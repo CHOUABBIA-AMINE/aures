@@ -1,19 +1,17 @@
-import { useNavigate }      from "react-router-dom";
+import { useNavigate }          from "react-router-dom";
 
-import { AppBar }           from "@mui/material";
-import { Button }           from "@mui/material";
-import { IconButton }       from "@mui/material";
-import { Stack }            from "@mui/material";
-import { Toolbar }          from "@mui/material";
-import { Typography }       from "@mui/material";
-import { CatchingPokemon }  from "@mui/icons-material";
-
-
+import { AppBar }               from "@mui/material";
+import { Button }               from "@mui/material";
+import { IconButton }           from "@mui/material";
+import { Stack }                from "@mui/material";
+import { Toolbar }              from "@mui/material";
+import { Typography }           from "@mui/material";
+import { CatchingPokemon }      from "@mui/icons-material";
 
 function Navbar() {
     const navigate = useNavigate();
 	return (
-        <AppBar position="fixed">
+        <AppBar position='static' sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
             <Toolbar>
                 <IconButton size="large" edge="start" color="inherit" aria-label="logo">
                     <CatchingPokemon />

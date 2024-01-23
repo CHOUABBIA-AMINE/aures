@@ -9,7 +9,7 @@ import commonMenu           from '../config/common.menu';
 import coreMenu             from '../config/core.menu';
 import SidenavItem          from './side.nav.item';
 
-function Sidenav() {
+const Sidenav = (props:any) => {
     
     const [open, setOpen] = useState(false);
   
@@ -24,7 +24,7 @@ function Sidenav() {
 	return (
 		<Drawer 
             anchor="left"
-            open={true}
+            open={props}
             onMouseEnter={mouseEnter}
             onMouseLeave={mouseLeave}
             variant="permanent"
