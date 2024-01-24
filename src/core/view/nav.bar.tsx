@@ -8,8 +8,17 @@ import { Toolbar }              from "@mui/material";
 import { Typography }           from "@mui/material";
 import { CatchingPokemon }      from "@mui/icons-material";
 
+import { useAuth }              from "../config/hook/useAuth";
+
 function Navbar() {
     const navigate = useNavigate();
+    const handleLogin = () => {
+        const { login } = useAuth();
+        login({
+          id: '1',
+          username: 'John Doe'
+        });
+      };
 	return (
         <AppBar position='static' sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
             <Toolbar>
@@ -20,7 +29,7 @@ function Navbar() {
                     AURES
                 </Typography>
                 <Stack direction="row" spacing={2}>
-                    <Button color="inherit" onClick={() => navigate("/")}>Home</Button>
+                    <Button color="inherit" onClick={() => handleLogin}>Home</Button>
                     <Button color="inherit" onClick={() => navigate("/about")}>About</Button>
                 </Stack>
             </Toolbar>
