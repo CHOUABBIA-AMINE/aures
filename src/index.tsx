@@ -11,8 +11,8 @@ ReactDOM.createRoot(
   	document.getElementById('root') as HTMLElement
 ).render(
 	<BrowserRouter>
-		<React.StrictMode>
+		{/* <React.StrictMode> */}
 			<Aures />
-		</React.StrictMode>
+		{/* </React.StrictMode> */}
 	</BrowserRouter>
 );

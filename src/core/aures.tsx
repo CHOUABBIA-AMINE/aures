@@ -7,14 +7,17 @@ import Navbar 					from './view/nav.bar';
 import Sidenav 					from './view/side.nav';
 import CoreRouting 				from './config/core.routing';
 
-import { useAuth } 				from './config/hook/useAuth';
-import AuthContext 				from './config/context/AuthContext';
+import {AuthContext}			from './config/context/auth.context';
+import { useAuth } from './config/hook/useAuth';
+import { useState } from 'react';
+import User from './model/user';
 
 function Aures() {
-	const { user, login, logout, setUser } = useAuth();
+	///const { user, login, logout } = useAuth();
 	
+	const [user, setUser] = useState<User | null>(null);
 	return (
-		<AuthContext.Provider value={{ user, setUser }}>
+		<AuthContext.Provider value={{ user , setUser }}>
 		<Box sx={{ display: 'flex', flexDirection: 'column'}}>
 			<CssBaseline />
 			<Navbar />

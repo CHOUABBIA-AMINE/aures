@@ -1,7 +1,7 @@
 import { useState }             from "react";
 
-const useLocalStorage = () => {
-
+export const useLocalStorage = () => {
+    
     const [value, setValue] = useState<string | null>(null);
 
     const setItem = (key: string, value: string) => {
@@ -21,7 +21,5 @@ const useLocalStorage = () => {
     };
 
     return { value, setItem, getItem, removeItem };
-}
-
-export default useLocalStorage;
+};
 

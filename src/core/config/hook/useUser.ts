@@ -1,11 +1,13 @@
 import { useContext }           from "react";
-
+import { useLocalStorage }      from "./useLocalStorage";
+import { AuthContext }          from "../context/auth.context";
 import User                     from "../../model/user";
-import useLocalStorage          from "./useLocalStorage";
-import AuthContext              from "../context/AuthContext";
 
-const useUser = () => {
+
+
+export const useUser = () => {
     const { user, setUser } = useContext(AuthContext);
+    
     const { setItem } = useLocalStorage();
 
     const addUser = (user: User) => {
@@ -21,4 +23,3 @@ const useUser = () => {
     return { user, addUser, removeUser };
 };
 
-export default useUser;
