@@ -13,7 +13,7 @@ const coreMenu : MenuItem[] = [
     { name : "Consultation",    icon : MenuBookOutlined,            link: "/" },
     { name : "Contract",        icon : DescriptionOutlined,         link: "/" },
     { name : "Amendment",       icon : OnDeviceTrainingOutlined,    link: "/" },
-    { name : "Purchase Order",  icon : ShoppingCartOutlined,        link: "/" }
+    { name : "Purchase ",       icon : ShoppingCartOutlined,        link: "/" }
 ];
 
 export default coreMenu;
