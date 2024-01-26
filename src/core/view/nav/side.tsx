@@ -60,4 +60,4 @@ const Sidenav = (props:any) => {
 		</Drawer>
 	);
 }
-export default Sidenav;
+export { Sidenav };

@@ -26,4 +26,4 @@ function CoreRouting(){
         </Routes>
     )
 }
-export default CoreRouting;
+export { CoreRouting };
