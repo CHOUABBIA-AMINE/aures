@@ -10,7 +10,7 @@ import { Typography }           from "@mui/material";
 import { CatchingPokemon }      from "@mui/icons-material";
 import { Login }                from "@mui/icons-material";
 
-import { AuthContext }          from "../config/context/auth.context";
+import { AuthContext }          from "../../config/context/auth.context";
 import { ProfileMenu }          from "./profile.menu";
 
 
@@ -42,4 +42,4 @@ function Navbar() {
         </AppBar>
 	);
 }
-export default Navbar;
+export { Navbar };

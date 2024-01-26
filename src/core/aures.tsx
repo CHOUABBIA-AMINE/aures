@@ -3,8 +3,8 @@ import './aures.css';
 import { Box } 					from '@mui/material';
 import { CssBaseline } 			from '@mui/material';
 
-import Navbar 					from './view/nav.bar';
-import Sidenav 					from './view/side.nav';
+import { Navbar }				from './view/nav/bar';
+import Sidenav 					from './view/nav/side';
 import CoreRouting 				from './config/core.routing';
 
 import { AuthContext }			from './config/context/auth.context';

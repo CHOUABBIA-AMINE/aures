@@ -7,10 +7,10 @@ import { ListItemButton }       from "@mui/material";
 import { ListItemIcon }         from "@mui/material";
 import { ListItemText }         from "@mui/material";
 
-import MenuItem                 from "../config/nav.item";
+import { NavItem }              from "../../config/nav.item";
 
 
-const SidenavItem = (props : MenuItem)=>{
+const SidenavItem = (props : NavItem)=>{
     
     const navigate = useNavigate();
 
@@ -26,4 +26,4 @@ const SidenavItem = (props : MenuItem)=>{
     )
 
 }
-export default SidenavItem;
+export { SidenavItem };

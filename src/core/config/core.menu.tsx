@@ -5,9 +5,9 @@ import { DescriptionOutlined }      from "@mui/icons-material"
 import { OnDeviceTrainingOutlined } from "@mui/icons-material"
 import { ShoppingCartOutlined }     from "@mui/icons-material"
 
-import MenuItem                     from "./nav.item"
+import { NavItem }                 from "./nav.item"
 
-const coreMenu : MenuItem[] = [
+const coreMenu : NavItem[] = [
     { name : "Provider",        icon : LocalShippingOutlined,       link: "/about" },
     { name : "Budget",          icon : AccountBalanceOutlined,      link: "/" },
     { name : "Consultation",    icon : MenuBookOutlined,            link: "/" },
@@ -16,4 +16,4 @@ const coreMenu : MenuItem[] = [
     { name : "Purchase ",       icon : ShoppingCartOutlined,        link: "/" }
 ];
 
-export default coreMenu;
+export { coreMenu };

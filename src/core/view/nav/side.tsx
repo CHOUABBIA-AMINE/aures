@@ -4,10 +4,10 @@ import { Drawer } 			from '@mui/material';
 import { List } 			from '@mui/material';
 import { Divider } 		    from '@mui/material';
 
-import environment          from '../config/environment';
-import commonMenu           from '../config/common.menu';
-import coreMenu             from '../config/core.menu';
-import SidenavItem          from './side.nav.item';
+import { environment }      from '../../config/environment';
+import { commonMenu }       from '../../config/common.menu';
+import { coreMenu }         from '../../config/core.menu';
+import { SidenavItem }      from './side.item';
 
 const Sidenav = (props:any) => {
     

@@ -7,4 +7,4 @@ type NavItem = {
     link: string
 }
 
-export default NavItem;
+export type { NavItem };
