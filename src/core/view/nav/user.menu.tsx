@@ -12,7 +12,7 @@ import { PersonAdd }            from "@mui/icons-material";
 import { Settings }             from "@mui/icons-material";
 
 
-function ProfileMenu() {
+function UserMenu() {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [open, setOpen] = useState<Boolean>(Boolean(anchorEl));
 
@@ -109,4 +109,4 @@ function ProfileMenu() {
         </>
     );
 }
-export { ProfileMenu };
+export { UserMenu };
