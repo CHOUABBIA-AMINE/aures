@@ -7,7 +7,7 @@ import { ListItemButton }       from "@mui/material";
 import { ListItemIcon }         from "@mui/material";
 import { ListItemText }         from "@mui/material";
 
-import MenuItem                 from "../config/menu.item";
+import MenuItem                 from "../config/nav.item";
 
 
 const SidenavItem = (props : MenuItem)=>{

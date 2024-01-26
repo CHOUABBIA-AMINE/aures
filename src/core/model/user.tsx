@@ -16,4 +16,4 @@ interface User {
     authToken  ?: string;*/
 }
 
-export default User;
+export type { User };

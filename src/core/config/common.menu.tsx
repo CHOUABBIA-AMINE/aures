@@ -3,7 +3,7 @@ import { HomeWorkOutlined }         from "@mui/icons-material"
 import { DraftsOutlined }           from "@mui/icons-material"
 import { VerifiedUserOutlined }     from "@mui/icons-material"
 
-import MenuItem                     from "./menu.item"
+import MenuItem                     from "./nav.item"
 
 const commonMenu : MenuItem[] = [
     { name : "Administration",  icon : Diversity3Outlined,      link: "/" },

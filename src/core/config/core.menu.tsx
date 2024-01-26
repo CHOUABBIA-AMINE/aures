@@ -5,7 +5,7 @@ import { DescriptionOutlined }      from "@mui/icons-material"
 import { OnDeviceTrainingOutlined } from "@mui/icons-material"
 import { ShoppingCartOutlined }     from "@mui/icons-material"
 
-import MenuItem                     from "./menu.item"
+import MenuItem                     from "./nav.item"
 
 const coreMenu : MenuItem[] = [
     { name : "Provider",        icon : LocalShippingOutlined,       link: "/about" },

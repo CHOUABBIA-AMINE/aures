@@ -3,12 +3,14 @@ import { Routes }               from "react-router-dom";
 
 import Home                     from "../view/home";
 import About                    from "../view/about";
+import Login                    from "../view/login";
 
 function CoreRouting(){
 	return (
         <Routes>
             <Route path='/'                 element={<Home />} />
             <Route path='/about'            element={<About />} />
+            <Route path='/login'            element={<Login />} />
 
             <Route path="/provider"         element={<About />}></Route>    
             <Route path="/finance"          element={<About />}></Route>

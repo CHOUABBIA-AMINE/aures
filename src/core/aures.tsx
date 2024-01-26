@@ -7,10 +7,9 @@ import Navbar 					from './view/nav.bar';
 import Sidenav 					from './view/side.nav';
 import CoreRouting 				from './config/core.routing';
 
-import {AuthContext}			from './config/context/auth.context';
-import { useAuth } from './config/hook/useAuth';
-import { useState } from 'react';
-import User from './model/user';
+import { AuthContext }			from './config/context/auth.context';
+import { useState } 			from 'react';
+import { User } 				from './model/user';
 
 function Aures() {
 	///const { user, login, logout } = useAuth();

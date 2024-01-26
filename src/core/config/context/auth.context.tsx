@@ -1,12 +1,12 @@
 import { createContext }        from 'react';
-import User                     from '../../model/user';
+import { User }                 from '../../model/user';
 
-interface AuthContext {
+interface IAuthContext {
     user: User | null;
     setUser: (user: User | null) => void;
 }
 
-export const AuthContext = createContext<AuthContext>({
+export const AuthContext = createContext<IAuthContext>({
     user: null,
     setUser: () => {},
 });
