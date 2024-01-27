@@ -22,7 +22,7 @@ function Aures() {
 				<CssBaseline />
 				<Navbar />
 				<Box position='static' sx={{width:'100%', height:'calc(100vh - 64px)', background:'FFF', display: 'flex', flexDirection: 'row'}}>
-					{(user == null) ? <Sidenav /> : ""}
+					{(user != null) ? <Sidenav /> : ""}
 					<CoreRouting />
 				</Box>
 			</Box>
