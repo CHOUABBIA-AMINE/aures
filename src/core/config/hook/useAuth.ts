@@ -14,14 +14,14 @@ export const useAuth = () => {
         }
     }, []);
 
-    const login = (user: User) => {
+    const connect = (user: User) => {
         addUser(user);
     };
 
-    const logout = () => {
+    const disconnect = () => {
         removeUser();
     };
 
-    return { user, login, logout };
+    return { user, connect, disconnect };
 };
 

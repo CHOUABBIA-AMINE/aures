@@ -9,9 +9,11 @@ import Typography               from '@mui/material/Typography';
 import Container                from '@mui/material/Container';
 
 import { PasswordInput }        from './password.input';
-import { authentication }       from '../api/request';
+import { useHTTP }             from '../api/request';
 
 function Login() {
+
+    const { connect } = useHTTP();
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
@@ -19,7 +21,7 @@ function Login() {
             username: data.get('username'),
             password: data.get('password'),
         });
-        authentication({username : data.get('username'), password: data.get('password')});
+        connect({username : data.get('username'), password: data.get('password')});
     };
 
     // const [username, setUsername] = useState("");

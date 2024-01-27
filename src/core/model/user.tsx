@@ -12,8 +12,8 @@ interface User {
     person      : string;
     picture     : string;
     roles       : string[];
-    authorities : string[];
-    authToken  ?: string;*/
+    authorities : string[];*/
+    token      ?: string;
 }
 
 export type { User };

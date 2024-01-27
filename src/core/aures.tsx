@@ -16,8 +16,9 @@ function Aures() {
 	///const { user, login, logout } = useAuth();
 	
 	const [user, setUser] = useState<User | null>(null);
+	const [token, setToken] = useState<string | null>("");
 	return (
-		<AuthContext.Provider value={{ user , setUser }}>
+		<AuthContext.Provider value={{ user , setUser, token, setToken }}>
 			<Box sx={{ display: 'flex', flexDirection: 'column'}}>
 				<CssBaseline />
 				<Navbar />
