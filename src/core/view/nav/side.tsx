@@ -24,7 +24,7 @@ const Sidenav = (props:any) => {
 	return (
 		<Drawer 
             anchor="left"
-            open={props}
+            open={true}
             onMouseEnter={mouseEnter}
             onMouseLeave={mouseLeave}
             variant="permanent"
@@ -43,7 +43,7 @@ const Sidenav = (props:any) => {
 
         >
             <Box sx={{ overflow: 'hidden' }}>
-                <List>
+                <List key="Menus-01">
                     {coreMenu.map((item) => (
                         <SidenavItem name={item.name} icon={item.icon} link={item.link} />
                     ))}
@@ -51,7 +51,7 @@ const Sidenav = (props:any) => {
             </Box>
             <Divider />
             <Box sx={{ overflow: 'hidden' }}>
-                <List>
+                <List key="Menus-02">
                     {commonMenu.map((item) => (
                         <SidenavItem name={item.name} icon={item.icon} link={item.link} />
                     ))}

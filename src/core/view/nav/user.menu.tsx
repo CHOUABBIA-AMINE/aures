@@ -1,4 +1,5 @@
 import { useState }             from "react";
+import { useNavigate }          from "react-router-dom";
 
 import { Avatar }               from "@mui/material";
 import { Divider }              from "@mui/material";
@@ -10,12 +11,14 @@ import { MenuItem }             from "@mui/material";
 import { Logout }               from "@mui/icons-material";
 import { PersonAdd }            from "@mui/icons-material";
 import { Settings }             from "@mui/icons-material";
+import { useUser }              from "../../config/hook/useUser";
 
 
 function UserMenu() {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [open, setOpen] = useState<Boolean>(Boolean(anchorEl));
-
+    const { removeUser } = useUser();
+    const navigate = useNavigate();
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
         setOpen(true);
@@ -25,6 +28,11 @@ function UserMenu() {
         setAnchorEl(null);
         setOpen(false);
         console.log("dlkdkldjdklj");
+    };
+    const logout = () => {
+        handleClose();
+        navigate("/home");
+        removeUser();
     };
 
     return (
@@ -99,7 +107,7 @@ function UserMenu() {
                     </ListItemIcon>
                     Settings
                 </MenuItem>
-                <MenuItem onClick={handleClose}>
+                <MenuItem onClick={logout}>
                     <ListItemIcon>
                         <Logout fontSize="small" />
                     </ListItemIcon>
