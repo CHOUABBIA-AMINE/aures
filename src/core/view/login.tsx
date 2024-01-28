@@ -1,5 +1,4 @@
-import { ChangeEvent }          from 'react';
-import { useState }             from 'react';
+import { useNavigate }          from 'react-router-dom';
 
 import Button                   from '@mui/material/Button';
 import CssBaseline              from '@mui/material/CssBaseline';
@@ -9,11 +8,14 @@ import Typography               from '@mui/material/Typography';
 import Container                from '@mui/material/Container';
 
 import { PasswordInput }        from './password.input';
-import { useHTTP }             from '../api/request';
+import { useHTTP }              from '../api/request';
+import { useUser }              from '../config/hook/useUser';
 
 function Login() {
 
+    const { addUser } = useUser();
     const { connect } = useHTTP();
+    const navigate = useNavigate();
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
@@ -21,20 +23,12 @@ function Login() {
             username: data.get('username'),
             password: data.get('password'),
         });
-        connect({username : data.get('username'), password: data.get('password')});
+        connect({username : data.get('username'), password: data.get('password')}).then(function (response) {
+            console.log(response.data.value);
+            navigate("/home");
+            addUser({"username" : JSON.stringify(data.get('username')?.valueOf()), "token" : JSON.stringify(response.data.value)});
+        });
     };
-
-    // const [username, setUsername] = useState("");
-    // const handleUsername = (event : ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    //     setUsername(event.target.value);
-    //     console.log(event.target.value);
-    // }
-
-    // const [password, setPassword] = useState("");
-    // const handlePassword = (event : ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    //     setPassword(event.target.value);
-    //     console.log(event.target.value);
-    // }
 
     return (
         <Container component="main" maxWidth="xs">
@@ -61,16 +55,6 @@ function Login() {
                         autoComplete="username"
                         autoFocus
                     />
-                    {/* <TextField
-                        margin="normal"
-                        required
-                        fullWidth
-                        name="password"
-                        label="Password"
-                        type="password"
-                        id="password"
-                        autoComplete="false"
-                    /> */}
                     <PasswordInput/>
                     <Button
                         type="submit"

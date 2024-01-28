@@ -26,13 +26,7 @@ export const useHTTP = () => {
     }
 
     const connect = (data : any) => {
-        axios.post(API.baseURL + API.authentication, data)
-            .then(function (response) {
-                console.log(response);
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
+        return axios.post(API.baseURL + API.authentication, data)
     }
 
     const getUrl = (url : string) => {

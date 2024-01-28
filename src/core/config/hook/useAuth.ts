@@ -24,4 +24,3 @@ export const useAuth = () => {
 
     return { user, connect, disconnect };
 };
-
