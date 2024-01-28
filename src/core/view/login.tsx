@@ -19,12 +19,7 @@ function Login() {
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-        console.log({
-            username: data.get('username'),
-            password: data.get('password'),
-        });
         connect({username : data.get('username'), password: data.get('password')}).then(function (response) {
-            console.log(response.data.value);
             navigate("/home");
             addUser({"username" : JSON.stringify(data.get('username')?.valueOf()), "token" : JSON.stringify(response.data.value)});
         });

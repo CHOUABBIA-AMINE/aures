@@ -27,7 +27,6 @@ function UserMenu() {
     const handleClose = () => {
         setAnchorEl(null);
         setOpen(false);
-        console.log("dlkdkldjdklj");
     };
     const logout = () => {
         handleClose();

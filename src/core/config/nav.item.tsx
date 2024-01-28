@@ -4,7 +4,7 @@ import { OverridableComponent }     from "@mui/material/OverridableComponent"
 type NavItem = {
     name: string,
     icon: OverridableComponent<SvgIconTypeMap<{}, "svg">>,
-    link: string
+    link: string | NavItem[]
 }
 
 export type { NavItem };

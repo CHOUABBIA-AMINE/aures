@@ -33,11 +33,13 @@ const Sidenav = (props:any) => {
                 marginTop:'65px',
                 height: 'calc(window.innerHeight - 64px)',
                 flexShrink: 0,
+                overflow: 'visible',
                 [`& .MuiDrawer-paper`]: { 
                     width: open ? environment.sideWidth : '64px',
                     marginTop:'65px',
                     height: `calc(window.innerHeight - 64px)`,
-                    boxSizing: 'border-box' 
+                    boxSizing: 'border-box',
+                    overflow: 'visible'
                 },
             }}
 

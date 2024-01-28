@@ -1,4 +1,4 @@
-import { LocalShippingOutlined }    from "@mui/icons-material"
+import { LocalShippingOutlined, Login }    from "@mui/icons-material"
 import { AccountBalanceOutlined }   from "@mui/icons-material"
 import { MenuBookOutlined }         from "@mui/icons-material"
 import { DescriptionOutlined }      from "@mui/icons-material"
@@ -9,7 +9,9 @@ import { NavItem }                 from "./nav.item"
 
 const coreMenu : NavItem[] = [
     { name : "Provider",        icon : LocalShippingOutlined,       link: "/about" },
-    { name : "Budget",          icon : AccountBalanceOutlined,      link: "/" },
+    { name : "Budget",          icon : AccountBalanceOutlined,      link: [
+        { name : "Provider",        icon : Login,       link: "/login" }
+    ] },
     { name : "Consultation",    icon : MenuBookOutlined,            link: "/" },
     { name : "Contract",        icon : DescriptionOutlined,         link: "/" },
     { name : "Amendment",       icon : OnDeviceTrainingOutlined,    link: "/" },
