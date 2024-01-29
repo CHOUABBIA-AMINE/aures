@@ -28,16 +28,17 @@ function UserList() {
         })
     }
     const handleSize = (event : any) => {
-        console.log(event.target);
+        
         sizeChange(event.target.value)
         pageChange(0);
-        console.log(size);
-        getBasedUrl("user?page=0&size="+size).then((response) => {
+        getBasedUrl("user?page=0&size="+event.target.value).then((response) => {
             let rows : []= response.data._embedded.user;
             rowChange(rows);
             totalChange(response.data.page.totalElements);
         })
-        console.log(size);
+    }
+    const rowClickHandler = (event : React.MouseEvent<HTMLElement>) => {
+        console.log(event);
     }
 
     useEffect(() => {
@@ -49,39 +50,10 @@ function UserList() {
 
     }, [])
 	return (
-        <div style={{ textAlign: 'center' }}>
+        <div style={{ textAlign: 'center', width: '100%'}}>
             <h1>MUI Table</h1>
 
             <Paper sx={{ width: '90%', marginLeft: '5%' }}>
-                <TableContainer sx={{maxHeight:450}}>
-                    <Table stickyHeader>
-                        <TableHead>
-                            <TableRow>
-                                {columns.map((column) => (
-                                    <TableCell style={{ backgroundColor: 'black', color: 'white' }} key={column.id}>{column.name}</TableCell>
-                                ))}
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {rows && rows
-                                .map((row, i) => {
-                                    return (
-                                        <TableRow key={i}>
-                                            {columns && columns.map((column, j) => {
-                                                let value;
-                                                j == 0 ? value = i+1 : value = row[column.id];
-                                                return (
-                                                    <TableCell key={j + " - "+ value}>
-                                                        {value}
-                                                    </TableCell>
-                                                )
-                                            })}
-                                        </TableRow>
-                                    )
-                                })}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
                 <TablePagination
                     rowsPerPageOptions={[2, 10, 25]}
                     rowsPerPage={size}
@@ -92,6 +64,37 @@ function UserList() {
                     onRowsPerPageChange={handleSize}
                 >
                 </TablePagination>
+                <TableContainer sx={{maxHeight:'calc(90vh - 128px)', minWidth: '100%', maxWidth: '100%'}}>
+                    <Table stickyHeader>
+                        <TableHead>
+                            <TableRow>
+                                {columns.map((column) => (
+                                    <TableCell align="center" style={{ backgroundColor: '#555', color: 'white' }} key={column.id}>{column.name}</TableCell>
+                                ))}
+                                <TableCell align="center" style={{ backgroundColor: '#555', color: 'white' }} key={columns.length}>&nbsp;</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {rows && rows
+                                .map((row, i) => {
+                                    return (
+                                        <TableRow hover={true} key={i} onClick={rowClickHandler}>
+                                            {columns && columns.map((column, j) => {
+                                                let value;
+                                                j === 0 ? value = i+1 : value = row[column.id];
+                                                return (
+                                                    <TableCell align="center" key={j + " - "+ value}>
+                                                        {value}
+                                                    </TableCell>
+                                                )
+                                            })}
+                                            <TableCell align="center" key={columns.length + " - action"}></TableCell>
+                                        </TableRow>
+                                    )
+                                })}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
             </Paper>
 
         </div>
