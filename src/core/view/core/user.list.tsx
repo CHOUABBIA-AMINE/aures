@@ -2,7 +2,7 @@ import { useEffect }            from "react";
 import { useState }             from "react";
 import { useNavigate }          from "react-router-dom";
 
-import { Paper }                from "@mui/material";
+import { IconButton, Paper }                from "@mui/material";
 import { Table }                from "@mui/material";
 import { TableBody }            from "@mui/material";
 import { TableCell }            from "@mui/material";
@@ -11,7 +11,10 @@ import { TableHead }            from "@mui/material";
 import { TablePagination }      from "@mui/material";
 import { TableRow }             from "@mui/material";
 
+import { format }               from "date-fns"
+
 import { useHTTP }              from "../../api/request";
+import { Delete, Edit } from "@mui/icons-material";
 
 function UserList() {
     const columns = [
@@ -24,6 +27,8 @@ function UserList() {
 
     const { getBasedUrl }       = useHTTP();
     const navigate              = useNavigate();
+
+    const [rowh, rowhChange]  = useState(-1);
     
     const [rows, rowChange]     = useState([]);
     const [page, pageChange]    = useState(0);
@@ -54,6 +59,11 @@ function UserList() {
         console.log(userId);
         navigate("/user/edit", { state: { userId: userId } });
     }
+    const rowHoverHandler = (event : React.MouseEvent<HTMLElement>, index: number) => {
+        event.preventDefault();
+        console.log(index);
+        rowhChange(index);
+    }
 
     useEffect(() => {
         getBasedUrl("user?page=0&size=2").then((response) => {
@@ -63,6 +73,19 @@ function UserList() {
         })
 
     },[])
+
+    const Actions = (userId : any) =>{
+        return(
+            <>
+            <IconButton aria-label="edit" size="small" sx={{ p: '0px' }} onClick={event => rowClickHandler(event, userId)}>
+                <Edit fontSize="small" />
+            </IconButton>
+            <IconButton aria-label="delete" size="small" sx={{ p: '0px' }} onClick={event => alert("DELETE!!")}>
+                <Delete fontSize="small" />
+            </IconButton>
+            </>
+        )
+    }
 	return (
         
         <div style={{ textAlign: 'center', width: '100%'}}>
@@ -80,8 +103,8 @@ function UserList() {
                 >
                 </TablePagination>
                 <TableContainer sx={{maxHeight:'calc(90vh - 128px)', minWidth: '100%', maxWidth: '100%'}}>
-                    <Table stickyHeader>
-                        <TableHead>
+                    <Table stickyHeader onMouseLeave={event => rowHoverHandler(event, -1)}>
+                        <TableHead onMouseEnter={event => rowHoverHandler(event, -1)}>
                             <TableRow>
                                 {columns.map((column) => (
                                     <TableCell align="center" style={{ backgroundColor: '#555', color: 'white' }} key={column.id}>{column.name}</TableCell>
@@ -93,7 +116,9 @@ function UserList() {
                             {rows && rows
                                 .map((row, i) => {
                                     return (
-                                        <TableRow hover={true} key={i} onClick={event => rowClickHandler(event, row['_links']['user']['href'])}>
+                                        <TableRow hover={true} key={i} 
+                                                  
+                                                  onMouseEnter={event => rowHoverHandler(event, i)}>
                                             {columns && columns.map((column, j) => {
                                                 let value;
                                                 j === 0 ? value = i+1 : value = row[column.id];
@@ -103,7 +128,9 @@ function UserList() {
                                                     </TableCell>
                                                 )
                                             })}
-                                            <TableCell align="center" key={columns.length + " - action"}></TableCell>
+                                            <TableCell align="center" key={columns.length + " - action"}>
+                                                {i==rowh ? <Actions userId={row['_links']['user']['href']}/> : " "}
+                                            </TableCell>
                                         </TableRow>
                                     )
                                 })}
