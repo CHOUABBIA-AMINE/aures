@@ -1,7 +1,16 @@
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow } from "@mui/material";
-import { useEffect, useState } from "react";
-import { useHTTP } from "../../api/request";
-import API from "../../api/settings";
+import { useEffect }            from "react";
+import { useState }             from "react";
+
+import { Paper }                from "@mui/material";
+import { Table }                from "@mui/material";
+import { TableBody }            from "@mui/material";
+import { TableCell }            from "@mui/material";
+import { TableContainer }       from "@mui/material";
+import { TableHead }            from "@mui/material";
+import { TablePagination }      from "@mui/material";
+import { TableRow }             from "@mui/material";
+
+import { useHTTP }              from "../../api/request";
 
 function UserList() {
     const columns = [
@@ -33,12 +42,13 @@ function UserList() {
         pageChange(0);
         getBasedUrl("user?page=0&size="+event.target.value).then((response) => {
             let rows : []= response.data._embedded.user;
+            console.log(response.data._embedded.user);
             rowChange(rows);
             totalChange(response.data.page.totalElements);
         })
     }
-    const rowClickHandler = (event : React.MouseEvent<HTMLElement>) => {
-        console.log(event);
+    const rowClickHandler = (event : React.MouseEvent<HTMLElement>, id: any) => {
+        console.log(id);
     }
 
     useEffect(() => {
@@ -78,7 +88,7 @@ function UserList() {
                             {rows && rows
                                 .map((row, i) => {
                                     return (
-                                        <TableRow hover={true} key={i} onClick={rowClickHandler}>
+                                        <TableRow hover={true} key={i} onClick={event => rowClickHandler(event, row['_links']['user']['href'])}>
                                             {columns && columns.map((column, j) => {
                                                 let value;
                                                 j === 0 ? value = i+1 : value = row[column.id];
