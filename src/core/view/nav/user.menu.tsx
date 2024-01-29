@@ -22,12 +22,10 @@ function UserMenu() {
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
         setOpen(true);
-        console.info(event.currentTarget);
     };
     const handleClose = () => {
         setAnchorEl(null);
         setOpen(false);
-        console.log("dlkdkldjdklj");
     };
     const logout = () => {
         handleClose();
