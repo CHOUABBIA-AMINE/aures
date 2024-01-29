@@ -6,27 +6,31 @@ import About                    from "../view/about";
 import Login                    from "../view/login";
 
 import UserList                 from "../view/core/user.list";
+import { UserDetails } from "../view/core/user.details";
 
 function CoreRouting(){
 	return (
         <Routes>
             <Route path='/'                 element={<Home />} />
-            <Route path='/home'             element={<Home />} />
-            <Route path='/about'            element={<About />} />
-            <Route path='/login'            element={<Login />} />
+            <Route path='home'              element={<Home />} />
+            <Route path='about'             element={<About />} />
+            <Route path='login'             element={<Login />} />
 
-            <Route path="/provider"         element={<About />}></Route>    
-            <Route path="/finance"          element={<About />}></Route>
-            <Route path="/consultation"     element={<About />}></Route>
-            <Route path="/contract"         element={<About />}></Route>
-            <Route path="/amendment"        element={<About />}></Route>
-            <Route path="/purchase"         element={<About />}></Route>
+            <Route path="provider"          element={<About />}></Route>    
+            <Route path="finance"           element={<About />}></Route>
+            <Route path="consultation"      element={<About />}></Route>
+            <Route path="contract"          element={<About />}></Route>
+            <Route path="amendment"         element={<About />}></Route>
+            <Route path="purchase"          element={<About />}></Route>
 
-            <Route path="/administration"   element={<About />}></Route>
-            <Route path="/environment"      element={<About />}></Route>
-            <Route path="/communication"    element={<About />}></Route>
-            <Route path="/security"         element={<About />}></Route>
-                <Route path="/user"             element={<UserList />}></Route>
+            <Route path="administration"    element={<About />}></Route>
+            <Route path="environment"       element={<About />}></Route>
+            <Route path="communication"     element={<About />}></Route>
+            <Route path="security"          element={<About />}></Route>
+
+            <Route path="user"              element={<UserList />}></Route>
+            <Route path="user/:action"      element={<UserDetails />}></Route>
+                
 
         </Routes>
     )

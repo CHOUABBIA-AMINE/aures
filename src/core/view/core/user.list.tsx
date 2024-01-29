@@ -1,5 +1,6 @@
 import { useEffect }            from "react";
 import { useState }             from "react";
+import { useNavigate }          from "react-router-dom";
 
 import { Paper }                from "@mui/material";
 import { Table }                from "@mui/material";
@@ -22,7 +23,8 @@ function UserList() {
     ]
 
     const { getBasedUrl }       = useHTTP();
-
+    const navigate              = useNavigate();
+    
     const [rows, rowChange]     = useState([]);
     const [page, pageChange]    = useState(0);
     const [size, sizeChange]    = useState(2);
@@ -47,8 +49,10 @@ function UserList() {
             totalChange(response.data.page.totalElements);
         })
     }
-    const rowClickHandler = (event : React.MouseEvent<HTMLElement>, id: any) => {
-        console.log(id);
+    const rowClickHandler = (event : React.MouseEvent<HTMLElement>, userId: any) => {
+        event.preventDefault();
+        console.log(userId);
+        navigate("/user/edit", { state: { userId: userId } });
     }
 
     useEffect(() => {
@@ -58,8 +62,9 @@ function UserList() {
             totalChange(response.data.page.totalElements);
         })
 
-    }, [])
+    },[])
 	return (
+        
         <div style={{ textAlign: 'center', width: '100%'}}>
             <h1>MUI Table</h1>
 

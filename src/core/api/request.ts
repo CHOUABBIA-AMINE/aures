@@ -37,8 +37,6 @@ export const useHTTP = () => {
     }
 
     const getBasedUrl = (url : string) => {
-        //configToken();
-        console.info(config);
         return axios.get(API.baseURL + url, {
             headers: { Authorization: `Bearer ${token}` }
         });
