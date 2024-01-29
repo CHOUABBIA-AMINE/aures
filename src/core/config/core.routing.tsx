@@ -5,6 +5,8 @@ import Home                     from "../view/home";
 import About                    from "../view/about";
 import Login                    from "../view/login";
 
+import UserList                 from "../view/core/user.list";
+
 function CoreRouting(){
 	return (
         <Routes>
@@ -24,6 +26,8 @@ function CoreRouting(){
             <Route path="/environment"      element={<About />}></Route>
             <Route path="/communication"    element={<About />}></Route>
             <Route path="/security"         element={<About />}></Route>
+                <Route path="/user"             element={<UserList />}></Route>
+
         </Routes>
     )
 }
