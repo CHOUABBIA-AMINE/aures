@@ -1,32 +1,50 @@
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow } from "@mui/material";
 import { useEffect, useState } from "react";
+import { useHTTP } from "../../api/request";
+import API from "../../api/settings";
 
 function UserList() {
     const columns = [
         { id: 'id', name: 'Id' },
-        { id: 'name', name: 'Name' },
-        { id: 'email', name: 'Email' },
-        { id: 'phone', name: 'Phone' }
+        { id: 'username', name: 'Username' },
+        { id: 'enabled', name: 'Enabled' },
+        { id: 'locked', name: 'Locked' },
+        { id: 'expirationDate', name: 'Expiration Date' }
     ]
 
-    const handlechangepage = (event : React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newpage : number) => {
-        pagechange(newpage)
+    const { getBasedUrl }       = useHTTP();
+
+    const [rows, rowChange]     = useState([]);
+    const [page, pageChange]    = useState(0);
+    const [size, sizeChange]    = useState(2);
+    const [total, totalChange]  = useState(0);
+
+    const handlePage = (event : any, newpage : number) => {
+        pageChange(newpage)
+        getBasedUrl("user?page="+ newpage +"&size=2").then((response) => {
+            let rows : [] = response.data._embedded.user;
+            rowChange(rows);
+            totalChange(response.data.page.totalElements);
+        })
     }
-    const handleRowsPerPage = (event : any) => {
-        rowperpagechange(+event.target.value)
-        pagechange(0);
+    const handleSize = (event : any) => {
+        console.log(event.target);
+        sizeChange(event.target.value)
+        pageChange(0);
+        console.log(size);
+        getBasedUrl("user?page=0&size="+size).then((response) => {
+            let rows : []= response.data._embedded.user;
+            rowChange(rows);
+            totalChange(response.data.page.totalElements);
+        })
+        console.log(size);
     }
 
-    const [rows, rowchange] = useState([]);
-    const [page, pagechange] = useState(0);
-    const [rowperpage, rowperpagechange] = useState(5);
     useEffect(() => {
-        fetch("http://localhost:8000/employee").then(resp => {
-            return resp.json();
-        }).then(resp => {
-            rowchange(resp);
-        }).catch(e => {
-            console.log(e.message)
+        getBasedUrl("user?page=0&size=2").then((response) => {
+            let rows : []= response.data._embedded.user;
+            rowChange(rows);
+            totalChange(response.data.page.totalElements);
         })
 
     }, [])
@@ -46,14 +64,14 @@ function UserList() {
                         </TableHead>
                         <TableBody>
                             {rows && rows
-                                .slice(page * rowperpage, page * rowperpage + rowperpage)
                                 .map((row, i) => {
                                     return (
                                         <TableRow key={i}>
-                                            {columns && columns.map((column, i) => {
-                                                let value = row[column.id];
+                                            {columns && columns.map((column, j) => {
+                                                let value;
+                                                j == 0 ? value = i+1 : value = row[column.id];
                                                 return (
-                                                    <TableCell key={value}>
+                                                    <TableCell key={j + " - "+ value}>
                                                         {value}
                                                     </TableCell>
                                                 )
@@ -65,16 +83,14 @@ function UserList() {
                     </Table>
                 </TableContainer>
                 <TablePagination
-                    rowsPerPageOptions={[5, 10, 25]}
-                    rowsPerPage={rowperpage}
+                    rowsPerPageOptions={[2, 10, 25]}
+                    rowsPerPage={size}
                     page={page}
-                    count={rows.length}
+                    count={total}
                     component="div"
-                    onPageChange={handlechangepage}
-                    onRowsPerPageChange={handleRowsPerPage}
-
+                    onPageChange={handlePage}
+                    onRowsPerPageChange={handleSize}
                 >
-
                 </TablePagination>
             </Paper>
 

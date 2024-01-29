@@ -31,76 +31,32 @@ export const useHTTP = () => {
 
     const getUrl = (url : string) => {
         configToken();
-        axios.get(url, config)
-            .then(function (response) {
-                console.log(response);
-            })
-            .catch(function (error) {
-                console.log(error);
-            })
-            .finally(function () {
-            });
+        return axios.get(url, config);
     }
 
     const getBasedUrl = (url : string) => {
         configToken();
-        axios.get(API.baseURL + url, config)
-            .then(function (response) {
-                console.log(response);
-            })
-            .catch(function (error) {
-                console.log(error);
-            })
-            .finally(function () {
-            });
+        return axios.get(API.baseURL + url, config);
     }
 
     const postUrl = (url : string, data : any) => {
         configToken();
-        axios.post(url, data, config)
-            .then(function (response) {
-                console.log(response);
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
+        return axios.post(url, data, config);
     }
 
     const postBasedUrl = (url : string, data : any) => {
         configToken();
-        axios.post(API.baseURL + url, data, config)
-            .then(function (response) {
-                console.log(response);
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
+        return axios.post(API.baseURL + url, data, config);
     }
 
     const deleteUrl = (url : string) => {
         configToken();
-        axios.delete(url, config)
-            .then(function (response) {
-                console.log(response);
-            })
-            .catch(function (error) {
-                console.log(error);
-            })
-            .finally(function () {
-            });
+        return axios.delete(url, config);
     }
 
     const deleteBasedUrl = (url : string) => {
         configToken();
-        axios.delete(API.baseURL + url, config)
-            .then(function (response) {
-                console.log(response);
-            })
-            .catch(function (error) {
-                console.log(error);
-            })
-            .finally(function () {
-            });
+        return axios.delete(API.baseURL + url, config);
     }
 
     return {connect, getUrl, getBasedUrl, postUrl, postBasedUrl, deleteUrl, deleteBasedUrl};
