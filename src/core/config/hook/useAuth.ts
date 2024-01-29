@@ -7,15 +7,15 @@ export const useAuth = () => {
     const { user, addUser, removeUser } = useUser();
     const { getItem } = useLocalStorage();
 
-    useEffect(() => {
-        const user = getItem("user");
-        if (user) {
-            addUser(JSON.parse(user));
-        }
-    }, []);
+    // useEffect(() => {
+    //     const user = getItem("user");
+    //     if (user) {
+    //         addUser(JSON.parse(user));
+    //     }
+    // }, []);
 
-    const connect = (user: User) => {
-        addUser(user);
+    const connect = (user: User, token : any) => {
+        addUser(user, token);
     };
 
     const disconnect = () => {

@@ -4,9 +4,14 @@ export const useLocalStorage = () => {
     
     const [value, setValue] = useState<string | null>(null);
 
-    const setItem = (key: string, value: string) => {
-        localStorage.setItem(key, value);
-        setValue(value);
+    const setItem = (key: string, value: string | undefined) => {
+        if(value !== undefined && value !== null){
+            localStorage.setItem(key, value);
+            setValue(value);
+        }else{
+            localStorage.setItem(key, "");
+            setValue(null);
+        }
     };
 
     const getItem = (key: string) => {

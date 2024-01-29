@@ -30,7 +30,7 @@ function UserList() {
 
     const handlePage = (event : any, newpage : number) => {
         pageChange(newpage)
-        getBasedUrl("user?page="+ newpage +"&size=2").then((response) => {
+        getBasedUrl("user?page="+ newpage +"&size="+size).then((response) => {
             let rows : [] = response.data._embedded.user;
             rowChange(rows);
             totalChange(response.data.page.totalElements);

@@ -5,14 +5,16 @@ import { AuthContext }          from "../context/auth.context";
 import { User }                 from "../../model/user";
 
 export const useUser = () => {
-    const { user, setUser } = useContext(AuthContext);
+    const { user, setUser, setToken } = useContext(AuthContext);
     
     const { setItem } = useLocalStorage();
 
-    const addUser = (user: User) => {
-        setUser(user);
-        setItem("user", JSON.stringify(user.username));
-        setItem("token", JSON.stringify(user.token));
+    const addUser = (_user: User, token :any) => {
+        setUser(_user);
+        setToken(token)
+        //setToken(_user.token !==undefined ? _user.token : "")
+        setItem("user", _user.username !== undefined ? _user.username : "");
+        setItem("token", token !== undefined ? token : "");
     };
 
     const removeUser = () => {

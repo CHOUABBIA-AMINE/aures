@@ -10,18 +10,26 @@ import Container                from '@mui/material/Container';
 import { PasswordInput }        from './password.input';
 import { useHTTP }              from '../api/request';
 import { useUser }              from '../config/hook/useUser';
+//import { useLocalStorage }      from '../config/hook/useLocalStorage';
 
 function Login() {
 
     const { addUser } = useUser();
+    //const { setItem } = useLocalStorage();
     const { connect } = useHTTP();
     const navigate = useNavigate();
+
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
+        console.log(event.currentTarget)
         connect({username : data.get('username'), password: data.get('password')}).then(function (response) {
             navigate("/home");
-            addUser({"username" : JSON.stringify(data.get('username')?.valueOf()), "token" : JSON.stringify(response.data.value)});
+            if(data.get('username') != null){
+                //setItem("user", data.get('username')?.toString());
+                //setItem("token", response.data.value);
+                addUser({"username" : data.get('username')?.toString()}, response.data.value);
+            }
         });
     };
 

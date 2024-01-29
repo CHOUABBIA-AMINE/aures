@@ -1,4 +1,4 @@
-import { useContext }           from "react";
+import { useContext, useState }           from "react";
 
 import axios                    from "axios";
 
@@ -9,54 +9,67 @@ import { AuthContext }          from "../config/context/auth.context";
 
 export const useHTTP = () => {
 
-    let config = {};
+    const [config, setConfig] = useState({});
     
     const { token } = useContext(AuthContext);
 
 
 
-    const configToken = () => {
-        if(token) {
-            config = {
-                headers: { Authorization: `Bearer ${token}` }
-            };
-        }else{
-            config = {};
-        }
-    }
+    // const configToken = () => {
+    //     if(user && user.token !== undefined) {
+    //         setConfig({
+    //             headers: { Authorization: `Bearer ${token}` }
+    //         });
+    //     }else{
+    //         setConfig({});
+    //     }
+    // }
 
     const connect = (data : any) => {
         return axios.post(API.baseURL + API.authentication, data)
     }
 
     const getUrl = (url : string) => {
-        configToken();
-        return axios.get(url, config);
+        //configToken();
+        return axios.get(url, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
     }
 
     const getBasedUrl = (url : string) => {
-        configToken();
-        return axios.get(API.baseURL + url, config);
+        //configToken();
+        console.info(config);
+        return axios.get(API.baseURL + url, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
     }
 
     const postUrl = (url : string, data : any) => {
-        configToken();
-        return axios.post(url, data, config);
+        //configToken();
+        return axios.post(url, data, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
     }
 
     const postBasedUrl = (url : string, data : any) => {
-        configToken();
-        return axios.post(API.baseURL + url, data, config);
+        //configToken();
+        return axios.post(API.baseURL + url, data, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
     }
 
     const deleteUrl = (url : string) => {
-        configToken();
-        return axios.delete(url, config);
+        //configToken();
+        return axios.delete(url, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
     }
 
     const deleteBasedUrl = (url : string) => {
-        configToken();
-        return axios.delete(API.baseURL + url, config);
+        //configToken();
+        return axios.delete(API.baseURL + url, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
     }
 
     return {connect, getUrl, getBasedUrl, postUrl, postBasedUrl, deleteUrl, deleteBasedUrl};

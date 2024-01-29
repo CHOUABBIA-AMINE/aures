@@ -1,6 +1,6 @@
 interface User {
     //id          : string;
-    username    : string;
+    username    : string | undefined;
     /*firstnameAr : string;
     lastnameAr  : string;
     firstnameLt : string;
@@ -13,7 +13,6 @@ interface User {
     picture     : string;
     roles       : string[];
     authorities : string[];*/
-    token      ?: string;
 }
 
 export type { User };
