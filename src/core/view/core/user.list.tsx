@@ -2,7 +2,12 @@ import { useEffect }            from "react";
 import { useState }             from "react";
 import { useNavigate }          from "react-router-dom";
 
-import { Fab, IconButton, Paper, TableSortLabel, Toolbar, Typography }                from "@mui/material";
+import { IconButton }           from "@mui/material";
+import { Input }                from "@mui/material";
+import { Paper }                from "@mui/material";
+import { TableSortLabel }       from "@mui/material";
+import { Toolbar }              from "@mui/material";
+import { Typography }           from "@mui/material";
 import { Table }                from "@mui/material";
 import { TableBody }            from "@mui/material";
 import { TableCell }            from "@mui/material";
@@ -12,6 +17,7 @@ import { TablePagination }      from "@mui/material";
 import { TableRow }             from "@mui/material";
 import { Delete }               from "@mui/icons-material";
 import { Edit }                 from "@mui/icons-material";
+import { Search }               from "@mui/icons-material";
 
 import { useHTTP }              from "../../api/request";
 
@@ -108,8 +114,9 @@ function UserList() {
                 >
                     MUI Table
                 </Typography>
-                <IconButton aria-label="edit">
-                    <Edit fontSize="small" />
+                <Input placeholder="Search" sx={{ width : '30%'}} />
+                <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
+                    <Search />
                 </IconButton>
             </Toolbar>
         )
