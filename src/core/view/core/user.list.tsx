@@ -114,7 +114,7 @@ function UserList() {
                 >
                     MUI Table
                 </Typography>
-                <Input placeholder="Search" sx={{ width : '30%'}} />
+                <Input placeholder="Search" sx={{ width : '340px'}} />
                 <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
                     <Search />
                 </IconButton>
@@ -127,7 +127,7 @@ function UserList() {
         <div style={{ width: '100%'}}>
             
 
-            <Paper sx={{ width: '90%', marginLeft: '5%' }}>
+            <Paper sx={{ width: 'calc(100% - 40px)', ml: '20px', mt: '10px' }}>
                 <TableTool />
                 <TablePagination
                     rowsPerPageOptions={[2, 10, 25]}
