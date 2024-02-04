@@ -4,6 +4,7 @@ const UserDetails = (props : any) => {
 	const location = useLocation();
 	const params = useParams();
 	const action = params.action;
+	console.log(location.state.userId)
 	return (
         <h1>{action}{location.state.userId}</h1>
 	);
