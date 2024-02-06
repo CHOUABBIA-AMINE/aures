@@ -4,9 +4,9 @@ const UserDetails = (props : any) => {
 	const location = useLocation();
 	const params = useParams();
 	const action = params.action;
-	console.log(location.state.userId)
+	console.log(location.state.modelId)
 	return (
-        <h1>{action}{location.state.userId}</h1>
+        <h1>{action}{location.state.modelId}</h1>
 	);
 }
 export { UserDetails };

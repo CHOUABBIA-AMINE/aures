@@ -22,7 +22,6 @@ function Login() {
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-        console.log(event.currentTarget)
         connect({username : data.get('username'), password: data.get('password')}).then(function (response) {
             navigate("/home");
             if(data.get('username') != null){

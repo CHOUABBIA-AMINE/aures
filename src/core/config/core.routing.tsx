@@ -5,8 +5,8 @@ import Home                     from "../view/home";
 import About                    from "../view/about";
 import Login                    from "../view/login";
 
-import UserList                 from "../view/core/user.list";
-import { UserDetails } from "../view/core/user.details";
+import ModelList                from "../view/core/model.list";
+import { UserDetails }          from "../view/core/user.details";
 
 function CoreRouting(){
 	return (
@@ -28,7 +28,7 @@ function CoreRouting(){
             <Route path="communication"     element={<About />}></Route>
             <Route path="security"          element={<About />}></Route>
 
-            <Route path="user"              element={<UserList />}></Route>
+            <Route path="list/:entity"      element={<ModelList />}></Route>
             <Route path="user/:action"      element={<UserDetails />}></Route>
                 
 

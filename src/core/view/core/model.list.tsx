@@ -1,6 +1,6 @@
 import { useEffect }            from "react";
 import { useState }             from "react";
-import { useNavigate }          from "react-router-dom";
+import { useNavigate, useParams }          from "react-router-dom";
 
 import { IconButton }           from "@mui/material";
 import { Input }                from "@mui/material";
@@ -22,7 +22,7 @@ import { Search }               from "@mui/icons-material";
 import { useHTTP }              from "../../api/request";
 import Lists                    from "../../api/list";
 
-function UserList(params : string) {
+function ModelList() {
     // const columns = [
     //     { id: 'id', name: 'Id', width: '5%' },
     //     { id: 'username', name: 'Username', width: '30%' },
@@ -30,7 +30,9 @@ function UserList(params : string) {
     //     { id: 'locked', name: 'Locked', width: '15%' },
     //     { id: 'expirationDate', name: 'Expiration Date', width: '25%' }
     // ]
-    const model                 = "user";
+    const {entity}              = useParams();
+    const model                 = entity !== undefined ? entity : "";
+    
     const { getBasedUrl }       = useHTTP();
     const navigate              = useNavigate();
 
@@ -89,7 +91,7 @@ function UserList(params : string) {
             totalChange(response.data.page.totalElements);
         })
 
-    },[ page, size, orderBy, order])
+    },[ model, page, size, orderBy, order])
 
     const Actions = (modelId : any) =>{
         return(
@@ -170,7 +172,7 @@ function UserList(params : string) {
                                         <TableRow hover={true} key={i} 
                                                   sx={{ cursor:"pointer" }}
                                                   onMouseEnter={event => rowHoverHandler(event, i)}>
-                                            {Lists.get(model) && Lists.get(model).map((column:any, j:number) => {
+                                            {Lists.get(model) && Lists.get(model).map((column : any, j:number) => {
                                                 let value;
                                                 j === 0 ? value = i+1 : value = row[column.id];
                                                 return (
@@ -193,4 +195,4 @@ function UserList(params : string) {
         </div>
     );
 }
-export default UserList;
+export default ModelList;
