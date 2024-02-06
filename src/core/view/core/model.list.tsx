@@ -129,7 +129,6 @@ function ModelList() {
         
         <div style={{ width: '100%'}}>
             
-
             <Paper sx={{ width: 'calc(100% - 40px)', ml: '20px', mt: '10px' }}>
                 <TableTool />
                 <TablePagination
