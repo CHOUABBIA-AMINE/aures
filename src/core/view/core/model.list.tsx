@@ -42,7 +42,7 @@ function ModelList() {
     
     const [rows, rowChange]     = useState([]);
     const [page, pageChange]    = useState(0);
-    const [size, sizeChange]    = useState(2);
+    const [size, sizeChange]    = useState(5);
     const [total, totalChange]  = useState(0);
 
     const handlePage = (event : any, newpage : number) => {
@@ -115,7 +115,7 @@ function ModelList() {
                     variant="subtitle1"
                     component="div"
                 >
-                    MUI Table
+                    User List
                 </Typography>
                 <Input placeholder="Search" sx={{ width : '340px'}} />
                 <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
@@ -132,7 +132,7 @@ function ModelList() {
             <Paper sx={{ width: 'calc(100% - 40px)', ml: '20px', mt: '10px' }}>
                 <TableTool />
                 <TablePagination
-                    rowsPerPageOptions={[2, 10, 25]}
+                    rowsPerPageOptions={[5, 10]}
                     rowsPerPage={size}
                     page={page}
                     count={total}
@@ -146,7 +146,7 @@ function ModelList() {
                         <TableHead onMouseEnter={event => rowHoverHandler(event, -1)}>
                             <TableRow>
                                 {Lists.get(model).map((column:any) => (
-                                    <TableCell  align="center" 
+                                    <TableCell  align={ column.align }
                                                 width={ column.width }
                                                 style={{ backgroundColor: '#555', color: 'white' }} 
                                                 key={column.id}
@@ -175,7 +175,7 @@ function ModelList() {
                                                 let value;
                                                 j === 0 ? value = i+1 : value = row[column.id];
                                                 return (
-                                                    <TableCell align="center" key={j + " - "+ value}>
+                                                    <TableCell align={ column.align } key={j + " - "+ value}>
                                                         {value}
                                                     </TableCell>
                                                 )

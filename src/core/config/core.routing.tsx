@@ -6,7 +6,7 @@ import About                    from "../view/about";
 import Login                    from "../view/login";
 
 import ModelList                from "../view/core/model.list";
-import { UserDetails }          from "../view/core/user.details";
+import UserDetails              from "../view/core/details/common/security/user";
 
 function CoreRouting(){
 	return (

@@ -1,17 +1,16 @@
 const Lists = new Map();
 
 const user = [
-        { id: 'id', name: 'Id', width: '5%' },
-        { id: 'username', name: 'Username', width: '30%' },
-        { id: 'enabled', name: 'Enabled', width: '15%' },
-        { id: 'locked', name: 'Locked', width: '15%' },
-        { id: 'expirationDate', name: 'Expiration Date', width: '25%' }
-    ];
+    { id: 'id',             name: 'Id',                 width: '20px',              align: 'center' },
+    { id: 'username',       name: 'Username',           width: '30%',               align: 'start' },
+    { id: 'enabled',        name: 'Enabled',            width: '15%',               align: 'start' },
+    { id: 'locked',         name: 'Locked',             width: '15%',               align: 'start' },
+    { id: 'expirationDate', name: 'Expiration Date',    width: 'calc(25%-20px)',    align: 'center' }
+];
 const role = [
-        { id: 'id', name: 'Id', width: '5%' },
-        { id: 'name', name: 'Name', width: '30%' }
-    ];
-
+    { id: 'id',             name: 'Id',                 width: '5%',                align: 'center' },
+    { id: 'name',           name: 'Name',               width: '30%',               align: 'start' }
+];
 
 Lists.set("user", user);
 Lists.set("role", role);
