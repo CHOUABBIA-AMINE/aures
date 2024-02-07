@@ -5,11 +5,11 @@ const user = [
     { id: 'username',       name: 'Username',           width: '30%',               align: 'start' },
     { id: 'enabled',        name: 'Enabled',            width: '15%',               align: 'start' },
     { id: 'locked',         name: 'Locked',             width: '15%',               align: 'start' },
-    { id: 'expirationDate', name: 'Expiration Date',    width: 'calc(25%-20px)',    align: 'center' }
+    { id: 'expirationDate', name: 'Expiration Date',    width: 'calc(40%-120px)',   align: 'center' }
 ];
 const role = [
-    { id: 'id',             name: 'Id',                 width: '5%',                align: 'center' },
-    { id: 'name',           name: 'Name',               width: '30%',               align: 'start' }
+    { id: 'id',             name: 'Id',                 width: '20px',              align: 'center' },
+    { id: 'name',           name: 'Name',               width: 'calc(100%-120px)',  align: 'start' }
 ];
 
 Lists.set("user", user);

@@ -1,8 +1,9 @@
 import { useEffect }            from "react";
 import { useState }             from "react";
-import { useNavigate, useParams }          from "react-router-dom";
+import { useNavigate }          from "react-router-dom";
+import { useParams }            from "react-router-dom";
 
-import { IconButton }           from "@mui/material";
+import { Button, IconButton }           from "@mui/material";
 import { Input }                from "@mui/material";
 import { Paper }                from "@mui/material";
 import { TableSortLabel }       from "@mui/material";
@@ -15,6 +16,8 @@ import { TableContainer }       from "@mui/material";
 import { TableHead }            from "@mui/material";
 import { TablePagination }      from "@mui/material";
 import { TableRow }             from "@mui/material";
+
+import { LibraryAddSharp }      from "@mui/icons-material";
 import { Delete }               from "@mui/icons-material";
 import { Edit }                 from "@mui/icons-material";
 import { Search }               from "@mui/icons-material";
@@ -23,13 +26,7 @@ import { useHTTP }              from "../../api/request";
 import Lists                    from "../../api/list";
 
 function ModelList() {
-    // const columns = [
-    //     { id: 'id', name: 'Id', width: '5%' },
-    //     { id: 'username', name: 'Username', width: '30%' },
-    //     { id: 'enabled', name: 'Enabled', width: '15%' },
-    //     { id: 'locked', name: 'Locked', width: '15%' },
-    //     { id: 'expirationDate', name: 'Expiration Date', width: '25%' }
-    // ]
+
     const {entity}              = useParams();
     const model                 = entity !== undefined ? entity : "";
     
@@ -47,21 +44,11 @@ function ModelList() {
 
     const handlePage = (event : any, newpage : number) => {
         pageChange(newpage)
-        /*getBasedUrl(model+"?page="+ newpage +"&size="+size).then((response) => {
-            let rows : [] = response.data._embedded.user;
-            rowChange(rows);
-            totalChange(response.data.page.totalElements);
-        })*/
     }
 
     const handleSize = (event : any) => {
         sizeChange(event.target.value)
         pageChange(0);
-        /*getBasedUrl(model + "?page=0&size="+event.target.value).then((response) => {
-            let rows : []= response.data._embedded.user;
-            rowChange(rows);
-            totalChange(response.data.page.totalElements);
-        })*/
     }
 
     const rowClickHandler = (event : React.MouseEvent<HTMLElement>, modelId: any) => {
@@ -96,12 +83,12 @@ function ModelList() {
     const Actions = (modelId : any) =>{
         return(
             <>
-            <IconButton aria-label="edit" color="success" size="small" sx={{ p: '0px', ml: '0%', mr: '5%', b: '0px'}} onClick={event => rowClickHandler(event, modelId)}>
-                <Edit fontSize="inherit" />
-            </IconButton>
-            <IconButton aria-label="delete" color="error" size="small" sx={{ p: '0px', ml: '5%', mr: '0%', b: '0px' }} onClick={event => alert("DELETE!!")}>
-                <Delete fontSize="inherit" />
-            </IconButton>
+                <IconButton aria-label="edit" color="success" size="small" sx={{ p: '0px', ml: '0%', mr: '5%', b: '0px'}} onClick={event => rowClickHandler(event, modelId)}>
+                    <Edit fontSize="inherit" />
+                </IconButton>
+                <IconButton aria-label="delete" color="error" size="small" sx={{ p: '0px', ml: '5%', mr: '0%', b: '0px' }} onClick={event => alert("DELETE!!")}>
+                    <Delete fontSize="inherit" />
+                </IconButton>
             </>
         )
     }
@@ -120,6 +107,9 @@ function ModelList() {
                 <Input placeholder="Search" sx={{ width : '340px'}} />
                 <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
                     <Search />
+                </IconButton>
+                <IconButton type="button" color="primary" sx={{ p: '10px' }} aria-label="new" onClick={event => rowClickHandler(event, null)}>
+                    <LibraryAddSharp />
                 </IconButton>
             </Toolbar>
         )
@@ -161,7 +151,7 @@ function ModelList() {
                                         </TableSortLabel>
                                     </TableCell>
                                 ))}
-                                <TableCell align="center" style={{ backgroundColor: '#555', color: 'white', width:'10%'}} key={Lists.get(model).length}>&nbsp;</TableCell>
+                                <TableCell align="center" style={{ backgroundColor: '#555', color: 'white', width:'100px'}} key={Lists.get(model).length}>&nbsp;</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
