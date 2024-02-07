@@ -1,5 +1,5 @@
-import { UploadFile } from "@mui/icons-material";
-import { Box, Button, Container, FormControl, Grid, InputLabel, MenuItem, Paper, Select, Stack, TextField, Typography } from "@mui/material";
+import { UploadFile, Visibility, VisibilityOff } from "@mui/icons-material";
+import { Box, Button, Container, FormControl, Grid, IconButton, InputAdornment, InputLabel, MenuItem, OutlinedInput, Paper, Select, Stack, TextField, Typography } from "@mui/material";
 import React from "react";
 import { useLocation, useParams } 			from "react-router-dom";
 
@@ -9,6 +9,11 @@ const UserDetails = (props : any) => {
 	const action 	= params.action;
 	//console.log(location.state.modelId)
 	const [age, setAge] = React.useState<string>("");
+	const [showPassword, setShowPassword] = React.useState(false);
+	const handleClickShowPassword = () => setShowPassword((show) => !show);
+	const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+		event.preventDefault();
+	};
 	const handleChange = (event:any) => {
 		setAge(event.target.value);
 	  };
@@ -37,24 +42,42 @@ const UserDetails = (props : any) => {
 						<FormControl fullWidth size="small">
 							<TextField
 								required
-								id="title"
-								name="title"
-								label="Title"
 								fullWidth
 								size="small"
+								id="username"
+								name="username"
+								label="Username"
 								autoComplete="off"
 								variant="outlined"
 							/>
 						</FormControl>
 					</Grid>
-					<Grid item xs={6} sm={6} />
 					<Grid item xs={6} sm={6}>
 						<FormControl fullWidth size="small">
 							<TextField
-								id="outlined-multiline-static"
-								label="Content"
+								required
 								fullWidth
 								size="small"
+								id="password"
+								type={showPassword ? 'text' : 'password'}
+								name="password"
+								label="Password"
+								autoComplete="off"
+								variant="outlined"
+								InputProps={{
+									endAdornment: (
+									  	<InputAdornment position="end">
+											<IconButton
+												aria-label="toggle password visibility"
+												onClick={handleClickShowPassword}
+												onMouseDown={handleMouseDownPassword}
+												edge="end"
+											>
+												{showPassword ? <VisibilityOff /> : <Visibility />}
+											</IconButton>
+									  	</InputAdornment>
+									),
+								  }}
 							/>
 						</FormControl>
 					</Grid>
