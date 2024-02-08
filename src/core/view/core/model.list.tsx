@@ -1,9 +1,11 @@
+import dayjs                    from "dayjs";
+
 import { useEffect }            from "react";
 import { useState }             from "react";
 import { useNavigate }          from "react-router-dom";
 import { useParams }            from "react-router-dom";
 
-import { Button, IconButton }           from "@mui/material";
+import { IconButton }           from "@mui/material";
 import { Input }                from "@mui/material";
 import { Paper }                from "@mui/material";
 import { TableSortLabel }       from "@mui/material";
@@ -158,15 +160,17 @@ function ModelList() {
                             {rows && rows
                                 .map((row, i) => {
                                     return (
-                                        <TableRow hover={true} key={i} 
-                                                  sx={{ cursor:"pointer" }}
-                                                  onMouseEnter={event => rowHoverHandler(event, i)}>
+                                        <TableRow 
+                                            hover={true} key={i} 
+                                            sx={{ cursor:"pointer" }}
+                                            onMouseEnter={event => rowHoverHandler(event, i)}
+                                        >
                                             {Lists.get(model) && Lists.get(model).map((column : any, j:number) => {
                                                 let value;
                                                 j === 0 ? value = i+1 : value = row[column.id];
                                                 return (
                                                     <TableCell align={ column.align } key={j + " - "+ value}>
-                                                        {value}
+                                                        {column.type === "date" ? dayjs(value).format('YYYY-MM-DD') : value}
                                                     </TableCell>
                                                 )
                                             })}

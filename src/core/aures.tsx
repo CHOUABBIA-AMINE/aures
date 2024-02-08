@@ -11,6 +11,8 @@ import { User } 				from './model/user';
 
 import { Navbar }				from './view/nav/bar';
 import { Sidenav } 				from './view/nav/side';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } 		from '@mui/x-date-pickers/AdapterDayjs'
 
 function Aures() {
 	///const { user, login, logout } = useAuth();
@@ -18,6 +20,7 @@ function Aures() {
 	const [user, setUser] = useState<User | null>(null);
 	const [token, setToken] = useState<string | null>("");
 	return (
+		<LocalizationProvider dateAdapter={AdapterDayjs}>
 		<AuthContext.Provider value={{ user , setUser, token, setToken }}>
 			<Box sx={{ display: 'flex', flexDirection: 'column'}}>
 				<CssBaseline />
@@ -28,6 +31,7 @@ function Aures() {
 				</Box>
 			</Box>
 		</AuthContext.Provider>
+		</LocalizationProvider>
 	);
 }
 export default Aures;
