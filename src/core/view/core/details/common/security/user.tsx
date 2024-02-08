@@ -19,11 +19,14 @@ import { Save } 				from "@mui/icons-material";
 import { Visibility } 			from "@mui/icons-material";
 import { VisibilityOff } 		from "@mui/icons-material";
 
+import { formatURL } 			from "../../../../../api/tools";
+import { User } 				from "../../../../../model/user";
+
 const UserDetails = (props : any) => {
 	const location 	= useLocation();
 	const params 	= useParams();
 	const action 	= params.action;
-
+    console.log(formatURL(location.state.modelId));
 	const [showPassword, setShowPassword] = React.useState(false);
 	const [enabled, setEnabled] = React.useState(true);
 	const [locked, 	setLocked] 	= React.useState(false);
