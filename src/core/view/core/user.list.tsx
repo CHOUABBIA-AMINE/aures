@@ -2,7 +2,9 @@ import { useEffect }            from "react";
 import { useState }             from "react";
 import { useNavigate }          from "react-router-dom";
 
-import { IconButton, Paper }                from "@mui/material";
+import { Toolbar, Typography }           from "@mui/material";
+import { IconButton }           from "@mui/material";
+import { Paper }                from "@mui/material";
 import { Table }                from "@mui/material";
 import { TableBody }            from "@mui/material";
 import { TableCell }            from "@mui/material";
@@ -10,11 +12,10 @@ import { TableContainer }       from "@mui/material";
 import { TableHead }            from "@mui/material";
 import { TablePagination }      from "@mui/material";
 import { TableRow }             from "@mui/material";
-
-import { format }               from "date-fns"
+import { DeleteForever, FilterList }        from "@mui/icons-material";
+import { Edit }                 from "@mui/icons-material";
 
 import { useHTTP }              from "../../api/request";
-import { Delete, Edit } from "@mui/icons-material";
 
 function UserList() {
     const columns = [
@@ -44,30 +45,28 @@ function UserList() {
         })
     }
     const handleSize = (event : any) => {
-        
         sizeChange(event.target.value)
         pageChange(0);
         getBasedUrl("user?page=0&size="+event.target.value).then((response) => {
             let rows : []= response.data._embedded.user;
-            console.log(response.data._embedded.user);
             rowChange(rows);
             totalChange(response.data.page.totalElements);
         })
     }
+
     const rowClickHandler = (event : React.MouseEvent<HTMLElement>, userId: any) => {
         event.preventDefault();
-        console.log(userId);
         navigate("/user/edit", { state: { userId: userId } });
     }
+
     const rowHoverHandler = (event : React.MouseEvent<HTMLElement>, index: number) => {
         event.preventDefault();
-        console.log(index);
         rowhChange(index);
     }
 
     useEffect(() => {
         getBasedUrl("user?page=0&size=2").then((response) => {
-            let rows : []= response.data._embedded.user;
+            let rows : [] = response.data._embedded.user;
             rowChange(rows);
             totalChange(response.data.page.totalElements);
         })
@@ -77,20 +76,40 @@ function UserList() {
     const Actions = (userId : any) =>{
         return(
             <>
-            <IconButton aria-label="edit" size="small" sx={{ p: '0px' }} onClick={event => rowClickHandler(event, userId)}>
+            <IconButton aria-label="edit" 
+                        size="small" 
+                        sx={{ mt: '0px', mb: '0px', ml: '0px', mr: '10px', p:'0px' }} 
+                        onClick={event => rowClickHandler(event, userId)}
+                        color="info"
+            >
                 <Edit fontSize="small" />
             </IconButton>
-            <IconButton aria-label="delete" size="small" sx={{ p: '0px' }} onClick={event => alert("DELETE!!")}>
-                <Delete fontSize="small" />
+            <IconButton aria-label="delete" 
+                        size="small" 
+                        sx={{ mt: '0px', mb: '0px', ml: '10px', mr: '0px', p:'0px' }} 
+                        onClick={event => alert({userId})}
+                        color="error"
+            >
+                <DeleteForever fontSize="small" />
             </IconButton>
             </>
         )
     }
 	return (
         
-        <div style={{ textAlign: 'center', width: '100%'}}>
-            <h1>MUI Table</h1>
-
+        <div style={{ width: '100%'}}>
+            
+            <Toolbar sx={{  width: '90%', marginLeft: '5%', justifyContent: 'space-between'}}>
+                <Typography color="inherit"
+                            variant="subtitle1"
+                            component="div"
+                >
+                    List
+                </Typography>
+                <IconButton>
+                    <FilterList />
+                </IconButton>
+            </Toolbar>
             <Paper sx={{ width: '90%', marginLeft: '5%' }}>
                 <TablePagination
                     rowsPerPageOptions={[2, 10, 25]}
@@ -116,9 +135,7 @@ function UserList() {
                             {rows && rows
                                 .map((row, i) => {
                                     return (
-                                        <TableRow hover={true} key={i} 
-                                                  
-                                                  onMouseEnter={event => rowHoverHandler(event, i)}>
+                                        <TableRow hover={true} key={i} sx={{cursor:'pointer'}} onMouseEnter={event => rowHoverHandler(event, i)}>
                                             {columns && columns.map((column, j) => {
                                                 let value;
                                                 j === 0 ? value = i+1 : value = row[column.id];
@@ -129,7 +146,7 @@ function UserList() {
                                                 )
                                             })}
                                             <TableCell align="center" key={columns.length + " - action"}>
-                                                {i==rowh ? <Actions userId={row['_links']['user']['href']}/> : " "}
+                                                {i === rowh ? <Actions userId={row['_links']['user']['href']}/> : " "}
                                             </TableCell>
                                         </TableRow>
                                     )
@@ -138,7 +155,6 @@ function UserList() {
                     </Table>
                 </TableContainer>
             </Paper>
-
         </div>
     );
 }

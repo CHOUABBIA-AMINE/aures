@@ -1,4 +1,4 @@
-import { useContext, useState }           from "react";
+import { useContext }           from "react";
 
 import axios                    from "axios";
 
@@ -8,22 +8,8 @@ import { AuthContext }          from "../config/context/auth.context";
 
 
 export const useHTTP = () => {
-
-    const [config, setConfig] = useState({});
     
     const { token } = useContext(AuthContext);
-
-
-
-    // const configToken = () => {
-    //     if(user && user.token !== undefined) {
-    //         setConfig({
-    //             headers: { Authorization: `Bearer ${token}` }
-    //         });
-    //     }else{
-    //         setConfig({});
-    //     }
-    // }
 
     const connect = (data : any) => {
         return axios.post(API.baseURL + API.authentication, data)
