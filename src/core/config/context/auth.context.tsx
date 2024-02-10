@@ -1,9 +1,9 @@
 import { createContext }        from 'react';
-import { User }                 from '../../model/user';
+import { UserContext }          from './user.context';
 
 interface IAuthContext {
-    user: User | null;
-    setUser: (user: User | null) => void;
+    user: UserContext | null;
+    setUser: (user: UserContext | null) => void;
     token: string | null;
     setToken: (token: string | null) => void;
 }

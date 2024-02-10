@@ -2,14 +2,14 @@ import { useContext }           from "react";
 
 import { useLocalStorage }      from "./useLocalStorage";
 import { AuthContext }          from "../context/auth.context";
-import { User }                 from "../../model/user";
+import { UserContext }          from "../context/user.context";
 
 export const useUser = () => {
     const { user, setUser, setToken } = useContext(AuthContext);
     
     const { setItem } = useLocalStorage();
 
-    const addUser = (_user: User, token :any) => {
+    const addUser = (_user: UserContext, token :any) => {
         setUser(_user);
         setToken(token)
         //setToken(_user.token !==undefined ? _user.token : "")

@@ -2,7 +2,9 @@ import React 					from "react";
 import { useLocation } 			from "react-router-dom";
 import { useParams } 			from "react-router-dom";
 
-import { Box, Checkbox, Divider, FormControlLabel, List, ListItemButton, ListItemIcon, ListItemText, Switch } 					from "@mui/material";
+import { Box } 					from "@mui/material";
+import { FormControlLabel } 	from "@mui/material";
+import { Switch } 				from "@mui/material";
 import { Container } 			from "@mui/material";
 import { FormControl } 			from "@mui/material";
 import { Grid } 				from "@mui/material";
@@ -44,92 +46,6 @@ const UserDetails = (props : any) => {
 		setLocked(event.target.checked);
 	};
 
-	function not(a: readonly number[], b: readonly number[]) {
-		return a.filter((value) => b.indexOf(value) === -1);
-	}
-	
-	function intersection(a: readonly number[], b: readonly number[]) {
-		return a.filter((value) => b.indexOf(value) !== -1);
-	}
-
-	const [checked, setChecked] = React.useState<readonly number[]>([]);
-  	const [left, setLeft] = React.useState<readonly number[]>([0, 1, 2, 3]);
-  	const [right, setRight] = React.useState<readonly number[]>([4, 5, 6, 7]);
-
-  	const leftChecked = intersection(checked, left);
-  	const rightChecked = intersection(checked, right);
-
-	const handleToggle = (value: number) => () => {
-		const currentIndex = checked.indexOf(value);
-		const newChecked = [...checked];
-
-		if (currentIndex === -1) {
-			newChecked.push(value);
-		} else {
-			newChecked.splice(currentIndex, 1);
-		}
-
-		setChecked(newChecked);
-	};
-
-	const handleAllRight = () => {
-		setRight(right.concat(left));
-		setLeft([]);
-	};
-
-	const handleCheckedRight = () => {
-		setRight(right.concat(leftChecked));
-		setLeft(not(left, leftChecked));
-		setChecked(not(checked, leftChecked));
-	};
-
-	const handleCheckedLeft = () => {
-		setLeft(left.concat(rightChecked));
-		setRight(not(right, rightChecked));
-		setChecked(not(checked, rightChecked));
-	};
-
-	const handleAllLeft = () => {
-		setLeft(left.concat(right));
-		setRight([]);
-	};
-
-	const customList = (items: readonly number[]) => (
-		<Box sx={{ width: 200, height: 230, overflow: 'auto', border:"solid 1px rgba(0, 0, 0, 0.3)", borderRadius:"5px"}}>
-			<Typography variant="h6" textAlign="center">
-				Role
-			</Typography>
-			<Divider orientation="horizontal"></Divider>
-			<List dense component="div" role="list">
-				{
-					items.map((value: number) => {
-						const labelId = `transfer-list-item-${value}-label`;
-				
-						return (
-							<ListItemButton
-								key={value}
-								role="listitem"
-								onClick={handleToggle(value)} 
-							>
-								<ListItemIcon>
-									<Checkbox
-										size="small"
-										checked={checked.indexOf(value) !== -1}
-										tabIndex={-1}
-										disableRipple
-										inputProps={{
-											'aria-labelledby': labelId,
-										}}
-									/>
-								</ListItemIcon>
-								<ListItemText id={labelId} primary={`List item ${value + 1}`} />
-							</ListItemButton>
-						);
-					})
-				}
-			</List>
-		</Box>
-	  );
 	return (
         // <h1>{action}{location.state !== null ? location.state.modelId : ""}</h1>
 		<Container maxWidth="lg">
@@ -207,54 +123,7 @@ const UserDetails = (props : any) => {
 					</Grid>
 					<Grid item xs={4} sm={4} />
 					<Grid item xs={8} sm={8}>
-						<Grid container direction="row" sx={{display : "flex", justifyContent: "center"}}>
-							<Grid item xs={5} sm={5} sx={{display : "flex", justifyContent: "center"}}>{customList(left)}</Grid>
-							<Grid item xs={2} sm={2} sx={{display : "flex", justifyContent: "center", alignItems: "center"}}>
-								<Grid container direction="column" alignItems="center">
-									<Button
-										sx={{ my: 0.5 }}
-										variant="outlined"
-										size="small"
-										onClick={handleAllRight}
-										disabled={left.length === 0}
-										aria-label="move all right"
-									>
-										≫
-									</Button>
-									<Button
-										sx={{ my: 0.5 }}
-										variant="outlined"
-										size="small"
-										onClick={handleCheckedRight}
-										disabled={leftChecked.length === 0}
-										aria-label="move selected right"
-									>
-										&gt;
-									</Button>
-									<Button
-										sx={{ my: 0.5 }}
-										variant="outlined"
-										size="small"
-										onClick={handleCheckedLeft}
-										disabled={rightChecked.length === 0}
-										aria-label="move selected left"
-									>
-										&lt;
-									</Button>
-									<Button
-										sx={{ my: 0.5 }}
-										variant="outlined"
-										size="small"
-										onClick={handleAllLeft}
-										disabled={right.length === 0}
-										aria-label="move all left"
-									>
-										≪
-									</Button>
-								</Grid>
-							</Grid>
-							<Grid item xs={5} sm={5} sx={{display : "flex", justifyContent: "center"}}>{customList(right)}</Grid>
-						</Grid>
+						
 					</Grid>
 				</Grid>
 			</Paper>

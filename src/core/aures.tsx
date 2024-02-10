@@ -7,7 +7,7 @@ import { CssBaseline } 			from '@mui/material';
 
 import { AuthContext }			from './config/context/auth.context';
 import { CoreRouting } 			from './config/core.routing';
-import { User } 				from './model/user';
+import { UserContext } 			from './config/context/user.context';
 
 import { Navbar }				from './view/nav/bar';
 import { Sidenav } 				from './view/nav/side';
@@ -17,7 +17,7 @@ import { AdapterDayjs } 		from '@mui/x-date-pickers/AdapterDayjs'
 function Aures() {
 	///const { user, login, logout } = useAuth();
 	
-	const [user, setUser] = useState<User | null>(null);
+	const [user, setUser] = useState<UserContext | null>(null);
 	const [token, setToken] = useState<string | null>("");
 	return (
 		<LocalizationProvider dateAdapter={AdapterDayjs}>
