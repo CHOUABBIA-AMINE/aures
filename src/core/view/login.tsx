@@ -25,8 +25,6 @@ function Login() {
         connect({username : data.get('username'), password: data.get('password')}).then(function (response) {
             navigate("/home");
             if(data.get('username') != null){
-                //setItem("user", data.get('username')?.toString());
-                //setItem("token", response.data.value);
                 addUser({"username" : data.get('username')?.toString()}, response.data.value);
             }
         });

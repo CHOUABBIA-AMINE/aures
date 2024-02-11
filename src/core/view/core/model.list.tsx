@@ -53,7 +53,7 @@ function ModelList() {
         pageChange(0);
     }
 
-    const rowClickHandler = (event : React.MouseEvent<HTMLElement>, modelId: any) => {
+    const rowClickHandler = (event : React.MouseEvent<HTMLElement>, modelId: any, action:string) => {
         event.preventDefault();
         navigate("/" + model + "/edit", { state: modelId } );
     }
@@ -85,7 +85,7 @@ function ModelList() {
     const Actions = (modelId : any) =>{
         return(
             <>
-                <IconButton aria-label="edit" color="success" size="small" sx={{ p: '0px', ml: '0%', mr: '5%', b: '0px'}} onClick={event => rowClickHandler(event, modelId)}>
+                <IconButton aria-label="edit" color="success" size="small" sx={{ p: '0px', ml: '0%', mr: '5%', b: '0px'}} onClick={event => rowClickHandler(event, modelId,'edit')}>
                     <Edit fontSize="inherit" />
                 </IconButton>
                 <IconButton aria-label="delete" color="error" size="small" sx={{ p: '0px', ml: '5%', mr: '0%', b: '0px' }} onClick={event => alert("DELETE!!")}>
@@ -110,7 +110,7 @@ function ModelList() {
                 <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
                     <Search />
                 </IconButton>
-                <IconButton type="button" color="primary" sx={{ p: '10px' }} aria-label="new" onClick={event => rowClickHandler(event, null)}>
+                <IconButton type="button" color="primary" sx={{ p: '10px' }} aria-label="new" onClick={event => rowClickHandler(event, null,'create')}>
                     <LibraryAddSharp />
                 </IconButton>
             </Toolbar>

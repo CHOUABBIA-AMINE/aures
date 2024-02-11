@@ -1,4 +1,5 @@
 import React 					from "react";
+import { useEffect } 			from "react";
 import { useLocation } 			from "react-router-dom";
 import { useParams } 			from "react-router-dom";
 
@@ -23,16 +24,18 @@ import { VisibilityOff } 		from "@mui/icons-material";
 
 import { formatURL } 			from "../../../../../api/tools";
 import { User } 				from "../../../../../model/user";
+import { useHTTP } 				from "../../../../../api/request";
 
 const UserDetails = (props : any) => {
-	const location 	= useLocation();
-	const params 	= useParams();
-	const action 	= params.action;
-    console.log(formatURL(location.state.modelId));
+	const location 				= useLocation();
+	const params 				= useParams();
+	const { getUrl }       		= useHTTP();
+	//const action 				= params.action;
+    //
 	const [showPassword, setShowPassword] = React.useState(false);
 	const [enabled, setEnabled] = React.useState(true);
 	const [locked, 	setLocked] 	= React.useState(false);
-
+	let readOnly = params.action === 'edit' ? false : true;
 	const handleClickShowPassword = () => setShowPassword((show) => !show);
 	const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
 		event.preventDefault();
@@ -45,6 +48,16 @@ const UserDetails = (props : any) => {
 	const lockChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setLocked(event.target.checked);
 	};
+
+	useEffect(() => {
+		if(location.state !== null){
+			console.log(formatURL(location.state.modelId));
+			getUrl(formatURL(location.state.modelId)).then((response) => {
+	
+			})
+		}
+
+    },[])
 
 	return (
         // <h1>{action}{location.state !== null ? location.state.modelId : ""}</h1>
@@ -76,6 +89,9 @@ const UserDetails = (props : any) => {
 								label="Username"
 								autoComplete="off"
 								variant="outlined"
+								inputProps={
+									{ readOnly: readOnly }
+								}
 							/>
 						</FormControl>
 					</Grid>
@@ -93,6 +109,7 @@ const UserDetails = (props : any) => {
 								autoComplete="off"
 								variant="outlined"
 								InputProps={{
+									readOnly: readOnly,
 									endAdornment: (
 									  	<InputAdornment position="end">
 											<IconButton
@@ -116,10 +133,10 @@ const UserDetails = (props : any) => {
 						</FormControl>
 					</Grid>
 					<Grid item xs={4} sm={4} sx={{display : "flex", justifyContent: "flex-end"}}>
-						<FormControlLabel control={<Switch checked={enabled} onChange={enableChange}/>} label="Enabled" />
+						<FormControlLabel control={<Switch checked={enabled} onChange={enableChange} readOnly={readOnly}/>} label="Enabled" />
 					</Grid>
 					<Grid item xs={4} sm={4} sx={{display : "flex", justifyContent: "flex-end"}}>
-						<FormControlLabel control={<Switch checked={locked} onChange={lockChange}/>} label="Locked" color="warning"/>
+						<FormControlLabel control={<Switch checked={locked} onChange={lockChange} readOnly={readOnly}/>} label="Locked" color="warning"/>
 					</Grid>
 					<Grid item xs={4} sm={4} />
 					<Grid item xs={8} sm={8}>
@@ -131,3 +148,4 @@ const UserDetails = (props : any) => {
 	);
 }
 export default UserDetails ;
+

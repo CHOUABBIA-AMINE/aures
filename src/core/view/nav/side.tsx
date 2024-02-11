@@ -46,7 +46,7 @@ const Sidenav = (props:any) => {
             <Box sx={{ overflow: 'hidden' }}>
                 <List key="Menus-01">
                     {coreMenu.map((item) => (
-                        <SidenavItem name={item.name} icon={item.icon} link={item.link} />
+                        <SidenavItem key={'sidenavitem' + item.name} name={item.name} icon={item.icon} link={item.link} />
                     ))}
                 </List>
             </Box>
@@ -54,7 +54,7 @@ const Sidenav = (props:any) => {
             <Box sx={{ overflow: 'hidden' }}>
                 <List key="Menus-02">
                     {commonMenu.map((item) => (
-                        <SidenavItem name={item.name} icon={item.icon} link={item.link} />
+                        <SidenavItem key={'sidenavitem' + item.name} name={item.name} icon={item.icon} link={item.link} />
                     ))}
                 </List>
             </Box>
