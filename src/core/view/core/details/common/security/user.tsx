@@ -1,5 +1,8 @@
+import dayjs                    from "dayjs";
+
 import React 					from "react";
 import { useEffect } 			from "react";
+import { useState } 			from "react";
 import { useLocation } 			from "react-router-dom";
 import { useParams } 			from "react-router-dom";
 
@@ -32,10 +35,21 @@ const UserDetails = (props : any) => {
 	const { getUrl }       		= useHTTP();
 	//const action 				= params.action;
     //
-	const [showPassword, setShowPassword] = React.useState(false);
-	const [enabled, setEnabled] = React.useState(true);
-	const [locked, 	setLocked] 	= React.useState(false);
+	const [user, setUser]		= useState<User>({
+		username 	: "",
+		password 	: "",
+		expireDate  : new Date(),
+		enabled     : true,
+		locked      : false,
+		userURL     : "",
+		roleURL     : ""
+	});
+	const [showPassword, setShowPassword] = useState(false);
+	const [enabled, setEnabled] = useState(true);
+	const [locked, 	setLocked] 	= useState(false);
+
 	let readOnly = params.action === 'edit' ? false : true;
+	
 	const handleClickShowPassword = () => setShowPassword((show) => !show);
 	const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
 		event.preventDefault();
@@ -53,7 +67,18 @@ const UserDetails = (props : any) => {
 		if(location.state !== null){
 			console.log(formatURL(location.state.modelId));
 			getUrl(formatURL(location.state.modelId)).then((response) => {
-	
+				setUser({
+					username 	: response.data.username,
+					password 	: "",
+					expireDate  : dayjs(response.data.expirationDate).toDate(),
+					enabled     : response.data.enabled === 1 ? true : false,
+					locked      : response.data.locked 	=== 1 ? true : false,
+					userURL     : response.data._links.self.href,
+					roleURL     : response.data._links.roles.href
+				})
+				
+			}).finally(()=>{
+				console.log(user.expireDate);
 			})
 		}
 
@@ -83,6 +108,7 @@ const UserDetails = (props : any) => {
 							<TextField
 								required
 								fullWidth
+								value={user.username}
 								size="small"
 								id="username"
 								name="username"
@@ -101,6 +127,7 @@ const UserDetails = (props : any) => {
 							<TextField
 								required
 								fullWidth
+								value={user.password}
 								size="small"
 								id="password"
 								type={showPassword ? 'text' : 'password'}
@@ -129,14 +156,14 @@ const UserDetails = (props : any) => {
 					<Grid item xs={8} sm={8} />
 					<Grid item xs={4} sm={4}>
 						<FormControl fullWidth size="small">
-							<DatePicker format="DD/MM/YYYY" label="Expiration Date" slotProps={{ textField: { size: 'small', required: true }}} />
+							<DatePicker format="DD/MM/YYYY" label="Expiration Date" slotProps={{ textField: { size: 'small', required: true }}} value={new Date()}/>
 						</FormControl>
 					</Grid>
 					<Grid item xs={4} sm={4} sx={{display : "flex", justifyContent: "flex-end"}}>
-						<FormControlLabel control={<Switch checked={enabled} onChange={enableChange} readOnly={readOnly}/>} label="Enabled" />
+						<FormControlLabel control={<Switch checked={user.enabled} onChange={enableChange} readOnly={readOnly}/>} label="Enabled" />
 					</Grid>
 					<Grid item xs={4} sm={4} sx={{display : "flex", justifyContent: "flex-end"}}>
-						<FormControlLabel control={<Switch checked={locked} onChange={lockChange} readOnly={readOnly}/>} label="Locked" color="warning"/>
+						<FormControlLabel control={<Switch checked={user.locked} onChange={lockChange} readOnly={readOnly}/>} label="Locked" color="warning"/>
 					</Grid>
 					<Grid item xs={4} sm={4} />
 					<Grid item xs={8} sm={8}>

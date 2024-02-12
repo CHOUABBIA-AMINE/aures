@@ -29,8 +29,9 @@ import Lists                    from "../../api/list";
 
 function ModelList() {
 
-    const {entity}              = useParams();
-    const model                 = entity !== undefined ? entity : "";
+    let {entity}                = useParams();
+    
+    const [model, modelChange]  = useState(entity !== undefined ? entity : "");
     
     const { getBasedUrl }       = useHTTP();
     const navigate              = useNavigate();
@@ -74,13 +75,23 @@ function ModelList() {
     }
 
     useEffect(() => {
+        if(entity !== undefined){
+            modelChange(entity);
+            if(model !== entity){
+                sizeChange(5);
+                pageChange(0);
+            }
+        }else{
+            modelChange("");
+        }
+
         getBasedUrl(model+"?page=" + page + "&size=" +size + "&sort=" + orderBy + "," + order).then((response) => {
             let rows : []= response.data._embedded[model];
             rowChange(rows);
             totalChange(response.data.page.totalElements);
         })
 
-    },[ model, page, size, orderBy, order])
+    },[ model, page, size, orderBy, order, entity])
 
     const Actions = (modelId : any) =>{
         return(

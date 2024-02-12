@@ -10,12 +10,10 @@ import Container                from '@mui/material/Container';
 import { PasswordInput }        from './password.input';
 import { useHTTP }              from '../api/request';
 import { useUser }              from '../config/hook/useUser';
-//import { useLocalStorage }      from '../config/hook/useLocalStorage';
 
 function Login() {
 
     const { addUser } = useUser();
-    //const { setItem } = useLocalStorage();
     const { connect } = useHTTP();
     const navigate = useNavigate();
 
@@ -60,6 +58,7 @@ function Login() {
                         type="submit"
                         fullWidth
                         variant="contained"
+                        size="large"
                         sx={{ 
                             mt: 3, 
                             mb: 2 
