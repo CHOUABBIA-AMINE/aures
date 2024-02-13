@@ -1,7 +1,7 @@
 import { Dayjs }                from 'dayjs';
 interface User {
     //id          : string;
-    username    : string | undefined;
+    username    : string;
     password    : string | undefined;
     expireDate  : Dayjs | null;
     enabled     : boolean;

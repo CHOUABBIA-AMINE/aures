@@ -36,6 +36,18 @@ export const useHTTP = () => {
         });
     }
 
+    const patchUrl = (url : string, data : any) => {
+        return axios.patch(url, data, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+    }
+
+    const patchBasedUrl = (url : string, data : any) => {
+        return axios.patch(API.baseURL + url, data, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+    }
+
     const deleteUrl = (url : string) => {
         return axios.delete(url, {
             headers: { Authorization: `Bearer ${token}` }
@@ -48,5 +60,5 @@ export const useHTTP = () => {
         });
     }
 
-    return {connect, getUrl, getBasedUrl, postUrl, postBasedUrl, deleteUrl, deleteBasedUrl};
+    return {connect, getUrl, getBasedUrl, postUrl, postBasedUrl, patchUrl, patchBasedUrl, deleteUrl, deleteBasedUrl};
 }

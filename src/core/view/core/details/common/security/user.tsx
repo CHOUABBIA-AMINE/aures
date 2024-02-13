@@ -28,13 +28,19 @@ import { VisibilityOff } 		from "@mui/icons-material";
 import { formatURL } 			from "../../../../../api/tools";
 import { User } 				from "../../../../../model/user";
 import { useHTTP } 				from "../../../../../api/request";
+import { json } from "stream/consumers";
 
 const UserDetails = (props : any) => {
 	const location 				= useLocation();
 	const params 				= useParams();
-	const { getUrl }       		= useHTTP();
-	//const action 				= params.action;
-    //
+	let readOnly 				= params.action === 'edit' ? false : true;
+	const { getUrl, patchBasedUrl }       	= useHTTP();
+	const [showPassword, setShowPassword] 	= useState(false);
+	const handleClickShowPassword 			= () => setShowPassword((show) => !show);
+	const handleMouseDownPassword 			= (event: React.MouseEvent<HTMLButtonElement>) => {
+		event.preventDefault();
+	};
+
 	const [user, setUser]		= useState<User>({
 		username 	: "",
 		password 	: "",
@@ -44,68 +50,50 @@ const UserDetails = (props : any) => {
 		userURL     : "",
 		roleURL     : ""
 	});
-	const [showPassword, setShowPassword] = useState(false);
-	//const [enabled, setEnabled] = useState(true);
-	//const [locked, 	setLocked] 	= useState(false);
 
-	let readOnly = params.action === 'edit' ? false : true;
-	
-	const handleClickShowPassword = () => setShowPassword((show) => !show);
-	const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
-		event.preventDefault();
-	};
+	const fetchData = ()=>{
+		getUrl(formatURL(location.state.modelId)).then((response) => {
+			setUser({
+				username 	: response.data.username,
+				password 	: "",
+				expireDate  : dayjs(response.data.expirationDate),
+				enabled     : response.data.enabled === 1 ? true : false,
+				locked      : response.data.locked 	=== 1 ? true : false,
+				userURL     : response.data._links.self.href,
+				roleURL     : response.data._links.roles.href
+			});
+		})
+	}
 
-	const enableChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		//setEnabled(event.target.checked);
-		console.log(user);
-		setUser(user => ({
-			...user,
-		 	enabled : !user.enabled
-		}))
-	};
-
-	const lockChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		//setLocked(event.target.checked);
-		setUser(user => ({
-			...user,
-		 	locked : !user.locked
-		}));
-		console.log(user);
-		
-	};
+	const patchData = ()=>{
+		patchBasedUrl(formatURL(location.state.modelId), JSON.stringify({
+			username 	: user.username,
+			expirationDate  : user.expireDate,
+			enabled     : user.enabled ? 1 : 0,
+			locked      : user.locked ? 1 : 0
+		})).then((response) => {
+			console.log(response)
+		})
+	}
 
 	useEffect(() => {
 		if(location.state !== null){
-			getUrl(formatURL(location.state.modelId)).then((response) => {
-				setUser({
-					username 	: response.data.username,
-					password 	: "",
-					expireDate  : dayjs(response.data.expirationDate),
-					enabled     : response.data.enabled === 1 ? true : false,
-					locked      : response.data.locked 	=== 1 ? true : false,
-					userURL     : response.data._links.self.href,
-					roleURL     : response.data._links.roles.href
-				});
-				console.log(user);
-			})
+			fetchData();
 		}
-
     },[])
 
 	return (
-        // <h1>{action}{location.state !== null ? location.state.modelId : ""}</h1>
 		<Container maxWidth="lg">
-			
 			<Paper variant="outlined" sx={{ marginTop: "60px", padding:'30px' }}>
 				<Box sx={{display : "flex", paddingBottom: 5 , justifyContent: "space-between"}}>
 					<Typography variant="h6" >
 						User Details
 					</Typography>
 					<Box>
-						<Button color="primary" variant="outlined" size="small" sx={{ marginRight:'5px' }}>
+						<Button color="primary" variant="outlined" size="small" sx={{ marginRight:'5px' }} onClick={e => patchData()}>
 							<Save />
 						</Button>
-						<Button color="success" variant="outlined" size="small" sx={{ marginLeft:'5px' }}>
+						<Button color="success" variant="outlined" size="small" sx={{ marginLeft:'5px' }}  onClick={e => fetchData()}>
 							<Replay />
 						</Button>
 					</Box>
@@ -117,15 +105,16 @@ const UserDetails = (props : any) => {
 								required
 								fullWidth
 								value={user.username}
+								onChange={ e => setUser(user => ({...user, username: e.currentTarget.value})) }
 								size="small"
 								id="username"
 								name="username"
 								label="Username"
 								autoComplete="off"
 								variant="outlined"
-								inputProps={
-									{ readOnly: readOnly }
-								}
+								inputProps={{ 
+									readOnly: readOnly 
+								}}
 							/>
 						</FormControl>
 					</Grid>
@@ -136,6 +125,7 @@ const UserDetails = (props : any) => {
 								required
 								fullWidth
 								value={user.password}
+								onChange={ e => setUser(user => ({...user, password: e.currentTarget.value})) }
 								size="small"
 								id="password"
 								type={showPassword ? 'text' : 'password'}
@@ -164,19 +154,24 @@ const UserDetails = (props : any) => {
 					<Grid item xs={8} sm={8} />
 					<Grid item xs={4} sm={4}>
 						<FormControl fullWidth size="small">
-							<DatePicker format="DD/MM/YYYY" label="Expiration Date" slotProps={{ textField: { size: 'small', required: true }}} value={user.expireDate}/>
+							<DatePicker 
+								format="DD/MM/YYYY" 
+								label="Expiration Date" 
+								readOnly={readOnly} 
+								slotProps={{ textField: { size: 'small', required: true }}} 
+								value={user.expireDate} 
+								onChange={ changedDate=>setUser(user => ({...user, expireDate:changedDate})) }
+							/>
 						</FormControl>
 					</Grid>
 					<Grid item xs={4} sm={4} sx={{display : "flex", justifyContent: "flex-end"}}>
-						<FormControlLabel control={<Switch checked={user.enabled} onChange={enableChange} readOnly={readOnly}/>} label="Enabled" />
+						<FormControlLabel control={<Switch checked={user.enabled} onChange={e => setUser(user => ({...user, enabled: !user.enabled}))} readOnly={readOnly}/>} label="Enabled" />
 					</Grid>
 					<Grid item xs={4} sm={4} sx={{display : "flex", justifyContent: "flex-end"}}>
-						<FormControlLabel control={<Switch checked={user.locked} onChange={lockChange} readOnly={readOnly}/>} label="Locked" color="warning"/>
+						<FormControlLabel control={<Switch checked={user.locked} onChange={e => setUser(user => ({...user, locked: !user.locked}))} readOnly={readOnly}/>} label="Locked" color="warning"/>
 					</Grid>
 					<Grid item xs={4} sm={4} />
-					<Grid item xs={8} sm={8}>
-						
-					</Grid>
+					<Grid item xs={8} sm={8} />
 				</Grid>
 			</Paper>
 		</Container>
