@@ -1,8 +1,9 @@
+import { Dayjs }                from 'dayjs';
 interface User {
     //id          : string;
     username    : string | undefined;
     password    : string | undefined;
-    expireDate  : Date;
+    expireDate  : Dayjs | null;
     enabled     : boolean;
     locked      : boolean;
     userURL     : string;

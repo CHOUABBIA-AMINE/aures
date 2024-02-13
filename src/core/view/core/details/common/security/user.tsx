@@ -38,15 +38,15 @@ const UserDetails = (props : any) => {
 	const [user, setUser]		= useState<User>({
 		username 	: "",
 		password 	: "",
-		expireDate  : new Date(),
+		expireDate  : dayjs(),
 		enabled     : true,
 		locked      : false,
 		userURL     : "",
 		roleURL     : ""
 	});
 	const [showPassword, setShowPassword] = useState(false);
-	const [enabled, setEnabled] = useState(true);
-	const [locked, 	setLocked] 	= useState(false);
+	//const [enabled, setEnabled] = useState(true);
+	//const [locked, 	setLocked] 	= useState(false);
 
 	let readOnly = params.action === 'edit' ? false : true;
 	
@@ -56,29 +56,37 @@ const UserDetails = (props : any) => {
 	};
 
 	const enableChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		setEnabled(event.target.checked);
+		//setEnabled(event.target.checked);
+		console.log(user);
+		setUser(user => ({
+			...user,
+		 	enabled : !user.enabled
+		}))
 	};
 
 	const lockChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		setLocked(event.target.checked);
+		//setLocked(event.target.checked);
+		setUser(user => ({
+			...user,
+		 	locked : !user.locked
+		}));
+		console.log(user);
+		
 	};
 
 	useEffect(() => {
 		if(location.state !== null){
-			console.log(formatURL(location.state.modelId));
 			getUrl(formatURL(location.state.modelId)).then((response) => {
 				setUser({
 					username 	: response.data.username,
 					password 	: "",
-					expireDate  : dayjs(response.data.expirationDate).toDate(),
+					expireDate  : dayjs(response.data.expirationDate),
 					enabled     : response.data.enabled === 1 ? true : false,
 					locked      : response.data.locked 	=== 1 ? true : false,
 					userURL     : response.data._links.self.href,
 					roleURL     : response.data._links.roles.href
-				})
-				
-			}).finally(()=>{
-				console.log(user.expireDate);
+				});
+				console.log(user);
 			})
 		}
 
@@ -156,7 +164,7 @@ const UserDetails = (props : any) => {
 					<Grid item xs={8} sm={8} />
 					<Grid item xs={4} sm={4}>
 						<FormControl fullWidth size="small">
-							<DatePicker format="DD/MM/YYYY" label="Expiration Date" slotProps={{ textField: { size: 'small', required: true }}} value={new Date()}/>
+							<DatePicker format="DD/MM/YYYY" label="Expiration Date" slotProps={{ textField: { size: 'small', required: true }}} value={user.expireDate}/>
 						</FormControl>
 					</Grid>
 					<Grid item xs={4} sm={4} sx={{display : "flex", justifyContent: "flex-end"}}>
