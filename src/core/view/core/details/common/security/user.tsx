@@ -7,7 +7,7 @@ import { useState } 			from "react";
 import { useLocation } 			from "react-router-dom";
 import { useParams } 			from "react-router-dom";
 
-import { Box } 					from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Box, Card, CardHeader, Checkbox, Divider, List, ListItemButton, ListItemIcon, ListItemText } 					from "@mui/material";
 import { FormControlLabel } 	from "@mui/material";
 import { Switch } 				from "@mui/material";
 import { Container } 			from "@mui/material";
@@ -21,7 +21,7 @@ import { TextField } 			from "@mui/material";
 import { Typography } 			from "@mui/material";
 import { DatePicker } 			from "@mui/x-date-pickers/DatePicker";
 
-import { Replay } 				from "@mui/icons-material";
+import { ExpandMore, Replay } 				from "@mui/icons-material";
 import { Save } 				from "@mui/icons-material";
 import { Visibility } 			from "@mui/icons-material";
 import { VisibilityOff } 		from "@mui/icons-material";
@@ -34,7 +34,7 @@ const UserDetails = (props : any) => {
 	const location 				= useLocation();
 	const params 				= useParams();
 	let readOnly 				= params.action === 'edit' ? false : true;
-	const { getUrl, patchUrl, postBasedUrl} = useHTTP();
+	const { getUrl, getBasedUrl, patchUrl, postBasedUrl} = useHTTP();
 	const [showPassword, setShowPassword] 	= useState(false);
 	const handleClickShowPassword 			= () => setShowPassword((show) => !show);
 	const handleMouseDownPassword 			= (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -62,6 +62,19 @@ const UserDetails = (props : any) => {
 				userURL     : response.data._links.self.href,
 				roleURL     : response.data._links.roles.href
 			});
+			getUserRoles(response.data._links.roles.href);
+		})
+	}
+
+	const getUserRoles = (roleURL : string) =>{
+		getUrl(formatURL(roleURL)).then((response) => {
+			console.log(response);
+		})
+	}
+
+	const getAppRoles = () =>{
+		getBasedUrl("role").then((response) => {
+			console.log(response);
 		})
 	}
 
@@ -103,8 +116,54 @@ const UserDetails = (props : any) => {
 	useEffect(() => {
 		if(location.state !== null){
 			fetchData();
+			getAppRoles();
 		}
     },[])
+
+	/*const roleList = (title: React.ReactNode, items: readonly number[]) => (
+		<Card>
+		  	<CardHeader
+				sx={{ px: 2, py: 1 }}
+				title={title}
+		  	/>
+		  	<Divider />
+			<List
+				sx={{
+					width: 200,
+					height: 230,
+					bgcolor: 'background.paper',
+					overflow: 'auto',
+				}}
+				dense
+				component="div"
+				role="list"
+			>
+				{items.map((value: number) => {
+					const labelId = `transfer-list-all-item-${value}-label`;
+		
+					return (
+						<ListItemButton
+							key={value}
+							role="listitem"
+							onClick={handleToggle(value)}
+						>
+							<ListItemIcon>
+								<Checkbox
+									checked={checked.indexOf(value) !== -1}
+									tabIndex={-1}
+									disableRipple
+									inputProps={{
+										'aria-labelledby': labelId,
+									}}
+								/>
+							</ListItemIcon>
+							<ListItemText id={labelId} primary={`List item ${value + 1}`} />
+						</ListItemButton>
+					);
+				})}
+		  	</List>
+		</Card>
+	);*/
 
 	return (
 		<Container maxWidth="lg">
@@ -197,6 +256,13 @@ const UserDetails = (props : any) => {
 					<Grid item xs={4} sm={4} />
 					<Grid item xs={8} sm={8} />
 				</Grid>
+				<Accordion>
+					<AccordionSummary expandIcon={<ExpandMore />}>Roles</AccordionSummary>
+					<AccordionDetails>
+						Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
+						malesuada lacus ex, sit amet blandit leo lobortis eget.
+					</AccordionDetails>
+				</Accordion>
 			</Paper>
 		</Container>
 	);
