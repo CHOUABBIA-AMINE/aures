@@ -11,7 +11,7 @@ export const useUser = () => {
 
     const addUser = (_user: UserContext, token :any) => {
         setUser(_user);
-        setToken(token)
+        setToken(token);
         //setToken(_user.token !==undefined ? _user.token : "")
         setItem("user", _user.username !== undefined ? _user.username : "");
         setItem("token", token !== undefined ? token : "");

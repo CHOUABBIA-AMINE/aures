@@ -5,7 +5,7 @@ import { useState }             from "react";
 import { useNavigate }          from "react-router-dom";
 import { useParams }            from "react-router-dom";
 
-import { IconButton }           from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton }           from "@mui/material";
 import { Input }                from "@mui/material";
 import { Paper }                from "@mui/material";
 import { TableSortLabel }       from "@mui/material";
@@ -27,33 +27,37 @@ import { Edit }                 from "@mui/icons-material";
 import { Search }               from "@mui/icons-material";
 
 import { useHTTP }              from "../../api/request";
+import { formatURL }            from "../../api/tools";
 import Lists                    from "../../api/list";
 
 function ModelList() {
 
     let {entity}                = useParams();
     
-    const [model, modelChange]  = useState(entity !== undefined ? entity : "");
-    
-    const { getBasedUrl }       = useHTTP();
+    const [model, setModel]     = useState(entity !== undefined ? entity : "");
     const navigate              = useNavigate();
 
-    const [rowh, rowhChange]    = useState(-1);
-    const [order, orderChange]  = useState<'asc' | 'desc'>('asc');
-    const [orderBy, orderByChange]    = useState(Lists.get(model)[1].id);
-    
-    const [rows, rowChange]     = useState([]);
-    const [page, pageChange]    = useState(0);
-    const [size, sizeChange]    = useState(5);
-    const [total, totalChange]  = useState(0);
+    const { getBasedUrl }       = useHTTP();
+    const { deleteUrl }         = useHTTP();
+
+    const [rowh, setRowH]       = useState(-1);
+    const [order, setOrder]     = useState<'asc' | 'desc'>('asc');
+    const [orderBy, setOrderBy] = useState(Lists.get(model)[1].id);
+    const [openRD, setOpenRD]   = useState(false);
+    const [url, setUrl]         = useState("");
+
+    const [rows, setRow]        = useState([]);
+    const [page, setPage]       = useState(0);
+    const [size, setSize]       = useState(5);
+    const [total, setTotal]     = useState(0);
 
     const handlePage = (event : any, newpage : number) => {
-        pageChange(newpage)
+        setPage(newpage)
     }
 
     const handleSize = (event : any) => {
-        sizeChange(event.target.value)
-        pageChange(0);
+        setSize(event.target.value)
+        setPage(0);
     }
 
     const rowClickHandler = (event : React.MouseEvent<HTMLElement>, modelId: any, action:string) => {
@@ -63,37 +67,52 @@ function ModelList() {
 
     const rowHoverHandler = (event : React.MouseEvent<HTMLElement>, index: number) => {
         event.preventDefault();
-        rowhChange(index);
+        setRowH(index);
     }
 
     const createSortHandler = (event : React.MouseEvent<HTMLElement>, data:any) => {
         if(data === orderBy){
-            orderChange(order === 'asc' ? 'desc' : 'asc');
+            setOrder(order === 'asc' ? 'desc' : 'asc');
         }else{
-            orderByChange(data);
-            orderChange('asc');
+            setOrderBy(data);
+            setOrder('asc');
+        }
+        
+    }
+
+    const deleteRow = (event : React.MouseEvent<HTMLElement>) => {
+        console.log(url);
+        event.preventDefault();
+        if(url !== ""){
+            deleteUrl(formatURL(url)).then((response) => {
+                setUrl("");
+                setTotal(total - 1 );
+                setOpenRD(false);
+            })
+        }else{
+            setOpenRD(false);
         }
         
     }
 
     useEffect(() => {
         if(entity !== undefined){
-            modelChange(entity);
+            setModel(entity);
             if(model !== entity){
-                sizeChange(5);
-                pageChange(0);
+                setSize(5);
+                setPage(0);
             }
         }else{
-            modelChange("");
+            setModel("");
         }
 
         getBasedUrl(model+"?page=" + page + "&size=" +size + "&sort=" + orderBy + "," + order).then((response) => {
             let rows : []= response.data._embedded[model];
-            rowChange(rows);
-            totalChange(response.data.page.totalElements);
+            setRow(rows);
+            setTotal(response.data.page.totalElements);
         })
 
-    },[ model, page, size, orderBy, order, entity])
+    },[ model, page, size, orderBy, order, entity, total])
 
     const Actions = (modelId : any) =>{
         return(
@@ -101,13 +120,37 @@ function ModelList() {
                 <IconButton aria-label="edit" color="success" size="small" sx={{ p: '0px', ml: '0%', mr: '5%', b: '0px'}} onClick={event => rowClickHandler(event, modelId,'edit')}>
                     <Edit fontSize="inherit" />
                 </IconButton>
-                <IconButton aria-label="delete" color="error" size="small" sx={{ p: '0px', ml: '5%', mr: '0%', b: '0px' }} onClick={event => alert("DELETE!!")}>
+                <IconButton aria-label="delete" color="error" size="small" sx={{ p: '0px', ml: '5%', mr: '0%', b: '0px' }} onClick={event => {setUrl(modelId.modelId); setOpenRD(true);}}>
                     <Delete fontSize="inherit" />
                 </IconButton>
             </>
         )
     }
 
+    const RemoveDialog = () => {
+        return (
+            <Dialog
+                open={openRD}
+                onClose={() => setOpenRD(false)}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">
+                    {"Use Google's location service?"}
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        Let Google help apps determine location. This means sending anonymous
+                        location data to Google, even when no apps are running.
+                    </DialogContentText>
+                </DialogContent>
+            <DialogActions>
+                <Button onClick={e => deleteRow(e)} color="warning">Confirm</Button>
+                <Button onClick={() => setOpenRD(false)} autoFocus>Cancel</Button>
+            </DialogActions>
+          </Dialog>
+        )
+    }
     const TableTool = () =>{
         return(
             <Toolbar>
@@ -139,7 +182,7 @@ function ModelList() {
 	return (
         
         <div style={{ width: '100%'}}>
-            
+            <RemoveDialog />
             <Paper sx={{ width: 'calc(100% - 40px)', ml: '20px', mt: '10px' }}>
                 <TableTool />
                 <TablePagination

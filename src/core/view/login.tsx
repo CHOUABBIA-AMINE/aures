@@ -1,3 +1,4 @@
+import { useState }             from 'react';
 import { useNavigate }          from 'react-router-dom';
 
 import Button                   from '@mui/material/Button';
@@ -6,6 +7,8 @@ import TextField                from '@mui/material/TextField';
 import Box                      from '@mui/material/Box';
 import Typography               from '@mui/material/Typography';
 import Container                from '@mui/material/Container';
+import Alert                    from '@mui/material/Alert';
+import AlertTitle               from '@mui/material/AlertTitle';
 
 import { PasswordInput }        from './password.input';
 import { useHTTP }              from '../api/request';
@@ -16,19 +19,29 @@ function Login() {
     const { addUser } = useUser();
     const { connect } = useHTTP();
     const navigate = useNavigate();
+    const [ error, setError ] = useState(false);
+
+    const ErrorAlert = () =>{
+        return(
+            <Alert severity="warning">
+                <AlertTitle>Authentication error</AlertTitle>
+                Username and/or Password are wrong.
+            </Alert>
+        )
+    }
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
         connect({username : data.get('username'), password: data.get('password')}).then(function (response) {
-            console.log(response.data.value)
+            setError(false);
             if(response.data.value !== undefined){
                 navigate("/home");
                 if(data.get('username') != null){
                     addUser({"username" : data.get('username')?.toString()}, response.data.value);
                 }
             }else{
-                navigate("*");
+                setError(true);
             }
         });
     };
@@ -72,6 +85,7 @@ function Login() {
                         Connect
                     </Button>
                 </Box>
+                { error ? <ErrorAlert /> : ""}
             </Box>
         </Container>
     );
