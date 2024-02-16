@@ -8,14 +8,14 @@ import { ShoppingCartOutlined }     from "@mui/icons-material"
 import { NavItem }                 from "./nav.item"
 
 const coreMenu : NavItem[] = [
-    { name : "Provider",        icon : LocalShippingOutlined,       link: "/about" },
-    { name : "Budget",          icon : AccountBalanceOutlined,      link: [
-        { name : "Provider",        icon : Login,       link: "/login" }
+    { name : "Provider",        icon : LocalShippingOutlined,   authority : "AUTH_PROVIDER",            link: "/about" },
+    { name : "Budget",          icon : AccountBalanceOutlined,  authority : "AUTH_ADMINISTRATION",      link: [
+        { name : "Provider",        icon : Login,  authority : "AUTH_ADMINISTRATION",       link: "/login" }
     ] },
-    { name : "Consultation",    icon : MenuBookOutlined,            link: "/" },
-    { name : "Contract",        icon : DescriptionOutlined,         link: "/" },
-    { name : "Amendment",       icon : OnDeviceTrainingOutlined,    link: "/" },
-    { name : "Purchase ",       icon : ShoppingCartOutlined,        link: "/" }
+    { name : "Consultation",    icon : MenuBookOutlined,        authority : "AUTH_CONSULTATION",        link: "/" },
+    { name : "Contract",        icon : DescriptionOutlined,     authority : "AUTH_CONTRACT",            link: "/" },
+    { name : "Amendment",       icon : OnDeviceTrainingOutlined,authority : "AUTH_AMENDMENT",           link: "/" },
+    { name : "Purchase ",       icon : ShoppingCartOutlined,    authority : "AUTH_CONSULTATION",        link: "/" }
 ];
 
 export { coreMenu };

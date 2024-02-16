@@ -12,13 +12,14 @@ import { ListItemText }         from "@mui/material";
 import { ExpandLess }           from "@mui/icons-material";
 import { ExpandMore }           from "@mui/icons-material";
 
-import { NavItem }              from "../../config/nav.item";
 import { NavContext }           from "../../config/context/nav.context";
-
+import { AuthContext }          from "../../config/context/auth.context";
+import { NavItem }              from "../../config/nav.item";
 
 const SidenavItem = (props : NavItem)=>{
     
-    const {menu, setMenu} = useContext(NavContext);
+    const { hasAuthority }  = useContext(AuthContext);
+    const {menu, setMenu}   = useContext(NavContext);
     const navigate = useNavigate();
     const [open, setOpen] = useState(false);
     return (
@@ -33,7 +34,7 @@ const SidenavItem = (props : NavItem)=>{
         <Collapse in={menu === props.name} timeout="auto" unmountOnExit sx={{background:'#ddd'}}>
             <List component="div" disablePadding key={"List-" + props.name}>
                 {typeof props.link !== 'string' ? props.link.map((item) => (
-                        <SidenavItem key={"SidenavItem-" + item.name} name={item.name} icon={item.icon} link={item.link} />
+                        hasAuthority(item.authority) ? <SidenavItem key={"SidenavItem-" + item.name} name={item.name} icon={item.icon} link={item.link} authority={item.authority}/> : ""
                     )) : null}
             </List>
         </Collapse>

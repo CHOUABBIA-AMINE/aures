@@ -1,9 +1,11 @@
+import { useContext }       from 'react';
 import { useState }         from 'react';
 import { Box } 			    from '@mui/material';
 import { Drawer } 			from '@mui/material';
 import { List } 			from '@mui/material';
 import { Divider } 		    from '@mui/material';
 
+import { AuthContext }      from '../../config/context/auth.context';
 import { environment }      from '../../config/environment';
 import { commonMenu }       from '../../config/common.menu';
 import { coreMenu }         from '../../config/core.menu';
@@ -11,7 +13,8 @@ import { SidenavItem }      from './side.item';
 
 const Sidenav = (props:any) => {
     
-    const [open, setOpen] = useState(false);
+    const { hasAuthority }  = useContext(AuthContext);
+    const [open, setOpen]   = useState(false);
   
     const mouseEnter = () => {
         setOpen(true);
@@ -46,7 +49,7 @@ const Sidenav = (props:any) => {
             <Box sx={{ overflow: 'hidden' }}>
                 <List key="Menus-01">
                     {coreMenu.map((item) => (
-                        <SidenavItem key={'sidenavitem' + item.name} name={item.name} icon={item.icon} link={item.link} />
+                        hasAuthority(item.authority) ? <SidenavItem key={'sidenavitem' + item.name} name={item.name} icon={item.icon} link={item.link} authority={item.authority}/> : ""
                     ))}
                 </List>
             </Box>
@@ -54,7 +57,7 @@ const Sidenav = (props:any) => {
             <Box sx={{ overflow: 'hidden' }}>
                 <List key="Menus-02">
                     {commonMenu.map((item) => (
-                        <SidenavItem key={'sidenavitem' + item.name} name={item.name} icon={item.icon} link={item.link} />
+                        hasAuthority(item.authority) ? <SidenavItem key={'sidenavitem' + item.name} name={item.name} icon={item.icon} link={item.link} authority={item.authority}/> : ""
                     ))}
                 </List>
             </Box>

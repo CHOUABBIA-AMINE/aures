@@ -41,8 +41,6 @@ const UserDetails = (props : any) => {
 		event.preventDefault();
 	};
 
-	var salt = bcrypt.genSaltSync(10);
-
 	const [user, setUser]		= useState<User>({
 		username 	: "",
 		password 	: "",
@@ -69,22 +67,35 @@ const UserDetails = (props : any) => {
 
 	const patchData = ()=>{
 		if(location.state != null){
-			patchUrl(formatURL(location.state.modelId), JSON.stringify({
-				username 	: user.username,
-				expirationDate  : user.expireDate,
-				enabled     : user.enabled ? 1 : 0,
-				locked      : user.locked ? 1 : 0
-			})).then((response) => {
-				console.log(response)
-			})
+			if(user.password === ""){
+				patchUrl(formatURL(location.state.modelId), JSON.stringify({
+					username 	: user.username,
+					expirationDate  : user.expireDate,
+					enabled     : user.enabled ? 1 : 0,
+					locked      : user.locked ? 1 : 0
+				})).then((response) => {
+
+				})
+			}else{
+				patchUrl(formatURL(location.state.modelId), JSON.stringify({
+					username 	: user.username,
+					expirationDate  : user.expireDate,
+					password 	: user.password !== undefined ? bcrypt.hashSync(user.password, bcrypt.genSaltSync(10)) : "",
+					enabled     : user.enabled ? 1 : 0,
+					locked      : user.locked ? 1 : 0
+				})).then((response) => {
+
+				})
+			}
 		}else{
 			postBasedUrl("user", JSON.stringify({
 				username 	: user.username,
-				password	: user.password !== undefined ? bcrypt.hashSync(user.password, salt) : "",
+				password	: user.password !== undefined ? bcrypt.hashSync(user.password, bcrypt.genSaltSync(10)) : "",
 				expirationDate  : user.expireDate,
 				enabled     : user.enabled ? 1 : 0,
 				locked      : user.locked ? 1 : 0
 			})).then((response) => {
+			
 			})
 		}
 	}
@@ -118,7 +129,7 @@ const UserDetails = (props : any) => {
 								required
 								fullWidth
 								value={user.username}
-								onChange={ e => {setUser(user => ({...user, username: e.currentTarget!== null ? e.currentTarget.value : user.username}))} }
+								onChange={ (e) => setUser(user => ({...user, username: e.currentTarget.value})) }
 								size="small"
 								id="username"
 								name="username"
@@ -138,7 +149,7 @@ const UserDetails = (props : any) => {
 								required
 								fullWidth
 								value={user.password}
-								onChange={ e => setUser(user => ({...user, password: e.currentTarget!== null ? e.currentTarget.value : user.password})) }
+								onChange={ (e) => setUser(user => ({...user, password: e.currentTarget.value })) }
 								size="small"
 								id="password"
 								type={showPassword ? 'text' : 'password'}
