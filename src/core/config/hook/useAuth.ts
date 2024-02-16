@@ -14,8 +14,8 @@ export const useAuth = () => {
     //     }
     // }, []);
 
-    const connect = (user: UserContext, token : any) => {
-        addUser(user, token);
+    const connect = (user: UserContext, token : any, authority:string[]) => {
+        addUser(user, token, authority);
     };
 
     const disconnect = () => {

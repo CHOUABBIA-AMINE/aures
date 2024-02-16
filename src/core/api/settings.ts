@@ -1,6 +1,8 @@
 const API = {
     baseURL         : 'http://localhost:8080/auresApi/',
-    authentication  : "auth/login",
+    authURL         : 'http://localhost:8080/auresApi/auth/',
+    authentication  : "login",
+    authority       : "/authority",
 
     dafaultPageSize : 10,
     dafaultStartPage: 0

@@ -6,6 +6,8 @@ interface IAuthContext {
     setUser: (user: UserContext | null) => void;
     token: string | null;
     setToken: (token: string | null) => void;
+    authority: string[];
+    setAuthority: (authority: string[]) => void;
 }
 
 export const AuthContext = createContext<IAuthContext>({
@@ -13,4 +15,6 @@ export const AuthContext = createContext<IAuthContext>({
     setUser: () => {},
     token: null,
     setToken: () => {},
+    authority: [],
+    setAuthority: () => {},
 });

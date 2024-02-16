@@ -18,13 +18,14 @@ import { NavContext } 			from './config/context/nav.context';
 function Aures() {
 	///const { user, login, logout } = useAuth();
 	
-	const [user, setUser] = useState<UserContext | null>(null);
+	const [user, setUser] 	= useState<UserContext | null>(null);
 	const [token, setToken] = useState<string | null>("");
-	const [menu, setMenu] = useState<string>("");
+	const [authority, setAuthority] = useState<string[]>([]);
+	const [menu, setMenu] 	= useState<string>("");
 	return (
 		<NavContext.Provider value={{menu, setMenu}}>
 		<LocalizationProvider dateAdapter={AdapterDayjs}>
-		<AuthContext.Provider value={{ user , setUser, token, setToken }}>
+		<AuthContext.Provider value={{ user , setUser, token, setToken, authority, setAuthority }}>
 			<Box sx={{ display: 'flex', flexDirection: 'column'}}>
 				<CssBaseline />
 				<Navbar />

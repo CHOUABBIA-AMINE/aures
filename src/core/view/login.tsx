@@ -16,10 +16,11 @@ import { useUser }              from '../config/hook/useUser';
 
 function Login() {
 
-    const { addUser } = useUser();
-    const { connect } = useHTTP();
-    const navigate = useNavigate();
-    const [ error, setError ] = useState(false);
+    const { addUser }           = useUser();
+    const { connect }           = useHTTP();
+    const { getAuthority }      = useHTTP();
+    const navigate              = useNavigate();
+    const [ error, setError ]   = useState(false);
 
     const ErrorAlert = () =>{
         return(
@@ -38,7 +39,9 @@ function Login() {
             if(response.data.value !== undefined){
                 navigate("/home");
                 if(data.get('username') != null){
-                    addUser({"username" : data.get('username')?.toString()}, response.data.value);
+                    getAuthority(data.get('username')?.toString())?.then(auths => {
+                        addUser({"username" : data.get('username')?.toString()}, response.data.value, auths.data);
+                })
                 }
             }else{
                 setError(true);

@@ -85,7 +85,6 @@ const UserDetails = (props : any) => {
 				enabled     : user.enabled ? 1 : 0,
 				locked      : user.locked ? 1 : 0
 			})).then((response) => {
-				console.log(response)
 			})
 		}
 	}

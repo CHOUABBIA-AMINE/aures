@@ -81,9 +81,9 @@ function ModelList() {
     }
 
     const deleteRow = (event : React.MouseEvent<HTMLElement>) => {
-        console.log(url);
         event.preventDefault();
         if(url !== ""){
+            setPage(0);
             deleteUrl(formatURL(url)).then((response) => {
                 setUrl("");
                 setTotal(total - 1 );
@@ -91,6 +91,7 @@ function ModelList() {
             })
         }else{
             setOpenRD(false);
+            setPage(0);
         }
         
     }

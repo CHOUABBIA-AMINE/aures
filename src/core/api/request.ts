@@ -9,7 +9,14 @@ export const useHTTP = () => {
     const { token } = useContext(AuthContext);
 
     const connect = (data : any) => {
-        return axios.post(API.baseURL + API.authentication, data)
+        return axios.post(API.authURL + API.authentication, data)
+    }
+
+    const getAuthority = (user : string | undefined) => {
+        if(user !== undefined)
+            return axios.post<string[]>(API.authURL + user + API.authority);
+        else
+            return null;
     }
 
     const getUrl = (url : string) => {
@@ -84,5 +91,5 @@ export const useHTTP = () => {
         });
     }
 
-    return {connect, getUrl, getBasedUrl, postUrl, postBasedUrl, patchUrl, patchBasedUrl, deleteUrl, deleteBasedUrl};
+    return {connect, getAuthority, getUrl, getBasedUrl, postUrl, postBasedUrl, patchUrl, patchBasedUrl, deleteUrl, deleteBasedUrl};
 }
