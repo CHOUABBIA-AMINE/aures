@@ -19,7 +19,9 @@ import { TableHead }            from "@mui/material";
 import { TablePagination }      from "@mui/material";
 import { TableRow }             from "@mui/material";
 
-import { LibraryAddSharp }      from "@mui/icons-material";
+import { AddBoxOutlined }       from "@mui/icons-material";
+import { PrintOutlined }        from "@mui/icons-material";
+import { IosShareOutlined }     from "@mui/icons-material";
 import { Delete }               from "@mui/icons-material";
 import { Edit }                 from "@mui/icons-material";
 import { Search }               from "@mui/icons-material";
@@ -122,7 +124,13 @@ function ModelList() {
                     <Search />
                 </IconButton>
                 <IconButton type="button" color="primary" sx={{ p: '10px' }} aria-label="new" onClick={event => rowClickHandler(event, null,'create')}>
-                    <LibraryAddSharp />
+                    <AddBoxOutlined />
+                </IconButton>
+                <IconButton type="button" color="success" sx={{ p: '10px' }} aria-label="new" onClick={event => rowClickHandler(event, null,'create')}>
+                    <IosShareOutlined />
+                </IconButton>
+                <IconButton type="button" color="info" sx={{ p: '10px' }} aria-label="new" onClick={event => rowClickHandler(event, null,'create')}>
+                    <PrintOutlined />
                 </IconButton>
             </Toolbar>
         )

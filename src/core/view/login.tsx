@@ -21,9 +21,14 @@ function Login() {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
         connect({username : data.get('username'), password: data.get('password')}).then(function (response) {
-            navigate("/home");
-            if(data.get('username') != null){
-                addUser({"username" : data.get('username')?.toString()}, response.data.value);
+            console.log(response.data.value)
+            if(response.data.value !== undefined){
+                navigate("/home");
+                if(data.get('username') != null){
+                    addUser({"username" : data.get('username')?.toString()}, response.data.value);
+                }
+            }else{
+                navigate("*");
             }
         });
     };

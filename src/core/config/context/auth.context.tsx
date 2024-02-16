@@ -14,5 +14,3 @@ export const AuthContext = createContext<IAuthContext>({
     token: null,
     setToken: () => {},
 });
-
-

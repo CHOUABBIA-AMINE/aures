@@ -3,6 +3,7 @@ import { Routes }               from "react-router-dom";
 
 import Home                     from "../view/home";
 import About                    from "../view/about";
+import NotFound                 from "../view/not.found";
 import Login                    from "../view/login";
 
 import ModelList                from "../view/core/model.list";
@@ -30,7 +31,8 @@ function CoreRouting(){
 
             <Route path="list/:entity"      element={<ModelList />}></Route>
             <Route path="user/:action"      element={<UserDetails />}></Route>
-                
+            
+            <Route path="*"                 element={<NotFound />}></Route>
 
         </Routes>
     )

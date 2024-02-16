@@ -1,4 +1,5 @@
 import dayjs                    from "dayjs";
+import bcrypt 					from "bcryptjs-react";
 
 import React 					from "react";
 import { useEffect } 			from "react";
@@ -28,18 +29,19 @@ import { VisibilityOff } 		from "@mui/icons-material";
 import { formatURL } 			from "../../../../../api/tools";
 import { User } 				from "../../../../../model/user";
 import { useHTTP } 				from "../../../../../api/request";
-import { json } from "stream/consumers";
 
 const UserDetails = (props : any) => {
 	const location 				= useLocation();
 	const params 				= useParams();
 	let readOnly 				= params.action === 'edit' ? false : true;
-	const { getUrl, patchBasedUrl }       	= useHTTP();
+	const { getUrl, patchUrl, postBasedUrl} = useHTTP();
 	const [showPassword, setShowPassword] 	= useState(false);
 	const handleClickShowPassword 			= () => setShowPassword((show) => !show);
 	const handleMouseDownPassword 			= (event: React.MouseEvent<HTMLButtonElement>) => {
 		event.preventDefault();
 	};
+
+	var salt = bcrypt.genSaltSync(10);
 
 	const [user, setUser]		= useState<User>({
 		username 	: "",
@@ -66,14 +68,26 @@ const UserDetails = (props : any) => {
 	}
 
 	const patchData = ()=>{
-		patchBasedUrl(formatURL(location.state.modelId), JSON.stringify({
-			username 	: user.username,
-			expirationDate  : user.expireDate,
-			enabled     : user.enabled ? 1 : 0,
-			locked      : user.locked ? 1 : 0
-		})).then((response) => {
-			console.log(response)
-		})
+		if(location.state != null){
+			patchUrl(formatURL(location.state.modelId), JSON.stringify({
+				username 	: user.username,
+				expirationDate  : user.expireDate,
+				enabled     : user.enabled ? 1 : 0,
+				locked      : user.locked ? 1 : 0
+			})).then((response) => {
+				console.log(response)
+			})
+		}else{
+			postBasedUrl("user", JSON.stringify({
+				username 	: user.username,
+				password	: user.password !== undefined ? bcrypt.hashSync(user.password, salt) : "",
+				expirationDate  : user.expireDate,
+				enabled     : user.enabled ? 1 : 0,
+				locked      : user.locked ? 1 : 0
+			})).then((response) => {
+				console.log(response)
+			})
+		}
 	}
 
 	useEffect(() => {
@@ -105,7 +119,7 @@ const UserDetails = (props : any) => {
 								required
 								fullWidth
 								value={user.username}
-								onChange={ e => setUser(user => ({...user, username: e.currentTarget.value})) }
+								onChange={ e => {setUser(user => ({...user, username: e.currentTarget!== null ? e.currentTarget.value : user.username}))} }
 								size="small"
 								id="username"
 								name="username"
@@ -125,7 +139,7 @@ const UserDetails = (props : any) => {
 								required
 								fullWidth
 								value={user.password}
-								onChange={ e => setUser(user => ({...user, password: e.currentTarget.value})) }
+								onChange={ e => setUser(user => ({...user, password: e.currentTarget!== null ? e.currentTarget.value : user.password})) }
 								size="small"
 								id="password"
 								type={showPassword ? 'text' : 'password'}
