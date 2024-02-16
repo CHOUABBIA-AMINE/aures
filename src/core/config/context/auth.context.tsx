@@ -8,6 +8,7 @@ interface IAuthContext {
     setToken: (token: string | null) => void;
     authority: string[];
     setAuthority: (authority: string[]) => void;
+    hasAuthority: (authority: string) => boolean;
 }
 
 export const AuthContext = createContext<IAuthContext>({
@@ -17,4 +18,5 @@ export const AuthContext = createContext<IAuthContext>({
     setToken: () => {},
     authority: [],
     setAuthority: () => {},
+    hasAuthority: () => false
 });

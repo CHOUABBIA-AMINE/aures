@@ -22,10 +22,13 @@ function Aures() {
 	const [token, setToken] = useState<string | null>("");
 	const [authority, setAuthority] = useState<string[]>([]);
 	const [menu, setMenu] 	= useState<string>("");
+	const hasAuthority = (auth:string) => {
+		return authority.indexOf(auth) !== -1 ? true : false;
+	}
 	return (
 		<NavContext.Provider value={{menu, setMenu}}>
 		<LocalizationProvider dateAdapter={AdapterDayjs}>
-		<AuthContext.Provider value={{ user , setUser, token, setToken, authority, setAuthority }}>
+		<AuthContext.Provider value={{ user , setUser, token, setToken, authority, setAuthority, hasAuthority }}>
 			<Box sx={{ display: 'flex', flexDirection: 'column'}}>
 				<CssBaseline />
 				<Navbar />
