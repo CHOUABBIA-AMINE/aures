@@ -21,14 +21,16 @@ import { TextField } 			from "@mui/material";
 import { Typography } 			from "@mui/material";
 import { DatePicker } 			from "@mui/x-date-pickers/DatePicker";
 
-import { ExpandMore, Replay } 				from "@mui/icons-material";
+import { ExpandMore } 			from "@mui/icons-material";
+import { Replay } 				from "@mui/icons-material";
 import { Save } 				from "@mui/icons-material";
 import { Visibility } 			from "@mui/icons-material";
 import { VisibilityOff } 		from "@mui/icons-material";
 
 import { formatURL } 			from "../../../../../api/tools";
-import { User } 				from "../../../../../model/user";
 import { useHTTP } 				from "../../../../../api/request";
+import { User } 				from "../../../../../model/user";
+import { Role } 				from "../../../../../model/role";
 
 const UserDetails = (props : any) => {
 	const location 				= useLocation();
@@ -40,6 +42,9 @@ const UserDetails = (props : any) => {
 	const handleMouseDownPassword 			= (event: React.MouseEvent<HTMLButtonElement>) => {
 		event.preventDefault();
 	};
+
+	const [appData, setAppData] 			= useState<Role[]>([]);
+  	const [modelData, setModelData] 		= useState<Role[]>([]);
 
 	const [user, setUser]		= useState<User>({
 		username 	: "",
@@ -62,19 +67,23 @@ const UserDetails = (props : any) => {
 				userURL     : response.data._links.self.href,
 				roleURL     : response.data._links.roles.href
 			});
-			getUserRoles(response.data._links.roles.href);
+			getUserData(response.data._links.roles.href);
 		})
 	}
+	const not = (a: Role[], b: Role[]) => {
+		return a.filter((role) => b.map(model => model._links.self.href).indexOf(role._links.self.href) === -1);
+	}
 
-	const getUserRoles = (roleURL : string) =>{
+	const getUserData = (roleURL : string) =>{
 		getUrl(formatURL(roleURL)).then((response) => {
-			console.log(response);
+			setModelData(response.data._embedded.role);
+			getAppData();
 		})
 	}
 
-	const getAppRoles = () =>{
+	const getAppData = () =>{
 		getBasedUrl("role").then((response) => {
-			console.log(response);
+			setAppData(not(response.data._embedded.role, modelData));
 		})
 	}
 
@@ -116,20 +125,21 @@ const UserDetails = (props : any) => {
 	useEffect(() => {
 		if(location.state !== null){
 			fetchData();
-			getAppRoles();
+			getAppData();
 		}
     },[])
 
-	/*const roleList = (title: React.ReactNode, items: readonly number[]) => (
+	const dependencyList = (title: React.ReactNode, items: Role[]) => (
 		<Card>
 		  	<CardHeader
 				sx={{ px: 2, py: 1 }}
 				title={title}
+				align='center'
 		  	/>
 		  	<Divider />
 			<List
 				sx={{
-					width: 200,
+					width: '100%',
 					height: 230,
 					bgcolor: 'background.paper',
 					overflow: 'auto',
@@ -138,18 +148,18 @@ const UserDetails = (props : any) => {
 				component="div"
 				role="list"
 			>
-				{items.map((value: number) => {
+				{items.map((value) => {
 					const labelId = `transfer-list-all-item-${value}-label`;
 		
 					return (
 						<ListItemButton
-							key={value}
+							key={value._links.self.href}
 							role="listitem"
-							onClick={handleToggle(value)}
+							//onClick={handleToggle(value)}
 						>
 							<ListItemIcon>
 								<Checkbox
-									checked={checked.indexOf(value) !== -1}
+									checked={false/*checked.indexOf(value) !== -1*/}
 									tabIndex={-1}
 									disableRipple
 									inputProps={{
@@ -157,13 +167,13 @@ const UserDetails = (props : any) => {
 									}}
 								/>
 							</ListItemIcon>
-							<ListItemText id={labelId} primary={`List item ${value + 1}`} />
+							<ListItemText id={labelId} primary={`${value.name}`} />
 						</ListItemButton>
 					);
 				})}
 		  	</List>
 		</Card>
-	);*/
+	);
 
 	return (
 		<Container maxWidth="lg">
@@ -259,8 +269,34 @@ const UserDetails = (props : any) => {
 				<Accordion>
 					<AccordionSummary expandIcon={<ExpandMore />}>Roles</AccordionSummary>
 					<AccordionDetails>
-						Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-						malesuada lacus ex, sit amet blandit leo lobortis eget.
+					<Grid container spacing={2} justifyContent="center" alignItems="center" direction="row">
+						<Grid item xs={5} sm={5}>{dependencyList('Unattributed Roles', appData)}</Grid>
+						<Grid item xs={2} sm={2}>
+							<Grid container direction="column" alignItems="center">
+								<Button
+									sx={{ my: 0.5 }}
+									variant="outlined"
+									size="small"
+									//onClick={handleCheckedRight}
+									//disabled={leftChecked.length === 0}
+									aria-label="move selected right"
+								>
+									&gt;
+								</Button>
+								<Button
+									sx={{ my: 0.5 }}
+									variant="outlined"
+									size="small"
+									//onClick={handleCheckedLeft}
+									//disabled={rightChecked.length === 0}
+									aria-label="move selected left"
+								>
+									&lt;
+								</Button>
+							</Grid>
+						</Grid>
+						<Grid item xs={5} sm={5}>{dependencyList('Attributed Roles', modelData)}</Grid>
+					</Grid>
 					</AccordionDetails>
 				</Accordion>
 			</Paper>
