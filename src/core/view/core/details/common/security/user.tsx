@@ -32,6 +32,11 @@ import { useHTTP } 				from "../../../../../api/request";
 import { User } 				from "../../../../../model/user";
 import { Role } 				from "../../../../../model/role";
 
+interface CheckedRole{
+	role : Role,
+	checked : boolean 
+}
+
 const UserDetails = (props : any) => {
 	const location 				= useLocation();
 	const params 				= useParams();
@@ -43,8 +48,8 @@ const UserDetails = (props : any) => {
 		event.preventDefault();
 	};
 
-	const [appData, setAppData] 			= useState<Role[]>([]);
-  	const [modelData, setModelData] 		= useState<Role[]>([]);
+	const [appData, setAppData] 			= useState<CheckedRole[]>([]);
+  	const [modelData, setModelData] 		= useState<CheckedRole[]>([]);
 
 	const [user, setUser]		= useState<User>({
 		username 	: "",
@@ -70,20 +75,22 @@ const UserDetails = (props : any) => {
 			getUserData(response.data._links.roles.href);
 		})
 	}
-	const not = (a: Role[], b: Role[]) => {
-		return a.filter((role) => b.map(model => model._links.self.href).indexOf(role._links.self.href) === -1);
+	const not = (a: CheckedRole[], b: CheckedRole[]) => {
+		return a.filter((checkedRole) => b.map(model => model.role._links.self.href).indexOf(checkedRole.role._links.self.href) === -1);
 	}
 
 	const getUserData = (roleURL : string) =>{
 		getUrl(formatURL(roleURL)).then((response) => {
-			setModelData(response.data._embedded.role);
+			let models :Role[] = response.data._embedded.role;
+			setModelData(models.map(e => {return { role : e, checked: false}}));
 			getAppData();
 		})
 	}
 
 	const getAppData = () =>{
 		getBasedUrl("role").then((response) => {
-			setAppData(not(response.data._embedded.role, modelData));
+			let models :Role[] = response.data._embedded.role;
+			setAppData(not(models.map(e => {return { role : e, checked: false}}), modelData));
 		})
 	}
 
@@ -129,7 +136,7 @@ const UserDetails = (props : any) => {
 		}
     },[])
 
-	const dependencyList = (title: React.ReactNode, items: Role[]) => (
+	const dependencyList = (title: React.ReactNode, items: CheckedRole[]) => (
 		<Card>
 		  	<CardHeader
 				sx={{ px: 2, py: 1 }}
@@ -153,13 +160,13 @@ const UserDetails = (props : any) => {
 		
 					return (
 						<ListItemButton
-							key={value._links.self.href}
+							key={value.role._links.self.href}
 							role="listitem"
 							//onClick={handleToggle(value)}
 						>
 							<ListItemIcon>
 								<Checkbox
-									checked={false/*checked.indexOf(value) !== -1*/}
+									checked={value.checked}
 									tabIndex={-1}
 									disableRipple
 									inputProps={{
@@ -167,7 +174,7 @@ const UserDetails = (props : any) => {
 									}}
 								/>
 							</ListItemIcon>
-							<ListItemText id={labelId} primary={`${value.name}`} />
+							<ListItemText id={labelId} primary={`${value.role.name}`} />
 						</ListItemButton>
 					);
 				})}
