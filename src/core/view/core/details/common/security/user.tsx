@@ -61,6 +61,23 @@ const UserDetails = (props : any) => {
 		roleURL     : ""
 	});
 
+	const not = (a: CheckedRole[], b: CheckedRole[]) => {
+		return a.filter((checkedRole) => b.map(model => model.role._links.self.href).indexOf(checkedRole.role._links.self.href) === -1);
+	}
+
+	const toggleCheked = (key : string, listIndex : number) => {
+		if(listIndex === 1){
+			const arrCopy = [...appData];
+			let index = appData.map(cRole => cRole.role._links.self.href).indexOf(key);
+			let cRole = arrCopy.at(index);
+			if( cRole !== undefined){
+				cRole.checked = !cRole.checked;
+				arrCopy.splice(appData.map(cRole => cRole.role._links.self.href).indexOf(key), 1, cRole);
+				setAppData(arrCopy);
+			}
+		}
+	}
+
 	const fetchData = ()=>{
 		getUrl(formatURL(location.state.modelId)).then((response) => {
 			setUser({
@@ -75,22 +92,23 @@ const UserDetails = (props : any) => {
 			getUserData(response.data._links.roles.href);
 		})
 	}
-	const not = (a: CheckedRole[], b: CheckedRole[]) => {
-		return a.filter((checkedRole) => b.map(model => model.role._links.self.href).indexOf(checkedRole.role._links.self.href) === -1);
-	}
 
 	const getUserData = (roleURL : string) =>{
 		getUrl(formatURL(roleURL)).then((response) => {
 			let models :Role[] = response.data._embedded.role;
 			setModelData(models.map(e => {return { role : e, checked: false}}));
-			getAppData();
+			return models.map(e => {return { role : e, checked: false}});
+		}).then((data) => {
+			getAppData(data);
 		})
 	}
 
-	const getAppData = () =>{
+	const getAppData = (data : CheckedRole[]) =>{
 		getBasedUrl("role").then((response) => {
 			let models :Role[] = response.data._embedded.role;
-			setAppData(not(models.map(e => {return { role : e, checked: false}}), modelData));
+			let appps :CheckedRole[] = not(models.map(e => {return { role : e, checked: false}}), data);
+			console.log(appps);
+			setAppData(not(models.map(e => {return { role : e, checked: false}}), data));
 		})
 	}
 
@@ -132,11 +150,10 @@ const UserDetails = (props : any) => {
 	useEffect(() => {
 		if(location.state !== null){
 			fetchData();
-			getAppData();
 		}
     },[])
 
-	const dependencyList = (title: React.ReactNode, items: CheckedRole[]) => (
+	const dependencyList = (title: React.ReactNode, items: CheckedRole[], listIndex : number) => (
 		<Card>
 		  	<CardHeader
 				sx={{ px: 2, py: 1 }}
@@ -162,7 +179,8 @@ const UserDetails = (props : any) => {
 						<ListItemButton
 							key={value.role._links.self.href}
 							role="listitem"
-							//onClick={handleToggle(value)}
+							//onClick={toggleCheked}
+							onClick={e => toggleCheked(value.role._links.self.href, 1)}
 						>
 							<ListItemIcon>
 								<Checkbox
@@ -277,7 +295,7 @@ const UserDetails = (props : any) => {
 					<AccordionSummary expandIcon={<ExpandMore />}>Roles</AccordionSummary>
 					<AccordionDetails>
 					<Grid container spacing={2} justifyContent="center" alignItems="center" direction="row">
-						<Grid item xs={5} sm={5}>{dependencyList('Unattributed Roles', appData)}</Grid>
+						<Grid item xs={5} sm={5}>{dependencyList('Unattributed Roles', appData, 1)}</Grid>
 						<Grid item xs={2} sm={2}>
 							<Grid container direction="column" alignItems="center">
 								<Button
@@ -302,7 +320,7 @@ const UserDetails = (props : any) => {
 								</Button>
 							</Grid>
 						</Grid>
-						<Grid item xs={5} sm={5}>{dependencyList('Attributed Roles', modelData)}</Grid>
+						<Grid item xs={5} sm={5}>{dependencyList('Attributed Roles', modelData, 2)}</Grid>
 					</Grid>
 					</AccordionDetails>
 				</Accordion>
