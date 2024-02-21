@@ -40,8 +40,8 @@ import { VisibilityOff } 		from "@mui/icons-material";
 
 import { formatURL } 			from "../../../../../api/tools";
 import { useHTTP } 				from "../../../../../api/request";
-import { Role } 				from "../../../../../model/role";
-import { Authority } 				from "../../../../../model/authority";
+import { Role } 				from "../../../../../model/common/security/role";
+import { Authority } 				from "../../../../../model/common/security/authority";
 
 interface CheckedAuthority{
 	authority : Authority,
