@@ -187,7 +187,8 @@ const UserDetails = (props : any) => {
 				password	: user.password !== undefined ? bcrypt.hashSync(user.password, bcrypt.genSaltSync(10)) : "",
 				expirationDate  : user.expireDate,
 				enabled     : user.enabled ? 1 : 0,
-				locked      : user.locked ? 1 : 0
+				locked      : user.locked ? 1 : 0,
+				roles		: modelData.map(model => model.role._links.self.href)
 			})).then((response) => {
 			
 			})
