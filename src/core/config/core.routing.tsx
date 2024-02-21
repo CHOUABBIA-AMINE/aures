@@ -8,6 +8,7 @@ import Login                    from "../view/login";
 
 import ModelList                from "../view/core/model.list";
 import UserDetails              from "../view/core/details/common/security/user";
+import RoleDetails              from "../view/core/details/common/security/role";
 
 function CoreRouting(){
 	return (
@@ -31,7 +32,7 @@ function CoreRouting(){
 
             <Route path="list/:entity"      element={<ModelList />}></Route>
             <Route path="user/:action"      element={<UserDetails />}></Route>
-            
+            <Route path="role/:action"      element={<RoleDetails />}></Route>
             <Route path="*"                 element={<NotFound />}></Route>
 
         </Routes>
