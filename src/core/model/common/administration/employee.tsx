@@ -2,7 +2,7 @@ interface Employee {
     serial          : string;
     hiringDate      : Date;
     _links          : {
-        mployee         :{
+        employee        :{
             href            : string
         },
         self            :{
