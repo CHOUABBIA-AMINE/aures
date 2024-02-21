@@ -1,10 +1,10 @@
 import { Route }                from "react-router-dom";
 import { Routes }               from "react-router-dom";
 
-import Home                     from "../view/home";
-import About                    from "../view/about";
-import NotFound                 from "../view/not.found";
-import Login                    from "../view/login";
+import Home                     from "../view/public/home";
+import About                    from "../view/public/about";
+import NotFound                 from "../view/public/not.found";
+import Login                    from "../view/public/login";
 
 import ModelList                from "../view/core/model.list";
 import UserDetails              from "../view/core/details/common/security/user";
