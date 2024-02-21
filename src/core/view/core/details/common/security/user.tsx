@@ -76,6 +76,40 @@ const UserDetails = (props : any) => {
 				setAppData(arrCopy);
 			}
 		}
+		if(listIndex === 2){
+			const arrCopy = [...modelData];
+			let index = modelData.map(cRole => cRole.role._links.self.href).indexOf(key);
+			let cRole = arrCopy.at(index);
+			if( cRole !== undefined){
+				cRole.checked = !cRole.checked;
+				arrCopy.splice(modelData.map(cRole => cRole.role._links.self.href).indexOf(key), 1, cRole);
+				setModelData(arrCopy);
+			}
+		}
+	}
+
+	const attributeRoles = () => {
+		const unattributedData : CheckedRole[] = [];
+		const attributedData : CheckedRole[] = [];
+		appData.forEach(role =>{
+			let status = role.checked;
+			role.checked = false;
+			status ? attributedData.push(role) : unattributedData.push(role);
+		});
+		setAppData(unattributedData);
+		setModelData(modelData.concat(attributedData));
+	}
+
+	const unattributeRoles = () => {
+		const unattributedData : CheckedRole[] = [];
+		const attributedData : CheckedRole[] = [];
+		modelData.forEach(role =>{
+			let status = role.checked;
+			role.checked = false;
+			status ? unattributedData.push(role) : attributedData.push(role);
+		});
+		setAppData(appData.concat(unattributedData));
+		setModelData(attributedData);
 	}
 
 	const fetchData = ()=>{
@@ -119,7 +153,8 @@ const UserDetails = (props : any) => {
 					username 	: user.username,
 					expirationDate  : user.expireDate,
 					enabled     : user.enabled ? 1 : 0,
-					locked      : user.locked ? 1 : 0
+					locked      : user.locked ? 1 : 0,
+					roles		: modelData.map(model => model.role._links.self.href)
 				})).then((response) => {
 
 				})
@@ -129,7 +164,8 @@ const UserDetails = (props : any) => {
 					expirationDate  : user.expireDate,
 					password 	: user.password !== undefined ? bcrypt.hashSync(user.password, bcrypt.genSaltSync(10)) : "",
 					enabled     : user.enabled ? 1 : 0,
-					locked      : user.locked ? 1 : 0
+					locked      : user.locked ? 1 : 0,
+					roles		: modelData.map(model => model.role._links.self.href)
 				})).then((response) => {
 
 				})
@@ -180,7 +216,7 @@ const UserDetails = (props : any) => {
 							key={value.role._links.self.href}
 							role="listitem"
 							//onClick={toggleCheked}
-							onClick={e => toggleCheked(value.role._links.self.href, 1)}
+							onClick={e => toggleCheked(value.role._links.self.href, listIndex)}
 						>
 							<ListItemIcon>
 								<Checkbox
@@ -302,7 +338,7 @@ const UserDetails = (props : any) => {
 									sx={{ my: 0.5 }}
 									variant="outlined"
 									size="small"
-									//onClick={handleCheckedRight}
+									onClick={attributeRoles}
 									//disabled={leftChecked.length === 0}
 									aria-label="move selected right"
 								>
@@ -312,7 +348,7 @@ const UserDetails = (props : any) => {
 									sx={{ my: 0.5 }}
 									variant="outlined"
 									size="small"
-									//onClick={handleCheckedLeft}
+									onClick={unattributeRoles}
 									//disabled={rightChecked.length === 0}
 									aria-label="move selected left"
 								>
