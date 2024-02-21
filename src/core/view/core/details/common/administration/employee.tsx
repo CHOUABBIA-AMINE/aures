@@ -48,7 +48,7 @@ interface CheckedRole{
 	checked : boolean 
 }
 
-const UserDetails = (props : any) => {
+const EmployeeDetails = (props : any) => {
 	const location 				= useLocation();
 	const params 				= useParams();
 	let readOnly 				= params.action === 'edit' ? false : true;
@@ -375,5 +375,5 @@ const UserDetails = (props : any) => {
 		</Container>
 	);
 }
-export default UserDetails ;
+export default EmployeeDetails ;
 

@@ -163,7 +163,6 @@ const RoleDetails = (props : any) => {
 		getBasedUrl("authority").then((response) => {
 			let models :Authority[] = response.data._embedded.authority;
 			let appps :CheckedAuthority[] = not(models.map(e => {return { authority : e, checked: false}}), data);
-			console.log(appps);
 			setAppData(not(models.map(e => {return { authority : e, checked: false}}), data));
 		})
 	}
@@ -244,7 +243,7 @@ const RoleDetails = (props : any) => {
 			<Paper variant="outlined" sx={{ marginTop: "60px", padding:'30px' }}>
 				<Box sx={{display : "flex", paddingBottom: 5 , justifyContent: "space-between"}}>
 					<Typography variant="h6" >
-						User Details
+						Role Details
 					</Typography>
 					<Box>
 						<Button color="primary" variant="outlined" size="small" sx={{ marginRight:'5px' }} onClick={e => patchData()}>
