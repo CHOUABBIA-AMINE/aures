@@ -1,19 +1,11 @@
 import { useContext }           from "react";
-<<<<<<< HEAD
-
-=======
->>>>>>> 415f3b1bac55103a3ba16da585d10c3a0c15f82f
 import axios                    from "axios";
 
 import API                      from "./settings";
 import { AuthContext }          from "../config/context/auth.context";
 
 export const useHTTP = () => {
-<<<<<<< HEAD
-    
-=======
 
->>>>>>> 415f3b1bac55103a3ba16da585d10c3a0c15f82f
     const { token } = useContext(AuthContext);
 
     const connect = (data : any) => {

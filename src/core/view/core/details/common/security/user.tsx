@@ -151,7 +151,6 @@ const UserDetails = (props : any) => {
 	const getAppData = (data : CheckedRole[]) =>{
 		getBasedUrl("role").then((response) => {
 			let models :Role[] = response.data._embedded.role;
-			let appps :CheckedRole[] = not(models.map(e => {return { role : e, checked: false}}), data);
 			setAppData(not(models.map(e => {return { role : e, checked: false}}), data));
 		})
 	}

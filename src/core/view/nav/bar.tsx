@@ -17,7 +17,7 @@ function Navbar() {
     const { user } = useContext(AuthContext);
 
 	return (
-        <AppBar position='static' sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+        <AppBar position='sticky' sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
             <Toolbar>
                 <AuresLogo />
                 <Stack direction="row" spacing={2}>

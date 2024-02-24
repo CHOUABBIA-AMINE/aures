@@ -1,6 +1,3 @@
-import dayjs                    from "dayjs";
-import bcrypt 					from "bcryptjs-react";
-
 import React 					from "react";
 import { useEffect } 			from "react";
 import { useState } 			from "react";
@@ -19,29 +16,22 @@ import { List } 				from "@mui/material";
 import { ListItemButton } 		from "@mui/material";
 import { ListItemIcon } 		from "@mui/material";
 import { ListItemText } 		from "@mui/material";
-import { FormControlLabel } 	from "@mui/material";
-import { Switch } 				from "@mui/material";
 import { Container } 			from "@mui/material";
 import { FormControl } 			from "@mui/material";
 import { Grid } 				from "@mui/material";
 import { Button } 				from "@mui/material";
-import { IconButton } 			from "@mui/material";
-import { InputAdornment } 		from "@mui/material";
 import { Paper } 				from "@mui/material";
 import { TextField } 			from "@mui/material";
 import { Typography } 			from "@mui/material";
-import { DatePicker } 			from "@mui/x-date-pickers/DatePicker";
 
 import { ExpandMore } 			from "@mui/icons-material";
 import { Replay } 				from "@mui/icons-material";
 import { Save } 				from "@mui/icons-material";
-import { Visibility } 			from "@mui/icons-material";
-import { VisibilityOff } 		from "@mui/icons-material";
 
 import { formatURL } 			from "../../../../../api/tools";
 import { useHTTP } 				from "../../../../../api/request";
 import { Role } 				from "../../../../../model/common/security/role";
-import { Authority } 				from "../../../../../model/common/security/authority";
+import { Authority } 			from "../../../../../model/common/security/authority";
 
 interface CheckedAuthority{
 	authority : Authority,
@@ -162,7 +152,6 @@ const RoleDetails = (props : any) => {
 	const getAppData = (data : CheckedAuthority[]) =>{
 		getBasedUrl("authority").then((response) => {
 			let models :Authority[] = response.data._embedded.authority;
-			let appps :CheckedAuthority[] = not(models.map(e => {return { authority : e, checked: false}}), data);
 			setAppData(not(models.map(e => {return { authority : e, checked: false}}), data));
 		})
 	}

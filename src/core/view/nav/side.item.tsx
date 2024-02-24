@@ -1,6 +1,5 @@
 import React                    from "react";
 import { useContext }           from "react";
-import { useState }             from "react";
 
 import { useNavigate }          from "react-router-dom";
 
@@ -21,7 +20,7 @@ const SidenavItem = (props : NavItem)=>{
     const { hasAuthority }  = useContext(AuthContext);
     const {menu, setMenu}   = useContext(NavContext);
     const navigate = useNavigate();
-    const [open, setOpen] = useState(false);
+    //const [open, setOpen] = useState(false);
     return (
         <>
         <ListItemButton key={props.name} onClick={() => typeof props.link === 'string' ? navigate(props.link) : setMenu(props.name)/*setOpen(()=>{ return !open;})*/}>
