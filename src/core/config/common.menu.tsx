@@ -13,8 +13,8 @@ const commonMenu : NavItem[] = [
     { name : "Environment",     icon : HomeWorkOutlined,        link: "/" },
     { name : "Currial",         icon : DraftsOutlined,          link: "/" },
     { name : "Security",        icon : HttpsOutlined,           link: [
-        { name : "User",            icon : PersonOutlineOutlined,   link: "/user" },
-        { name : "Role",            icon : SecurityOutlined,        link: "/role" },
+        { name : "User",            icon : PersonOutlineOutlined,   link: "/list/user" },
+        { name : "Role",            icon : SecurityOutlined,        link: "/list/role" },
         { name : "Authority",       icon : VerifiedUserOutlined,    link: "/authority" }
     ] }
 ];

@@ -42,7 +42,6 @@ const Sidenav = (props:any) => {
                     overflow: 'visible'
                 },
             }}
-
         >
             <Box sx={{ overflow: 'hidden' }}>
                 <List key="Menus-01">

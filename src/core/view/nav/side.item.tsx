@@ -36,6 +36,5 @@ const SidenavItem = (props : NavItem)=>{
         </Collapse>
         </>
     )
-
 }
 export { SidenavItem };
