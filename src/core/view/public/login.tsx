@@ -1,3 +1,4 @@
+import { useState }             from 'react';
 import { useNavigate }          from 'react-router-dom';
 
 import Button                   from '@mui/material/Button';
@@ -6,28 +7,44 @@ import TextField                from '@mui/material/TextField';
 import Box                      from '@mui/material/Box';
 import Typography               from '@mui/material/Typography';
 import Container                from '@mui/material/Container';
+import Alert                    from '@mui/material/Alert';
+import AlertTitle               from '@mui/material/AlertTitle';
 
 import { PasswordInput }        from './password.input';
-import { useHTTP }              from '../api/request';
-import { useUser }              from '../config/hook/useUser';
-//import { useLocalStorage }      from '../config/hook/useLocalStorage';
+import { useHTTP }              from '../../api/request';
+import { useUser }              from '../../config/hook/useUser';
 
 function Login() {
 
-    const { addUser } = useUser();
-    //const { setItem } = useLocalStorage();
-    const { connect } = useHTTP();
-    const navigate = useNavigate();
+    const { addUser }           = useUser();
+    const { connect }           = useHTTP();
+    const { getAuthority }      = useHTTP();
+    const navigate              = useNavigate();
+    const [ error, setError ]   = useState(false);
+
+    const ErrorAlert = () =>{
+        return(
+            <Alert severity="warning">
+                <AlertTitle>Authentication error</AlertTitle>
+                Username and/or Password are wrong.
+            </Alert>
+        )
+    }
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
         connect({username : data.get('username'), password: data.get('password')}).then(function (response) {
-            navigate("/home");
-            if(data.get('username') != null){
-                //setItem("user", data.get('username')?.toString());
-                //setItem("token", response.data.value);
-                addUser({"username" : data.get('username')?.toString()}, response.data.value);
+            setError(false);
+            if(response.data.value !== undefined){
+                navigate("/home");
+                if(data.get('username') != null){
+                    getAuthority(data.get('username')?.toString())?.then(auths => {
+                        addUser({"username" : data.get('username')?.toString()}, response.data.value, auths.data);
+                })
+                }
+            }else{
+                setError(true);
             }
         });
     };
@@ -62,6 +79,7 @@ function Login() {
                         type="submit"
                         fullWidth
                         variant="contained"
+                        size="large"
                         sx={{ 
                             mt: 3, 
                             mb: 2 
@@ -70,6 +88,7 @@ function Login() {
                         Connect
                     </Button>
                 </Box>
+                { error ? <ErrorAlert /> : ""}
             </Box>
         </Container>
     );

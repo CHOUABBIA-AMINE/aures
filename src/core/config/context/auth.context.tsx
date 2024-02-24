@@ -1,11 +1,14 @@
 import { createContext }        from 'react';
-import { User }                 from '../../model/user';
+import { UserContext }          from './user.context';
 
 interface IAuthContext {
-    user: User | null;
-    setUser: (user: User | null) => void;
+    user: UserContext | null;
+    setUser: (user: UserContext | null) => void;
     token: string | null;
     setToken: (token: string | null) => void;
+    authority: string[];
+    setAuthority: (authority: string[]) => void;
+    hasAuthority: (authority: string) => boolean;
 }
 
 export const AuthContext = createContext<IAuthContext>({
@@ -13,6 +16,7 @@ export const AuthContext = createContext<IAuthContext>({
     setUser: () => {},
     token: null,
     setToken: () => {},
+    authority: [],
+    setAuthority: () => {},
+    hasAuthority: () => false
 });
-
-

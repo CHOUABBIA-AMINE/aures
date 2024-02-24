@@ -1,7 +1,10 @@
 import { Diversity3Outlined }       from "@mui/icons-material"
+import { DomainOutlined }           from "@mui/icons-material"
+import { EngineeringOutlined }      from "@mui/icons-material"
+import { Person2Outlined }          from "@mui/icons-material"
+import { WorkOutlineOutlined }      from "@mui/icons-material"
 import { HomeWorkOutlined }         from "@mui/icons-material"
 import { DraftsOutlined }           from "@mui/icons-material"
-import { VerifiedUserOutlined }     from "@mui/icons-material"
 import { PersonOutlineOutlined }    from "@mui/icons-material"
 import { SecurityOutlined }         from "@mui/icons-material"
 import { HttpsOutlined }            from "@mui/icons-material"
@@ -9,13 +12,17 @@ import { HttpsOutlined }            from "@mui/icons-material"
 import { NavItem }                  from "./nav.item"
 
 const commonMenu : NavItem[] = [
-    { name : "Administration",  icon : Diversity3Outlined,      link: "/" },
-    { name : "Environment",     icon : HomeWorkOutlined,        link: "/" },
-    { name : "Currial",         icon : DraftsOutlined,          link: "/" },
-    { name : "Security",        icon : HttpsOutlined,           link: [
-        { name : "User",            icon : PersonOutlineOutlined,   link: "/list/user" },
-        { name : "Role",            icon : SecurityOutlined,        link: "/list/role" },
-        { name : "Authority",       icon : VerifiedUserOutlined,    link: "/authority" }
+    { name : "Administration",  icon : Diversity3Outlined,      authority : "AUTH_ADMINISTRATION",      link : [
+        { name : "Structure",       icon : DomainOutlined,          authority : "AUTH_STRUCTURE",           link: "/list/structure" },
+        { name : "Job",             icon : WorkOutlineOutlined,     authority : "AUTH_JOB",                 link: "/list/job" },
+        { name : "Person",          icon : Person2Outlined,         authority : "AUTH_PERSON",              link: "/list/person" },
+        { name : "Employee",        icon : EngineeringOutlined,     authority : "AUTH_EMPLOYEE",            link: "/list/employee" }
+    ] },
+    { name : "Environment",     icon : HomeWorkOutlined,        authority : "AUTH_ENVIRONMENT",         link : "/" },
+    { name : "Currial",         icon : DraftsOutlined,          authority : "AUTH_COMMUNICATION",       link : "/" },
+    { name : "Security",        icon : HttpsOutlined,           authority : "AUTH_SECURITY",            link : [
+        { name : "User",            icon : PersonOutlineOutlined,   authority : "AUTH_USER",                link: "/list/user" },
+        { name : "Role",            icon : SecurityOutlined,        authority : "AUTH_ROLE",                link: "/list/role" }
     ] }
 ];
 

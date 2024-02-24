@@ -1,7 +1,7 @@
 import { useEffect }            from "react";
 import { useUser }              from "./useUser";
 import { useLocalStorage }      from "./useLocalStorage";
-import { User }                 from "../../model/user";
+import { UserContext }          from "../context/user.context";
 
 export const useAuth = () => {
     const { user, addUser, removeUser } = useUser();
@@ -14,8 +14,8 @@ export const useAuth = () => {
     //     }
     // }, []);
 
-    const connect = (user: User, token : any) => {
-        addUser(user, token);
+    const connect = (user: UserContext, token : any, authority:string[]) => {
+        addUser(user, token, authority);
     };
 
     const disconnect = () => {

@@ -1,12 +1,15 @@
 import { Route }                from "react-router-dom";
 import { Routes }               from "react-router-dom";
 
-import Home                     from "../view/home";
-import About                    from "../view/about";
-import Login                    from "../view/login";
+import Home                     from "../view/public/home";
+import About                    from "../view/public/about";
+import NotFound                 from "../view/public/not.found";
+import Login                    from "../view/public/login";
 
 import ModelList                from "../view/core/model.list";
+import StructureDetails         from "../view/core/details/common/administration/structure";
 import UserDetails              from "../view/core/details/common/security/user";
+import RoleDetails              from "../view/core/details/common/security/role";
 
 function CoreRouting(){
 	return (
@@ -29,8 +32,10 @@ function CoreRouting(){
             <Route path="security"          element={<About />}></Route>
 
             <Route path="list/:entity"      element={<ModelList />}></Route>
+            <Route path="structure/:action" element={<StructureDetails />}></Route>
             <Route path="user/:action"      element={<UserDetails />}></Route>
-                
+            <Route path="role/:action"      element={<RoleDetails />}></Route>
+            <Route path="*"                 element={<NotFound />}></Route>
 
         </Routes>
     )

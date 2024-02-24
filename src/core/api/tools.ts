@@ -1,5 +1,5 @@
 const formatURL = (url : string) => {
-    return url.slice(0, url.indexOf("{"));
+    return url.indexOf("{") === -1 ? url : url.slice(0, url.indexOf("{"));
 }
 
 
