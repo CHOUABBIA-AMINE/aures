@@ -16,7 +16,7 @@ const commonMenu : NavItem[] = [
         { name : "Structure",       icon : DomainOutlined,          authority : "AUTH_STRUCTURE",           link: "/list/structure" },
         { name : "Job",             icon : WorkOutlineOutlined,     authority : "AUTH_JOB",                 link: "/list/job" },
         { name : "Person",          icon : Person2Outlined,         authority : "AUTH_PERSON",              link: "/list/person" },
-        { name : "Employee",        icon : EngineeringOutlined,     authority : "AUTH_EMPLOYEE",            link: "/list/employee" }
+        { name : "Employee",        icon : EngineeringOutlined,     authority : "AUTH_EMPLOYEE",            link: "/list/employee/employeeList" }
     ] },
     { name : "Environment",     icon : HomeWorkOutlined,        authority : "AUTH_ENVIRONMENT",         link : "/" },
     { name : "Currial",         icon : DraftsOutlined,          authority : "AUTH_COMMUNICATION",       link : "/" },

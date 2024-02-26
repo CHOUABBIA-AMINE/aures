@@ -38,8 +38,8 @@ import Lists                    from "../../api/list";
 
 function ModelList() {
 
-    let {entity}                = useParams();
-    
+    let {entity,proj}           = useParams();
+    console.log(entity,proj);
     const [model, setModel]     = useState(entity !== undefined ? entity : "");
     const navigate              = useNavigate();
 
@@ -112,8 +112,8 @@ function ModelList() {
         }else{
             setModel("");
         }
-
-        getBasedUrl(model+"?page=" + page + "&size=" +size + "&sort=" + orderBy + "," + order).then((response) => {
+        let projection = proj !== undefined ? "&projection=" + proj : ""
+        getBasedUrl(entity+"?page=" + page + "&size=" +size + "&sort=" + orderBy + "," + order + projection).then((response) => {
             let rows : []= response.data._embedded[model];
             setRow(rows);
             setTotal(response.data.page.totalElements);
@@ -236,7 +236,7 @@ function ModelList() {
                                         >
                                             {Lists.get(model) && Lists.get(model).map((column : any, j:number) => {
                                                 let value;
-                                                j === 0 ? value = i+1 : value = row[column.id];
+                                                j === 0 ? value = page * size + i+1 : value = row[column.id];
                                                 return (
                                                     <TableCell align={ column.align } key={j + " - "+ value}>
                                                         {column.type === "date" ? dayjs(value).format('YYYY-MM-DD') : value}
