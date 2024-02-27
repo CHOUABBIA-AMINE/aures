@@ -28,16 +28,20 @@ import { Structure } 			from "../../../../../model/common/administration/structu
 import { StructureType } 		from "../../../../../model/common/administration/structure.type";
 
 const StructureDetails = (props : any) => {
-	const location 				= useLocation();
-	const params 				= useParams();
-	const [ filter, setFilter ]	= useState<string>("");
-	const [ types, setTypes ]	= useState<StructureType[]>([]);
-	const [ ups, setUps ]		= useState<Structure[]>([]);
 
-	let readOnly 				= params.action === 'edit' ? false : true;
-	const { getUrl, getBasedUrl, patchUrl, postBasedUrl} = useHTTP();
+	const location 					= useLocation();
+	const params 					= useParams();
 	
-	const [structure, setStructure]	= useState<Structure>({
+	let readOnly 					= params.action === 'edit' ? false : true;
+	const { getUrl, getBasedUrl, patchUrl, postBasedUrl} = useHTTP();
+
+	const [ types, setTypes ]			= useState<StructureType[]>([]);
+	const [ parents, setParents ]		= useState<Structure[]>([]);
+
+	const [ type, setType ]				= useState<string>("");
+	const [ parent, setParent ]			= useState<Structure | null>(null);
+	
+	const [ structure, setStructure ]	= useState<Structure>({
 		designationAr   : "",
 		designationEn   : "",
 		designationFr   : "",
@@ -62,12 +66,7 @@ const StructureDetails = (props : any) => {
 
 	const fetchData = ()=>{
 
-		getBasedUrl("structureType").then((structureTypes) => {
-			setTypes(structureTypes.data._embedded.structureType);
-		});
-
-		getUrl(formatURL(location.state.modelId)).then((response) => {
-			//console.log(response);
+		getUrl(formatURL(location.state.modelId)).then((response : any) => {
 			setStructure({
 				designationAr	: response.data.designationAr,
 				designationEn	: response.data.designationEn,
@@ -83,60 +82,28 @@ const StructureDetails = (props : any) => {
 						href            : response.data._links.self.href
 					},
 					structureType   :{
-						href            : ""
+						href            : response.data._links.structureType.href
 					},
 					structureUp     :{
-						href            : ""
+						href            : response.data._links.structureUp.href
 					}
 				}
 			})
-			//console.log(response.data._links.structureType.href);
 			getUrl(formatURL(response.data._links.structureType.href)).then((type) => {
-				setStructure(structure => ({...structure, _links: {
-					structureType 	: { 
-						href : type.data !== "" ? type.data._links.self.href : "" 
-					},
-					structure 		: { 
-						href : response.data._links.structure.href
-					},
-					self 			: { 
-						href : response.data._links.self.href
-					},
-					structureUp		: { 
-						href : ""
-					}
-				}}))
-				
-				getUrl(formatURL(response.data._links.structureUp.href)).then((up) => {
-					setStructure(structure => ({...structure, _links: {
-						structureUp 	: { 
-							href : up.data !== "" ? up.data._links.self.href : "" 
-						},
-						structure 		: { 
-							href : response.data._links.structure.href
-						},
-						self 			: { 
-							href : response.data._links.self.href
-						},
-						structureType	: { 
-							href : type.data !== "" ? type.data._links.self.href : ""
-						}
-					}}));
-				})
+				setType(type.data !== undefined ? type.data._links.self.href : "" )
+				getUrl(formatURL(response.data._links.structureUp.href)).then((parent) => {
+					setParent(parent.data !== undefined ? parent.data : null )
+				}).catch(()=>{
+				});
 			});
 		});
 	}
 
 	const filterBy = (e : any) =>{
-		console.log(e.target.value);
-		setFilter(e.target.value);
-		/*getBasedUrl("structure/search/filterBy?filter=" + e.target.value).then((up) => {
-			console.log(up);
-			setUps(up.data.structure);
-		})*/
+		getBasedUrl("structure/search/filterBy?filter=" + e.target.value).then((up) => {
+			setParents(up.data._embedded.structure);
+		})
 	}
-
-	const debouncedOnChange = debounce(filterBy, 200);
 
 	const patchData = ()=>{
 		if(location.state != null){
@@ -147,8 +114,8 @@ const StructureDetails = (props : any) => {
 				acronymAr 		: structure.acronymAr,
 				acronymEn 		: structure.acronymEn,
 				acronymFr 		: structure.acronymFr,
-				structureType  	: structure._links.structureType.href,
-				//structureUp  	: structure._links.structureUp.href
+				structureType  	: type,
+				structureUp  	: parent
 			})).then((response) => {
 
 			})
@@ -160,8 +127,8 @@ const StructureDetails = (props : any) => {
 				acronymAr 		: structure.acronymAr,
 				acronymEn 		: structure.acronymEn,
 				acronymFr 		: structure.acronymFr,
-				structureType  	: structure._links.structureType.href,
-				//structureUp  	: structure._links.structureUp.href
+				structureType  	: type,
+				structureUp  	: parent
 			})).then((response) => {
 			
 			})
@@ -169,6 +136,11 @@ const StructureDetails = (props : any) => {
 	}
 
 	useEffect(() => {
+
+		getBasedUrl("structureType").then((structureTypes) => {
+			setTypes(structureTypes.data._embedded.structureType);
+		});
+
 		if(location.state !== null){
 			fetchData();
 		}
@@ -193,16 +165,15 @@ const StructureDetails = (props : any) => {
 				<Grid container spacing={1}>
 					<Grid item xs={4} sm={4}>
 						<Autocomplete
-							inputValue={filter}
-							id="structureUp"
-							options={ups}
-							getOptionLabel={(option) => option.designationFr}
+							id="parent"
 							fullWidth
 							size="small"
-							renderInput={(params) => (
-							  <TextField {...params} label="Structure Parente" variant="outlined" onChange={(e) => debounce(filterBy,200)} fullWidth size="small"/>
-							)}
-							open={filter.length > 1}
+							options={parents}
+							value={parent}
+							onChange={(e, value) => setParent(value)}
+							getOptionLabel={(parent) => parent.designationFr}
+							isOptionEqualToValue={(option, value) => option._links.self.href === value._links.self.href}
+							renderInput={(params) => <TextField {...params} label="Parent" onChange={debounce(filterBy, 200)}/>}
 						/>
 					</Grid>
 					<Grid item xs={8} sm={8}></Grid>
@@ -217,23 +188,10 @@ const StructureDetails = (props : any) => {
 								labelId="typeLabel"
 								id="structureType"
 								variant="outlined"
-								value={structure._links.structureType.href}
+								value={type}
 								label="Type"
-								onChange={(e) => setStructure(structure => ({...structure, _links: {
-										structureType : {
-											href : e.target.value
-										},
-										structure 		: { 
-											href : structure._links.structure.href
-										},
-										self 			: { 
-											href : structure._links.self.href
-										},
-										structureUp		: { 
-											href : structure._links.structureUp.href
-										}
-									}
-								}))}
+								
+								onChange={(e) => setType(e.target.value)}
 							>
 								{
 									types.length > 0 && types.map(type => {
