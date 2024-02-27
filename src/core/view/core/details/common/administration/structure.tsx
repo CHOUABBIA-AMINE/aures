@@ -7,44 +7,33 @@ import { useState } 			from "react";
 import { useLocation } 			from "react-router-dom";
 import { useParams } 			from "react-router-dom";
 
-import { Accordion } 			from "@mui/material";
-import { AccordionDetails } 	from "@mui/material";
-import { AccordionSummary } 	from "@mui/material";
+import { Autocomplete, Select, debounce } 				from "@mui/material";
+import { MenuItem } 			from "@mui/material";
+import { InputLabel } 			from "@mui/material";
 import { Box } 					from "@mui/material";
-import { Card } 				from "@mui/material";
-import { CardHeader } 			from "@mui/material";
-import { Checkbox } 			from "@mui/material";
-import { Divider } 				from "@mui/material";
-import { List } 				from "@mui/material";
-import { ListItemButton } 		from "@mui/material";
-import { ListItemIcon } 		from "@mui/material";
-import { ListItemText } 		from "@mui/material";
-import { FormControlLabel } 	from "@mui/material";
-import { Switch } 				from "@mui/material";
 import { Container } 			from "@mui/material";
 import { FormControl } 			from "@mui/material";
 import { Grid } 				from "@mui/material";
 import { Button } 				from "@mui/material";
-import { IconButton } 			from "@mui/material";
-import { InputAdornment } 		from "@mui/material";
 import { Paper } 				from "@mui/material";
 import { TextField } 			from "@mui/material";
 import { Typography } 			from "@mui/material";
-import { DatePicker } 			from "@mui/x-date-pickers/DatePicker";
 
-import { ExpandMore } 			from "@mui/icons-material";
 import { Replay } 				from "@mui/icons-material";
 import { Save } 				from "@mui/icons-material";
-import { Visibility } 			from "@mui/icons-material";
-import { VisibilityOff } 		from "@mui/icons-material";
 
 import { formatURL } 			from "../../../../../api/tools";
 import { useHTTP } 				from "../../../../../api/request";
 import { Structure } 			from "../../../../../model/common/administration/structure";
+import { StructureType } 		from "../../../../../model/common/administration/structure.type";
 
 const StructureDetails = (props : any) => {
 	const location 				= useLocation();
 	const params 				= useParams();
+	const [ filter, setFilter ]	= useState<string>("");
+	const [ types, setTypes ]	= useState<StructureType[]>([]);
+	const [ ups, setUps ]		= useState<Structure[]>([]);
+
 	let readOnly 				= params.action === 'edit' ? false : true;
 	const { getUrl, getBasedUrl, patchUrl, postBasedUrl} = useHTTP();
 	
@@ -72,7 +61,13 @@ const StructureDetails = (props : any) => {
 	});
 
 	const fetchData = ()=>{
+
+		getBasedUrl("structureType").then((structureTypes) => {
+			setTypes(structureTypes.data._embedded.structureType);
+		});
+
 		getUrl(formatURL(location.state.modelId)).then((response) => {
+			//console.log(response);
 			setStructure({
 				designationAr	: response.data.designationAr,
 				designationEn	: response.data.designationEn,
@@ -88,15 +83,60 @@ const StructureDetails = (props : any) => {
 						href            : response.data._links.self.href
 					},
 					structureType   :{
-						href            : response.data._links.structureType.href
+						href            : ""
 					},
 					structureUp     :{
-						href            : response.data._links.structureUp.href
+						href            : ""
 					}
 				}
+			})
+			//console.log(response.data._links.structureType.href);
+			getUrl(formatURL(response.data._links.structureType.href)).then((type) => {
+				setStructure(structure => ({...structure, _links: {
+					structureType 	: { 
+						href : type.data !== "" ? type.data._links.self.href : "" 
+					},
+					structure 		: { 
+						href : response.data._links.structure.href
+					},
+					self 			: { 
+						href : response.data._links.self.href
+					},
+					structureUp		: { 
+						href : ""
+					}
+				}}))
+				
+				getUrl(formatURL(response.data._links.structureUp.href)).then((up) => {
+					setStructure(structure => ({...structure, _links: {
+						structureUp 	: { 
+							href : up.data !== "" ? up.data._links.self.href : "" 
+						},
+						structure 		: { 
+							href : response.data._links.structure.href
+						},
+						self 			: { 
+							href : response.data._links.self.href
+						},
+						structureType	: { 
+							href : type.data !== "" ? type.data._links.self.href : ""
+						}
+					}}));
+				})
 			});
-		})
+		});
 	}
+
+	const filterBy = (e : any) =>{
+		console.log(e.target.value);
+		setFilter(e.target.value);
+		/*getBasedUrl("structure/search/filterBy?filter=" + e.target.value).then((up) => {
+			console.log(up);
+			setUps(up.data.structure);
+		})*/
+	}
+
+	const debouncedOnChange = debounce(filterBy, 200);
 
 	const patchData = ()=>{
 		if(location.state != null){
@@ -108,7 +148,7 @@ const StructureDetails = (props : any) => {
 				acronymEn 		: structure.acronymEn,
 				acronymFr 		: structure.acronymFr,
 				structureType  	: structure._links.structureType.href,
-				structureUp  	: structure._links.structureUp.href
+				//structureUp  	: structure._links.structureUp.href
 			})).then((response) => {
 
 			})
@@ -121,7 +161,7 @@ const StructureDetails = (props : any) => {
 				acronymEn 		: structure.acronymEn,
 				acronymFr 		: structure.acronymFr,
 				structureType  	: structure._links.structureType.href,
-				structureUp  	: structure._links.structureUp.href
+				//structureUp  	: structure._links.structureUp.href
 			})).then((response) => {
 			
 			})
@@ -151,6 +191,62 @@ const StructureDetails = (props : any) => {
 					</Box>
 				</Box>
 				<Grid container spacing={1}>
+					<Grid item xs={4} sm={4}>
+						<Autocomplete
+							inputValue={filter}
+							id="structureUp"
+							options={ups}
+							getOptionLabel={(option) => option.designationFr}
+							fullWidth
+							size="small"
+							renderInput={(params) => (
+							  <TextField {...params} label="Structure Parente" variant="outlined" onChange={(e) => debounce(filterBy,200)} fullWidth size="small"/>
+							)}
+							open={filter.length > 1}
+						/>
+					</Grid>
+					<Grid item xs={8} sm={8}></Grid>
+
+					<Grid item xs={4} sm={4}>
+						<FormControl fullWidth size="small" >
+							<InputLabel id="typeLabel">Type</InputLabel>
+							<Select
+								required
+								fullWidth
+								size="small"
+								labelId="typeLabel"
+								id="structureType"
+								variant="outlined"
+								value={structure._links.structureType.href}
+								label="Type"
+								onChange={(e) => setStructure(structure => ({...structure, _links: {
+										structureType : {
+											href : e.target.value
+										},
+										structure 		: { 
+											href : structure._links.structure.href
+										},
+										self 			: { 
+											href : structure._links.self.href
+										},
+										structureUp		: { 
+											href : structure._links.structureUp.href
+										}
+									}
+								}))}
+							>
+								{
+									types.length > 0 && types.map(type => {
+										return(
+											<MenuItem key={type._links.self.href} value={type._links.self.href}>{type.designationFr}</MenuItem>
+										);
+									})
+								}
+							</Select>
+						</FormControl>
+					</Grid>
+					<Grid item xs={8} sm={8}></Grid>
+					
 					<Grid item xs={4} sm={4}>
 						<FormControl fullWidth size="small">
 							<TextField
@@ -200,6 +296,64 @@ const StructureDetails = (props : any) => {
 								id="designationFr"
 								name="designationFr"
 								label="Designation (Fr)"
+								autoComplete="off"
+								variant="outlined"
+								inputProps={{ 
+									readOnly: readOnly 
+								}}
+							/>
+						</FormControl>
+					</Grid>
+
+					<Grid item xs={4} sm={4}>
+						<FormControl fullWidth size="small">
+							<TextField
+								required
+								sx={{width:'40%'}}
+								value={structure.acronymAr}
+								onChange={ (e) => setStructure(structure => ({...structure, acronymAr: e.currentTarget.value})) }
+								size="small"
+								id="acronymAr"
+								name="acronymAr"
+								label="Acronyme (Ar)"
+								autoComplete="off"
+								variant="outlined"
+								inputProps={{ 
+									readOnly: readOnly 
+								}}
+							/>
+						</FormControl>
+					</Grid>
+					<Grid item xs={4} sm={4}>
+						<FormControl fullWidth size="small">
+							<TextField
+								required
+								sx={{width:'40%'}}
+								value={structure.acronymEn}
+								onChange={ (e) => setStructure(structure => ({...structure, acronymEn: e.currentTarget.value})) }
+								size="small"
+								id="acronymEn"
+								name="acronymEn"
+								label="Acronyme (En)"
+								autoComplete="off"
+								variant="outlined"
+								inputProps={{ 
+									readOnly: readOnly 
+								}}
+							/>
+						</FormControl>
+					</Grid>
+					<Grid item xs={4} sm={4}>
+						<FormControl fullWidth size="small">
+							<TextField
+								required
+								sx={{width:'40%'}}
+								value={structure.acronymFr}
+								onChange={ (e) => setStructure(structure => ({...structure, acronymFr: e.currentTarget.value})) }
+								size="small"
+								id="acronymFr"
+								name="acronymFr"
+								label="Acronyme (Fr)"
 								autoComplete="off"
 								variant="outlined"
 								inputProps={{ 

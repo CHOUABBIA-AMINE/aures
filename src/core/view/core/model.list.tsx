@@ -39,7 +39,6 @@ import Lists                    from "../../api/list";
 function ModelList() {
 
     let {entity,proj}           = useParams();
-    console.log(entity,proj);
     const [model, setModel]     = useState(entity !== undefined ? entity : "");
     const navigate              = useNavigate();
 
