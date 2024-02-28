@@ -1,9 +1,11 @@
+import { Dayjs }                from "dayjs";
+
 interface Person {
     firstnameAr     : string;
     lastnameAr      : string;
     firstnameLt     : string;
     lastnameLt      : string;
-    birthDate       : Date;
+    birthDate       : Dayjs | null;
     birthPlace      : string;
     address         : string;
     _links          : {

@@ -1,6 +1,8 @@
+import { Dayjs }                from "dayjs";
+
 interface Employee {
     serial          : string;
-    hiringDate      : Date;
+    hiringDate      : Dayjs | null;
     _links          : {
         employee        :{
             href            : string

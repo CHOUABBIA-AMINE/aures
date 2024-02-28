@@ -7,10 +7,13 @@ import NotFound                 from "../view/public/not.found";
 import Login                    from "../view/public/login";
 
 import ModelList                from "../view/core/model.list";
+
 import StructureDetails         from "../view/core/details/common/administration/structure";
+import JobDetails               from "../view/core/details/common/administration/job";
+import EmployeeDetails          from "../view/core/details/common/administration/employee";
+
 import UserDetails              from "../view/core/details/common/security/user";
 import RoleDetails              from "../view/core/details/common/security/role";
-import JobDetails               from "../view/core/details/common/administration/job";
 
 function CoreRouting(){
 	return (
@@ -37,10 +40,10 @@ function CoreRouting(){
 
             <Route path="structure/:action"     element={<StructureDetails />}></Route>
             <Route path="job/:action"           element={<JobDetails />}></Route>
+            <Route path="employee/:action"      element={<EmployeeDetails />}></Route>
             
             <Route path="user/:action"          element={<UserDetails />}></Route>
             <Route path="role/:action"          element={<RoleDetails />}></Route>
-
 
             <Route path="*"                     element={<NotFound />}></Route>
 
