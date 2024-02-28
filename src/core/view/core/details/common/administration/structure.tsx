@@ -1,13 +1,11 @@
-import dayjs                    from "dayjs";
-import bcrypt 					from "bcryptjs-react";
-
-import React 					from "react";
 import { useEffect } 			from "react";
 import { useState } 			from "react";
 import { useLocation } 			from "react-router-dom";
 import { useParams } 			from "react-router-dom";
 
-import { Autocomplete, Select, debounce } 				from "@mui/material";
+import { Autocomplete } 		from "@mui/material";
+import { Select } 				from "@mui/material";
+import { debounce } 			from "@mui/material";
 import { MenuItem } 			from "@mui/material";
 import { InputLabel } 			from "@mui/material";
 import { Box } 					from "@mui/material";
@@ -115,7 +113,7 @@ const StructureDetails = (props : any) => {
 				acronymEn 		: structure.acronymEn,
 				acronymFr 		: structure.acronymFr,
 				structureType  	: type,
-				structureUp  	: parent
+				structureUp  	: parent?._links.self.href
 			})).then((response) => {
 
 			})
@@ -128,7 +126,7 @@ const StructureDetails = (props : any) => {
 				acronymEn 		: structure.acronymEn,
 				acronymFr 		: structure.acronymFr,
 				structureType  	: type,
-				structureUp  	: parent
+				structureUp  	: parent?._links.self.href
 			})).then((response) => {
 			
 			})

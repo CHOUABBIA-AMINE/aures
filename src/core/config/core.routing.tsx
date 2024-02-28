@@ -10,6 +10,7 @@ import ModelList                from "../view/core/model.list";
 import StructureDetails         from "../view/core/details/common/administration/structure";
 import UserDetails              from "../view/core/details/common/security/user";
 import RoleDetails              from "../view/core/details/common/security/role";
+import JobDetails               from "../view/core/details/common/administration/job";
 
 function CoreRouting(){
 	return (
@@ -35,6 +36,7 @@ function CoreRouting(){
             <Route path="list/:entity/:proj"    element={<ModelList />}></Route>
 
             <Route path="structure/:action"     element={<StructureDetails />}></Route>
+            <Route path="job/:action"           element={<JobDetails />}></Route>
             
             <Route path="user/:action"          element={<UserDetails />}></Route>
             <Route path="role/:action"          element={<RoleDetails />}></Route>
