@@ -1,5 +1,3 @@
-import './aures.css';
-
 import { SnackbarProvider } 	from 'notistack';
 
 import { useState } 			from 'react';
@@ -18,15 +16,15 @@ import { AdapterDayjs } 		from '@mui/x-date-pickers/AdapterDayjs'
 import { NavContext } 			from './config/context/nav.context';
 
 function Aures() {
-	///const { user, login, logout } = useAuth();
-	
+
 	const [user, setUser] 	= useState<UserContext | null>(null);
 	const [token, setToken] = useState<string | null>("");
 	const [authority, setAuthority] = useState<string[]>([]);
 	const [menu, setMenu] 	= useState<string>("");
-	const hasAuthority = (auth:string) => {
+	const hasAuthority 		= (auth:string) => {
 		return authority.indexOf(auth) !== -1 ? true : false;
 	}
+
 	return (
 		<SnackbarProvider maxSnack={3} autoHideDuration={1200} anchorOrigin={{horizontal: "center", vertical: "bottom"}}>
 		<NavContext.Provider value={{menu, setMenu}}>
@@ -45,5 +43,6 @@ function Aures() {
 		</NavContext.Provider>
 		</SnackbarProvider>
 	);
+
 }
 export default Aures;
