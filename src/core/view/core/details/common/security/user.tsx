@@ -1,5 +1,6 @@
 import dayjs                    from "dayjs";
 import bcrypt 					from "bcryptjs-react";
+import { useSnackbar } 			from "notistack";
 
 import React 					from "react";
 import { useEffect } 			from "react";
@@ -11,25 +12,26 @@ import { Accordion } 			from "@mui/material";
 import { AccordionDetails } 	from "@mui/material";
 import { AccordionSummary } 	from "@mui/material";
 import { Box } 					from "@mui/material";
+import { Button } 				from "@mui/material";
 import { Card } 				from "@mui/material";
 import { CardHeader } 			from "@mui/material";
 import { Checkbox } 			from "@mui/material";
+import { Container } 			from "@mui/material";
 import { Divider } 				from "@mui/material";
+import { FormControl } 			from "@mui/material";
+import { FormControlLabel } 	from "@mui/material";
+import { IconButton } 			from "@mui/material";
+import { InputAdornment } 		from "@mui/material";
+import { Grid } 				from "@mui/material";
 import { List } 				from "@mui/material";
 import { ListItemButton } 		from "@mui/material";
 import { ListItemIcon } 		from "@mui/material";
 import { ListItemText } 		from "@mui/material";
-import { FormControlLabel } 	from "@mui/material";
-import { Switch } 				from "@mui/material";
-import { Container } 			from "@mui/material";
-import { FormControl } 			from "@mui/material";
-import { Grid } 				from "@mui/material";
-import { Button } 				from "@mui/material";
-import { IconButton } 			from "@mui/material";
-import { InputAdornment } 		from "@mui/material";
 import { Paper } 				from "@mui/material";
+import { Switch } 				from "@mui/material";
 import { TextField } 			from "@mui/material";
 import { Typography } 			from "@mui/material";
+
 import { DatePicker } 			from "@mui/x-date-pickers/DatePicker";
 
 import { ExpandMore } 			from "@mui/icons-material";
@@ -52,6 +54,7 @@ const UserDetails = (props : any) => {
 	const location 				= useLocation();
 	const params 				= useParams();
 	let readOnly 				= params.action === 'edit' ? false : true;
+	const { enqueueSnackbar } 	= useSnackbar();
 	const { getUrl, getBasedUrl, patchUrl, postBasedUrl} = useHTTP();
 	const [showPassword, setShowPassword] 	= useState(false);
 	const handleClickShowPassword 			= () => setShowPassword((show) => !show);
@@ -165,7 +168,7 @@ const UserDetails = (props : any) => {
 					locked      : user.locked ? 1 : 0,
 					roles		: modelData.map(model => model.role._links.self.href)
 				})).then((response) => {
-
+					enqueueSnackbar('Entity updated successfully!', {variant: 'success'});
 				})
 			}else{
 				patchUrl(formatURL(location.state.modelId), JSON.stringify({
@@ -176,7 +179,7 @@ const UserDetails = (props : any) => {
 					locked      : user.locked ? 1 : 0,
 					roles		: modelData.map(model => model.role._links.self.href)
 				})).then((response) => {
-
+					enqueueSnackbar('Entity created successfully !', {variant: 'success'});
 				})
 			}
 		}else{
@@ -300,7 +303,7 @@ const UserDetails = (props : any) => {
 								InputProps={{
 									readOnly: readOnly,
 									endAdornment: (
-									  	<InputAdornment position="end">
+										<InputAdornment position="end">
 											<IconButton
 												aria-label="toggle password visibility"
 												onClick={handleClickShowPassword}
@@ -309,9 +312,9 @@ const UserDetails = (props : any) => {
 											>
 												{showPassword ? <VisibilityOff /> : <Visibility />}
 											</IconButton>
-									  	</InputAdornment>
+										</InputAdornment>
 									),
-								  }}
+								}}
 							/>
 						</FormControl>
 					</Grid>

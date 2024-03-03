@@ -3,17 +3,19 @@ import { useState } 			from "react";
 import { useLocation } 			from "react-router-dom";
 import { useParams } 			from "react-router-dom";
 
+import { useSnackbar } 			from "notistack";
+
 import { Autocomplete } 		from "@mui/material";
-import { Select } 				from "@mui/material";
-import { debounce } 			from "@mui/material";
-import { MenuItem } 			from "@mui/material";
-import { InputLabel } 			from "@mui/material";
 import { Box } 					from "@mui/material";
-import { Container } 			from "@mui/material";
-import { FormControl } 			from "@mui/material";
-import { Grid } 				from "@mui/material";
 import { Button } 				from "@mui/material";
+import { Container } 			from "@mui/material";
+import { debounce } 			from "@mui/material";
+import { FormControl } 			from "@mui/material";
+import { InputLabel } 			from "@mui/material";
+import { Grid } 				from "@mui/material";
+import { MenuItem } 			from "@mui/material";
 import { Paper } 				from "@mui/material";
+import { Select } 				from "@mui/material";
 import { TextField } 			from "@mui/material";
 import { Typography } 			from "@mui/material";
 
@@ -27,18 +29,20 @@ import { StructureType } 		from "../../../../../model/common/administration/stru
 
 const StructureDetails = (props : any) => {
 
-	const location 					= useLocation();
-	const params 					= useParams();
-	
-	let readOnly 					= params.action === 'edit' ? false : true;
 	const { getUrl, getBasedUrl, patchUrl, postBasedUrl} = useHTTP();
+
+	const location 						= useLocation();
+	const params 						= useParams();
+	const { enqueueSnackbar } 			= useSnackbar();
+	
+	let readOnly 						= params.action === 'edit' ? false : true;
 
 	const [ types, setTypes ]			= useState<StructureType[]>([]);
 	const [ parents, setParents ]		= useState<Structure[]>([]);
 
 	const [ type, setType ]				= useState<string>("");
 	const [ parent, setParent ]			= useState<Structure | null>(null);
-	
+
 	const [ structure, setStructure ]	= useState<Structure>({
 		designationAr   : "",
 		designationEn   : "",
@@ -115,7 +119,7 @@ const StructureDetails = (props : any) => {
 				structureType  	: type,
 				structureUp  	: parent?._links.self.href
 			})).then((response) => {
-
+				enqueueSnackbar('Entity updated successfully!', {variant: 'success'});
 			})
 		}else{
 			postBasedUrl("structure", JSON.stringify({
@@ -128,7 +132,7 @@ const StructureDetails = (props : any) => {
 				structureType  	: type,
 				structureUp  	: parent?._links.self.href
 			})).then((response) => {
-			
+				enqueueSnackbar('Entity updated successfully!', {variant: 'success'});
 			})
 		}
 	}

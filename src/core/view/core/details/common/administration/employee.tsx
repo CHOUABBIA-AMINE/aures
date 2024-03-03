@@ -116,7 +116,7 @@ const EmployeeDetails = (props : any) => {
 					}
 				}
 			})
-			getUrl(formatURL(response.data._links.person.href)).then((person) => {
+			/*getUrl(formatURL(response.data._links.person.href)).then((person) => {
 				setType(type.data !== undefined ? type.data._links.self.href : "" )
 			});
 			getUrl(formatURL(response.data._links.person.href)).then((militaryRank) => {
@@ -124,7 +124,7 @@ const EmployeeDetails = (props : any) => {
 			});
 			getUrl(formatURL(response.data._links.person.href)).then((person) => {
 				setType(type.data !== undefined ? type.data._links.self.href : "" )
-			});
+			});*/
 		});
 	}
 
@@ -135,7 +135,7 @@ const EmployeeDetails = (props : any) => {
 	}
 
 	const patchData = ()=>{
-		if(location.state != null){
+		/*if(location.state != null){
 			patchUrl(formatURL(location.state.modelId), JSON.stringify({
 				designationAr 	: structure.designationAr,
 				designationEn 	: structure.designationEn,
@@ -161,7 +161,7 @@ const EmployeeDetails = (props : any) => {
 			})).then((response) => {
 			
 			})
-		}
+		}*/
 	}
 
 	useEffect(() => {
@@ -239,8 +239,8 @@ const EmployeeDetails = (props : any) => {
 							<TextField
 								required
 								fullWidth
-								value={structure.designationAr}
-								onChange={ (e) => setStructure(structure => ({...structure, designationAr: e.currentTarget.value})) }
+								//value={employee.hiringDate}
+								//onChange={ (e) => setStructure(structure => ({...structure, designationAr: e.currentTarget.value})) }
 								size="small"
 								id="designationAr"
 								name="designationAr"
@@ -258,8 +258,8 @@ const EmployeeDetails = (props : any) => {
 							<TextField
 								required
 								fullWidth
-								value={structure.designationEn}
-								onChange={ (e) => setStructure(structure => ({...structure, designationEn: e.currentTarget.value})) }
+								//value={structure.designationEn}
+								//onChange={ (e) => setStructure(structure => ({...structure, designationEn: e.currentTarget.value})) }
 								size="small"
 								id="designationEn"
 								name="designationEn"
@@ -277,8 +277,8 @@ const EmployeeDetails = (props : any) => {
 							<TextField
 								required
 								fullWidth
-								value={structure.designationFr}
-								onChange={ (e) => setStructure(structure => ({...structure, designationFr: e.currentTarget.value})) }
+								//value={structure.designationFr}
+								//onChange={ (e) => setStructure(structure => ({...structure, designationFr: e.currentTarget.value})) }
 								size="small"
 								id="designationFr"
 								name="designationFr"
@@ -297,8 +297,8 @@ const EmployeeDetails = (props : any) => {
 							<TextField
 								required
 								sx={{width:'40%'}}
-								value={structure.acronymAr}
-								onChange={ (e) => setStructure(structure => ({...structure, acronymAr: e.currentTarget.value})) }
+								//value={structure.acronymAr}
+								//onChange={ (e) => setStructure(structure => ({...structure, acronymAr: e.currentTarget.value})) }
 								size="small"
 								id="acronymAr"
 								name="acronymAr"
@@ -316,8 +316,8 @@ const EmployeeDetails = (props : any) => {
 							<TextField
 								required
 								sx={{width:'40%'}}
-								value={structure.acronymEn}
-								onChange={ (e) => setStructure(structure => ({...structure, acronymEn: e.currentTarget.value})) }
+								//value={structure.acronymEn}
+								//onChange={ (e) => setStructure(structure => ({...structure, acronymEn: e.currentTarget.value})) }
 								size="small"
 								id="acronymEn"
 								name="acronymEn"
@@ -335,8 +335,8 @@ const EmployeeDetails = (props : any) => {
 							<TextField
 								required
 								sx={{width:'40%'}}
-								value={structure.acronymFr}
-								onChange={ (e) => setStructure(structure => ({...structure, acronymFr: e.currentTarget.value})) }
+								//value={structure.acronymFr}
+								//onChange={ (e) => setStructure(structure => ({...structure, acronymFr: e.currentTarget.value})) }
 								size="small"
 								id="acronymFr"
 								name="acronymFr"

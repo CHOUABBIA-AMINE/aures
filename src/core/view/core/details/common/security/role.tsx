@@ -4,22 +4,24 @@ import { useState } 			from "react";
 import { useLocation } 			from "react-router-dom";
 import { useParams } 			from "react-router-dom";
 
-import { Accordion } 			from "@mui/material";
+import { useSnackbar } 			from "notistack";
+
+import { Accordion} 			from "@mui/material";
 import { AccordionDetails } 	from "@mui/material";
 import { AccordionSummary } 	from "@mui/material";
 import { Box } 					from "@mui/material";
+import { Button } 				from "@mui/material";
 import { Card } 				from "@mui/material";
 import { CardHeader } 			from "@mui/material";
 import { Checkbox } 			from "@mui/material";
+import { Container } 			from "@mui/material";
 import { Divider } 				from "@mui/material";
+import { FormControl } 			from "@mui/material";
+import { Grid } 				from "@mui/material";
 import { List } 				from "@mui/material";
 import { ListItemButton } 		from "@mui/material";
 import { ListItemIcon } 		from "@mui/material";
 import { ListItemText } 		from "@mui/material";
-import { Container } 			from "@mui/material";
-import { FormControl } 			from "@mui/material";
-import { Grid } 				from "@mui/material";
-import { Button } 				from "@mui/material";
 import { Paper } 				from "@mui/material";
 import { TextField } 			from "@mui/material";
 import { Typography } 			from "@mui/material";
@@ -42,6 +44,7 @@ const RoleDetails = (props : any) => {
 	const location 				= useLocation();
 	const params 				= useParams();
 	let readOnly 				= params.action === 'edit' ? false : true;
+	const { enqueueSnackbar } 	= useSnackbar();
 	const { getUrl, getBasedUrl, patchUrl, postBasedUrl} = useHTTP();
 
 	const [appData, setAppData] 			= useState<CheckedAuthority[]>([]);
@@ -162,14 +165,14 @@ const RoleDetails = (props : any) => {
 				name 		: role.name,
 				authorities : modelData.map(model => model.authority._links.self.href)
 			})).then((response) => {
-
+				enqueueSnackbar('Entity updated successfully!', {variant: 'success'});
 			})
 		}else{
 			postBasedUrl("role", JSON.stringify({
 				name 		: role.name,
 				authorities : modelData.map(model => model.authority._links.self.href)
 			})).then((response) => {
-			
+				enqueueSnackbar('Entity created successfully!', {variant: 'success'});
 			})
 		}
 	}

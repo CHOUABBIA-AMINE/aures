@@ -1,5 +1,7 @@
 import './aures.css';
 
+import { SnackbarProvider } 	from 'notistack';
+
 import { useState } 			from 'react';
 
 import { Box } 					from '@mui/material';
@@ -26,6 +28,7 @@ function Aures() {
 		return authority.indexOf(auth) !== -1 ? true : false;
 	}
 	return (
+		<SnackbarProvider maxSnack={3} autoHideDuration={2000}>
 		<NavContext.Provider value={{menu, setMenu}}>
 		<LocalizationProvider dateAdapter={AdapterDayjs}>
 		<AuthContext.Provider value={{ user , setUser, token, setToken, authority, setAuthority, hasAuthority }}>
@@ -40,6 +43,7 @@ function Aures() {
 		</AuthContext.Provider>
 		</LocalizationProvider>
 		</NavContext.Provider>
+		</SnackbarProvider>
 	);
 }
 export default Aures;
