@@ -149,7 +149,7 @@ const JobDetails = (props : any) => {
 								required
 								fullWidth
 								value={job.designationAr}
-								onChange={(e) => setJob(job => ({ ...job, designationAr: e.currentTarget.value }))}
+								onChange={(e) => setJob(job => ({ ...job, designationAr: e.target.value }))}
 								size="small"
 								id="designationAr"
 								name="designationAr"
@@ -167,7 +167,7 @@ const JobDetails = (props : any) => {
 								required
 								fullWidth
 								value={job.designationEn}
-								onChange={(e) => setJob(job => ({ ...job, designationEn: e.currentTarget.value }))}
+								onChange={(e) => setJob(job => ({ ...job, designationEn: e.target.value }))}
 								size="small"
 								id="designationEn"
 								name="designationEn"
@@ -185,7 +185,7 @@ const JobDetails = (props : any) => {
 								required
 								fullWidth
 								value={job.designationFr}
-								onChange={(e) => setJob(job => ({ ...job, designationFr: e.currentTarget.value }))}
+								onChange={(e) => setJob(job => ({ ...job, designationFr: e.target.value }))}
 								size="small"
 								id="designationFr"
 								name="designationFr"

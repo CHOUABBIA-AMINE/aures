@@ -253,7 +253,7 @@ const RoleDetails = (props : any) => {
 								required
 								fullWidth
 								value={role.name}
-								onChange={ (e) => setRole(role => ({...role, name: e.currentTarget.value})) }
+								onChange={ (e) => setRole(role => ({...role, name: e.target.value})) }
 								size="small"
 								id="name"
 								name="name"

@@ -272,7 +272,7 @@ const UserDetails = (props : any) => {
 								required
 								fullWidth
 								value={user.username}
-								onChange={ (e) => setUser(user => ({...user, username: e.currentTarget.value})) }
+								onChange={ (e) => setUser(user => ({...user, username: e.target.value})) }
 								size="small"
 								id="username"
 								name="username"
@@ -292,7 +292,7 @@ const UserDetails = (props : any) => {
 								required
 								fullWidth
 								value={user.password}
-								onChange={ (e) => setUser(user => ({...user, password: e.currentTarget.value })) }
+								onChange={ (e) => setUser(user => ({...user, password: e.target.value })) }
 								size="small"
 								id="password"
 								type={showPassword ? 'text' : 'password'}

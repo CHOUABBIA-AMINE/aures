@@ -28,7 +28,7 @@ function Aures() {
 		return authority.indexOf(auth) !== -1 ? true : false;
 	}
 	return (
-		<SnackbarProvider maxSnack={3} autoHideDuration={2000}>
+		<SnackbarProvider maxSnack={3} autoHideDuration={1200} anchorOrigin={{horizontal: "center", vertical: "bottom"}}>
 		<NavContext.Provider value={{menu, setMenu}}>
 		<LocalizationProvider dateAdapter={AdapterDayjs}>
 		<AuthContext.Provider value={{ user , setUser, token, setToken, authority, setAuthority, hasAuthority }}>

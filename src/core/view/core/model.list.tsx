@@ -166,7 +166,7 @@ function ModelList() {
                     variant="subtitle1"
                     component="div"
                 >
-                    User List
+                    {model} List
                 </Typography>
                 <Input placeholder="Search" sx={{ width : '340px'}} />
                 <IconButton type="button" sx={{ p: '10px' }} aria-label="search">

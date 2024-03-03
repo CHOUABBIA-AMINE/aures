@@ -213,7 +213,7 @@ const StructureDetails = (props : any) => {
 								required
 								fullWidth
 								value={structure.designationAr}
-								onChange={ (e) => setStructure(structure => ({...structure, designationAr: e.currentTarget.value})) }
+								onChange={ (e) => setStructure(structure => ({...structure, designationAr: e.target.value})) }
 								size="small"
 								id="designationAr"
 								name="designationAr"
@@ -232,7 +232,7 @@ const StructureDetails = (props : any) => {
 								required
 								fullWidth
 								value={structure.designationEn}
-								onChange={ (e) => setStructure(structure => ({...structure, designationEn: e.currentTarget.value})) }
+								onChange={ (e) => setStructure(structure => ({...structure, designationEn: e.target.value})) }
 								size="small"
 								id="designationEn"
 								name="designationEn"
@@ -251,7 +251,7 @@ const StructureDetails = (props : any) => {
 								required
 								fullWidth
 								value={structure.designationFr}
-								onChange={ (e) => setStructure(structure => ({...structure, designationFr: e.currentTarget.value})) }
+								onChange={ (e) => setStructure(structure => ({...structure, designationFr: e.target.value})) }
 								size="small"
 								id="designationFr"
 								name="designationFr"
@@ -271,7 +271,7 @@ const StructureDetails = (props : any) => {
 								required
 								sx={{width:'40%'}}
 								value={structure.acronymAr}
-								onChange={ (e) => setStructure(structure => ({...structure, acronymAr: e.currentTarget.value})) }
+								onChange={ (e) => setStructure(structure => ({...structure, acronymAr: e.target.value})) }
 								size="small"
 								id="acronymAr"
 								name="acronymAr"
@@ -290,7 +290,7 @@ const StructureDetails = (props : any) => {
 								required
 								sx={{width:'40%'}}
 								value={structure.acronymEn}
-								onChange={ (e) => setStructure(structure => ({...structure, acronymEn: e.currentTarget.value})) }
+								onChange={ (e) => setStructure(structure => ({...structure, acronymEn: e.target.value})) }
 								size="small"
 								id="acronymEn"
 								name="acronymEn"
