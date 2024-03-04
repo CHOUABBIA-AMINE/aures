@@ -23,7 +23,7 @@ const SidenavItem = (props : NavItem)=>{
     //const [open, setOpen] = useState(false);
     return (
         <>
-        <ListItemButton key={props.name} onClick={() => typeof props.link === 'string' ? navigate(props.link) : setMenu(props.name)/*setOpen(()=>{ return !open;})*/}>
+        <ListItemButton key={props.name} onClick={() => typeof props.link === 'string' ? navigate(props.link) : props.name !== menu ? setMenu(props.name) : setMenu("")}>
             <ListItemIcon key={"icon-" + props.name}>
                 {React.createElement(props.icon)}
             </ListItemIcon>
