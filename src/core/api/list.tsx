@@ -11,8 +11,10 @@ const job = [
 ];
 const employee = [
     { id: 'id',             name: 'Id',                 width: '20px',              align: 'center',    type:"number" },
-    { id: 'serial',         name: 'Matricule',          width: '30%',               align: 'left',      type:"text" },
-    { id: 'nameLt',         name: 'Name',               width: 'calc(70%-120px)',   align: 'left',      type:"text" }
+    { id: 'serial',         name: 'Matricule',          width: '15%',               align: 'left',      type:"text" },
+    { id: 'militaryRank.designationFr',  name: 'Rank',  width: '20%',               align: 'left',      type:"text" },
+    { id: 'person.nameLt',  name: 'Name',               width: 'calc(50%-120px)',   align: 'left',      type:"text" },
+    { id: 'job.designationFr',  name: 'Job',            width: '20%',               align: 'left',      type:"text" }
 ];
 const user = [
     { id: 'id',             name: 'Id',                 width: '20px',              align: 'center',    type:"number" },

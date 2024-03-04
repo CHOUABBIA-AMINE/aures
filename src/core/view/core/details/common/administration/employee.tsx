@@ -1,4 +1,5 @@
 import dayjs 					from "dayjs";
+import { useSnackbar } 			from "notistack";
 
 import { useEffect } 			from "react";
 import { useState } 			from "react";
@@ -6,16 +7,16 @@ import { useLocation } 			from "react-router-dom";
 import { useParams } 			from "react-router-dom";
 
 import { Autocomplete } 		from "@mui/material";
-import { Select } 				from "@mui/material";
-import { debounce } 			from "@mui/material";
-import { MenuItem } 			from "@mui/material";
-import { InputLabel } 			from "@mui/material";
 import { Box } 					from "@mui/material";
-import { Container } 			from "@mui/material";
-import { FormControl } 			from "@mui/material";
-import { Grid } 				from "@mui/material";
 import { Button } 				from "@mui/material";
+import { Container } 			from "@mui/material";
+import { debounce } 			from "@mui/material";
+import { FormControl } 			from "@mui/material";
+import { InputLabel } 			from "@mui/material";
+import { Grid } 				from "@mui/material";
+import { MenuItem } 			from "@mui/material";
 import { Paper } 				from "@mui/material";
+import { Select } 				from "@mui/material";
 import { TextField } 			from "@mui/material";
 import { Typography } 			from "@mui/material";
 
@@ -38,7 +39,8 @@ const EmployeeDetails = (props : any) => {
 
 	const location 					= useLocation();
 	const params 					= useParams();
-	
+	const { enqueueSnackbar } 		= useSnackbar();
+
 	let readOnly 					= params.action === 'edit' ? false : true;
 	const { getUrl, getBasedUrl, patchUrl, postBasedUrl} = useHTTP();
 
@@ -108,7 +110,7 @@ const EmployeeDetails = (props : any) => {
 		getUrl(formatURL(location.state.modelId)).then((emp : any) => {
 			setEmployee({
 				serial			: emp.data.serial,
-				hiringDate		: emp.data.hiringDate,
+				hiringDate		: dayjs(emp.data.hiringDate),
 				_links          : {
 					employee       	:{
 						href            : emp.data._links.employee.href
@@ -127,15 +129,35 @@ const EmployeeDetails = (props : any) => {
 					}
 				}
 			})
-			/*getUrl(formatURL(response.data._links.person.href)).then((person) => {
-				setType(type.data !== undefined ? type.data._links.self.href : "" )
+			getUrl(formatURL(emp.data._links.person.href)).then((person) => {
+				if(person.data !== undefined){
+					let aux = person;
+					aux.data.birthDate = dayjs(aux.data.birthDate);
+					setPerson(person.data !== undefined ? aux.data : null );
+					getUrl(formatURL(person.data._links.birthState.href)).then((birthState) => {
+						setBirthSt(birthState.data._links.self.href)
+					})
+					getUrl(formatURL(person.data._links.addressState.href)).then((addressState) => {
+						setAddressSt(addressState.data._links.self.href)
+					})
+				}
 			});
-			getUrl(formatURL(response.data._links.person.href)).then((militaryRank) => {
-				setType(type.data !== undefined ? type.data._links.self.href : "" )
+			getUrl(formatURL(emp.data._links.militaryRank.href)).then((militaryRank) => {
+				getUrl(formatURL(militaryRank.data._links.militaryCategory.href)).then((militaryCategory) => {
+					setMCategory(militaryCategory.data._links.militaryRanks.href);
+					getRanks(militaryCategory.data._links.militaryRanks.href, militaryRank.data._links.self.href);
+				})
 			});
-			getUrl(formatURL(response.data._links.person.href)).then((person) => {
-				setType(type.data !== undefined ? type.data._links.self.href : "" )
-			});*/
+			getUrl(formatURL(emp.data._links.job.href)).then((job) => {
+				if(job.data){
+					getUrl(formatURL(job.data._links.structure.href)).then((structure) => {
+						setStructures(Array.of<Structure>(structure.data));
+						setStructure(structure.data);
+					})
+					setJobs(Array.of<Job>(job.data));
+					setJob(job.data);
+				}
+			});
 		});
 	}
 
@@ -152,39 +174,67 @@ const EmployeeDetails = (props : any) => {
 	}
 
 	const patchData = ()=>{
-		/*if(location.state != null){
+		if(location.state != null){
 			patchUrl(formatURL(location.state.modelId), JSON.stringify({
-				serial			: employee.data.serial,
-				hiringDate		: employee.data.hiringDate,
-				designationFr 	: structure.designationFr,
-				acronymAr 		: structure.acronymAr,
-				acronymEn 		: structure.acronymEn,
-				acronymFr 		: structure.acronymFr,
-				structureType  	: type,
-				structureUp  	: parent?._links.self.href
-			})).then((response) => {
-
+				serial          : employee.serial,
+				hiringDate      : employee.hiringDate,
+				militaryRank	: mRank,
+				job       		: job?._links.self.href
+			})).then((employee) => {
+				if(employee.data !== undefined){
+					setEmployee(employee.data);
+					getUrl(formatURL(employee.data._links.person.href)).then((_person) => {
+						patchUrl(formatURL(_person.data._links.person.href), JSON.stringify({
+							firstnameAr     : person.firstnameAr,
+							lastnameAr      : person.lastnameAr,
+							firstnameLt     : person.firstnameLt,
+							lastnameLt      : person.lastnameLt,
+							birthDate       : person.birthDate,
+							birthPlace      : person.birthPlace,
+							address         : person.address,
+							birthState  	: birthSt,
+							addressState  	: addressSt
+						})).then((person) => {
+							setPerson(person.data !== undefined ? person.data : null);
+							enqueueSnackbar('Entity updated successfully !', {variant: 'success'});
+						})
+					})
+				}
 			})
 		}else{
-			postBasedUrl("structure", JSON.stringify({
-				designationAr 	: structure.designationAr,
-				designationEn 	: structure.designationEn,
-				designationFr 	: structure.designationFr,
-				acronymAr 		: structure.acronymAr,
-				acronymEn 		: structure.acronymEn,
-				acronymFr 		: structure.acronymFr,
-				structureType  	: type,
-				structureUp  	: parent?._links.self.href
-			})).then((response) => {
-			
+			postBasedUrl("person", JSON.stringify({
+				firstnameAr     : person.firstnameAr,
+				lastnameAr      : person.lastnameAr,
+				firstnameLt     : person.firstnameLt,
+				lastnameLt      : person.lastnameLt,
+				birthDate       : person.birthDate,
+				birthPlace      : person.birthPlace,
+				address         : person.address,
+				birthState  	: birthSt,
+				addressState  	: addressSt
+			})).then((person) => {
+				if(person.data !== undefined){
+					setPerson(person.data);
+					postBasedUrl("employee", JSON.stringify({
+						serial          : employee.serial,
+						hiringDate      : employee.hiringDate,
+						person     		: person.data._links.self.href,
+						militaryRank	: mRank,
+						job       		: job?._links.self.href
+					})).then((employee) => {
+						setEmployee(employee.data !== undefined ? employee.data : null);
+						enqueueSnackbar('Entity created successfully !', {variant: 'success'});
+					})
+				}
 			})
-		}*/
+		}
 	}
 
-	const getRanks = (categoryLink : string) => {
+	const getRanks = (categoryLink : string, rankLink : string ="") => {
 		if(categoryLink !== "")
 		getUrl(categoryLink).then((mRanks) => {
 			setMRanks(mRanks.data._embedded.militaryRank);
+			if(rankLink !== "") setMRank(rankLink)
 		});
 	}
 
@@ -359,6 +409,7 @@ const EmployeeDetails = (props : any) => {
 							</Select>
 						</FormControl>
 					</Grid>
+					
 					<Grid item xs={8} sm={8}>
 						<FormControl fullWidth size="small">
 							<TextField
@@ -410,7 +461,7 @@ const EmployeeDetails = (props : any) => {
 								required
 								fullWidth
 								value={employee.serial}
-								onChange={ (e) => setPerson(employee => ({...employee, serial: e.target.value})) }
+								onChange={ (e) => setEmployee(employee => ({...employee, serial: e.target.value})) }
 								size="small"
 								id="serial"
 								name="serial"
@@ -492,7 +543,7 @@ const EmployeeDetails = (props : any) => {
 						</FormControl>
 					</Grid>
 					<Grid item xs={4} sm={4}></Grid>
-					
+
 					<Grid item xs={4} sm={4}>
 						<Autocomplete
 							id="structure"

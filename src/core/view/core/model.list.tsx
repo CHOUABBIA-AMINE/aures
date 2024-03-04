@@ -56,6 +56,16 @@ function ModelList() {
     const [size, setSize]       = useState(5);
     const [total, setTotal]     = useState(0);
 
+    const decodeId = (id : string, row : any) => {
+        let ids : string[] = id.split(".");
+        
+        switch (ids.length) {
+            case 1: return row[id];
+            case 2: return row[ids[0]][ids[1]];
+            case 3: return row[ids[0]][ids[1]][ids[2]];
+            default : return row[id];
+        }
+    }
     const handlePage = (event : any, newpage : number) => {
         setPage(newpage)
     }
@@ -102,6 +112,7 @@ function ModelList() {
     }
 
     useEffect(() => {
+        setRow([]);
         if(entity !== undefined){
             setModel(entity);
             if(model !== entity){
@@ -111,6 +122,9 @@ function ModelList() {
         }else{
             setModel("");
         }
+    }, [entity])
+    useEffect(() => {
+        
         let projection = proj !== undefined ? "&projection=" + proj : ""
         getBasedUrl(entity+"?page=" + page + "&size=" +size + "&sort=" + orderBy + "," + order + projection).then((response) => {
             let rows : []= response.data._embedded[model];
@@ -118,7 +132,7 @@ function ModelList() {
             setTotal(response.data.page.totalElements);
         })
 
-    },[ model, page, size, orderBy, order, entity, total])
+    },[ model, page, size, orderBy, order, total])
 
     const Actions = (modelId : any) =>{
         return(
@@ -235,7 +249,7 @@ function ModelList() {
                                         >
                                             {Lists.get(model) && Lists.get(model).map((column : any, j:number) => {
                                                 let value;
-                                                j === 0 ? value = page * size + i+1 : value = row[column.id];
+                                                j === 0 ? value = page * size + i+1 : value = decodeId(column.id, row);
                                                 return (
                                                     <TableCell align={ column.align } key={j + " - "+ value}>
                                                         {column.type === "date" ? dayjs(value).format('YYYY-MM-DD') : value}

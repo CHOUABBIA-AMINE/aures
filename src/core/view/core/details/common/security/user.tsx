@@ -179,7 +179,7 @@ const UserDetails = (props : any) => {
 					locked      : user.locked ? 1 : 0,
 					roles		: modelData.map(model => model.role._links.self.href)
 				})).then((response) => {
-					enqueueSnackbar('Entity created successfully !', {variant: 'success'});
+					enqueueSnackbar('Entity updated successfully !', {variant: 'success'});
 				})
 			}
 		}else{
@@ -191,7 +191,7 @@ const UserDetails = (props : any) => {
 				locked      : user.locked ? 1 : 0,
 				roles		: modelData.map(model => model.role._links.self.href)
 			})).then((response) => {
-			
+				enqueueSnackbar('Entity created successfully !', {variant: 'success'});
 			})
 		}
 	}
