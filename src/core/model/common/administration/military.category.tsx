@@ -4,10 +4,13 @@ interface MilitaryCategory {
     designationFr   : string;
     _links          : {
         militaryCategory    :{
-            href            : string
+            href                : string
         },
-        self            :{
-            href            : string
+        self                :{
+            href                : string
+        },
+        militaryRanks       :{
+            href                : string
         }
     }
 }
