@@ -55,6 +55,16 @@ const EmployeeDetails = (props : any) => {
 	const [ structure, setStructure ]	= useState<Structure | null>(null);
 	const [ jobs, setJobs ]				= useState<Job[]>([]);
 	const [ job, setJob ]				= useState<Job | null>(null);
+	const [ image, setImage ] 			= useState()
+    const [ preview, setPreview] 		= useState<string>()
+
+	const onSelectFile = (e : any) => {
+        if (!e.target.files || e.target.files.length === 0) {
+            setImage(undefined);
+            return;
+        }
+        setImage(e.target.files[0])
+    }
 
 	const [ person, setPerson ]			= useState<Person>({
 		firstnameAr     : "",
@@ -239,6 +249,16 @@ const EmployeeDetails = (props : any) => {
 	}
 
 	useEffect(() => {
+        if (!image) {
+            setPreview(undefined)
+            return
+        }
+        const objectUrl = URL.createObjectURL(image)
+        setPreview(objectUrl)
+        return () => URL.revokeObjectURL(objectUrl)
+    }, [image])
+
+	useEffect(() => {
 
 		getBasedUrl("state").then((states) => {
 			setStates(states.data._embedded.state);
@@ -271,306 +291,326 @@ const EmployeeDetails = (props : any) => {
 						</Button>
 					</Box>
 				</Box>
-				<Grid container spacing={1}>			
+				<Grid container spacing={1} direction={"column"}>			
 					
-					<Grid item xs={4} sm={4}>
-						<FormControl fullWidth size="small">
-							<TextField
-								required
-								fullWidth
-								value={person.firstnameAr}
-								onChange={ (e) => setPerson(person => ({...person, firstnameAr: e.target.value})) }
-								size="small"
-								id="firstnameAr"
-								name="firstnameAr"
-								label="First Name (Ar)"
-								autoComplete="off"
-								variant="outlined"
-								inputProps={{ 
-									readOnly: readOnly 
-								}}
-							/>
-						</FormControl>
-					</Grid>
-					<Grid item xs={4} sm={4}>
-						<FormControl fullWidth size="small">
-							<TextField
-								required
-								fullWidth
-								value={person.lastnameAr}
-								onChange={ (e) => setPerson(person => ({...person, lastnameAr: e.target.value})) }
-								size="small"
-								id="lastnameAr"
-								name="lastnameAr"
-								label="Last Name (Ar)"
-								autoComplete="off"
-								variant="outlined"
-								inputProps={{ 
-									readOnly: readOnly 
-								}}
-							/>
-						</FormControl>
-					</Grid>
-					<Grid item xs={4} sm={4}></Grid>
+					<Grid item>
+						<Grid container spacing={1} direction={"row"}>
+							<Grid item xs={8} sm={8}>
+								<Grid container spacing={1} direction={"row"}>
+									<Grid item xs={6} sm={6}>
+										<FormControl fullWidth size="small">
+											<TextField
+												required
+												fullWidth
+												value={employee.serial}
+												onChange={ (e) => setEmployee(employee => ({...employee, serial: e.target.value})) }
+												size="small"
+												id="serial"
+												name="serial"
+												label="Serial"
+												autoComplete="off"
+												variant="outlined"
+												inputProps={{ 
+													readOnly: readOnly 
+												}}
+											/>
+										</FormControl>
+									</Grid>
+									<Grid item xs={6} sm={6}>
+										<FormControl fullWidth size="small">
+											<DatePicker 
+												format="DD/MM/YYYY" 
+												label="Hiring Date" 
+												readOnly={readOnly} 
+												slotProps={{ textField: { size: 'small', required: true }}} 
+												value={employee.hiringDate} 
+												onChange={ changedDate => setEmployee(employee => ({...employee, hiringDate:changedDate})) }
+											/>
+										</FormControl>
+									</Grid>
 
-					<Grid item xs={4} sm={4}>
-						<FormControl fullWidth size="small">
-							<TextField
-								required
-								fullWidth
-								value={person.firstnameLt}
-								onChange={ (e) => setPerson(person => ({...person, firstnameLt: e.target.value})) }
-								size="small"
-								id="firstnameLt"
-								name="firstnameLt"
-								label="First Name (Lt)"
-								autoComplete="off"
-								variant="outlined"
-								inputProps={{ 
-									readOnly: readOnly 
-								}}
-							/>
-						</FormControl>
-					</Grid>
-					<Grid item xs={4} sm={4}>
-						<FormControl fullWidth size="small">
-							<TextField
-								required
-								fullWidth
-								value={person.lastnameLt}
-								onChange={ (e) => setPerson(person => ({...person, lastnameLt: e.target.value})) }
-								size="small"
-								id="lastnameLt"
-								name="lastnameLt"
-								label="Last Name (Lt)"
-								autoComplete="off"
-								variant="outlined"
-								inputProps={{ 
-									readOnly: readOnly 
-								}}
-							/>
-						</FormControl>
-					</Grid>
-					<Grid item xs={4} sm={4}></Grid>
+									<Grid item xs={6} sm={6}>
+										<FormControl fullWidth size="small" >
+											<InputLabel id="mCategoryLabel">Category</InputLabel>
+											<Select
+												required
+												fullWidth
+												size="small"
+												labelId="mCategoryLabel"
+												id="mCategory"
+												variant="outlined"
+												value={mCategory}
+												label="Category"
+												
+												onChange={(e) => {
+														setMCategory(e.target.value); 
+														getRanks(e.target.value);
+													}
+												}
+											>
+												{
+													mCategors.length > 0 && mCategors.map(category => {
+														return(
+															<MenuItem key={category._links.self.href} value={category._links.militaryRanks.href}>{category.designationFr}</MenuItem>
+														);
+													})
+												}
+											</Select>
+										</FormControl>
+									</Grid>
+									<Grid item xs={6} sm={6}>
+										<FormControl fullWidth size="small" >
+											<InputLabel id="mRankLabel">Rank</InputLabel>
+											<Select
+												required
+												fullWidth
+												size="small"
+												labelId="mRankLabel"
+												id="mRank"
+												variant="outlined"
+												value={mRank}
+												label="Rank"
+												
+												onChange={(e) => setMRank(e.target.value)}
+											>
+												{
+													mRanks.length > 0 && mRanks.map(rank => {
+														return(
+															<MenuItem key={rank._links.self.href} value={rank._links.self.href}>{rank.designationFr}</MenuItem>
+														);
+													})
+												}
+											</Select>
+										</FormControl>
+									</Grid>
 
-					<Grid item xs={4} sm={4}>
-						<FormControl fullWidth size="small">
-							<DatePicker 
-								format="DD/MM/YYYY" 
-								label="Birth Date" 
-								readOnly={readOnly} 
-								slotProps={{ textField: { size: 'small', required: true }}} 
-								value={person.birthDate} 
-								onChange={ changedDate => setPerson(person => ({...person, birthDate:changedDate})) }
-							/>
-						</FormControl>
+									<Grid item xs={6} sm={6}>
+										<Autocomplete
+											id="structure"
+											fullWidth
+											size="small"
+											options={structures}
+											value={structure}
+											onChange={(e, value) => setStructure(value)}
+											getOptionLabel={(structure) => structure.designationFr}
+											isOptionEqualToValue={(option, value) => option._links.self.href === value._links.self.href}
+											renderInput={(params) => <TextField {...params} label="Structure" onChange={debounce(filterStrBy, 200)}/>}
+										/>
+									</Grid>
+									<Grid item xs={6} sm={6}>
+										<Autocomplete
+											id="job"
+											fullWidth
+											size="small"
+											options={jobs}
+											value={job}
+											onChange={(e, value) => setJob(value)}
+											getOptionLabel={(job) => job.designationFr}
+											isOptionEqualToValue={(option, value) => option._links.self.href === value._links.self.href}
+											renderInput={(params) => <TextField {...params} label="Job" onChange={debounce(filterJobBy, 200)}/>}
+										/>
+									</Grid>
+
+									<Grid item xs={6} sm={6}>
+										<FormControl fullWidth size="small">
+											<TextField
+												required
+												fullWidth
+												value={person.firstnameAr}
+												onChange={ (e) => setPerson(person => ({...person, firstnameAr: e.target.value})) }
+												size="small"
+												id="firstnameAr"
+												name="firstnameAr"
+												label="First Name (Ar)"
+												autoComplete="off"
+												variant="outlined"
+												inputProps={{ 
+													readOnly: readOnly 
+												}}
+											/>
+										</FormControl>
+									</Grid>
+									<Grid item xs={6} sm={6}>
+										<FormControl fullWidth size="small">
+											<TextField
+												required
+												fullWidth
+												value={person.lastnameAr}
+												onChange={ (e) => setPerson(person => ({...person, lastnameAr: e.target.value})) }
+												size="small"
+												id="lastnameAr"
+												name="lastnameAr"
+												label="Last Name (Ar)"
+												autoComplete="off"
+												variant="outlined"
+												inputProps={{ 
+													readOnly: readOnly 
+												}}
+											/>
+										</FormControl>
+									</Grid>
+
+									<Grid item xs={6} sm={6}>
+										<FormControl fullWidth size="small">
+											<TextField
+												required
+												fullWidth
+												value={person.firstnameLt}
+												onChange={ (e) => setPerson(person => ({...person, firstnameLt: e.target.value})) }
+												size="small"
+												id="firstnameLt"
+												name="firstnameLt"
+												label="First Name (Lt)"
+												autoComplete="off"
+												variant="outlined"
+												inputProps={{ 
+													readOnly: readOnly 
+												}}
+											/>
+										</FormControl>
+									</Grid>
+									<Grid item xs={6} sm={6}>
+										<FormControl fullWidth size="small">
+											<TextField
+												required
+												fullWidth
+												value={person.lastnameLt}
+												onChange={ (e) => setPerson(person => ({...person, lastnameLt: e.target.value})) }
+												size="small"
+												id="lastnameLt"
+												name="lastnameLt"
+												label="Last Name (Lt)"
+												autoComplete="off"
+												variant="outlined"
+												inputProps={{ 
+													readOnly: readOnly 
+												}}
+											/>
+										</FormControl>
+									</Grid>
+								</Grid>
+							</Grid>
+							<Grid item xs={4} sm={4}>
+								<Grid container spacing={1} direction={"row"}>
+									<input type='file' onChange={onSelectFile} />
+            						{image &&  <img src={preview} /> }
+								</Grid>
+							</Grid>
+						</Grid>
 					</Grid>
-					<Grid item xs={4} sm={4}>
-						<FormControl fullWidth size="small">
-							<TextField
-								required
-								fullWidth
-								value={person.birthPlace}
-								onChange={ (e) => setPerson(person => ({...person, birthPlace: e.target.value})) }
-								size="small"
-								id="birthPlace"
-								name="birthPlace"
-								label="Birth Place"
-								autoComplete="off"
-								variant="outlined"
-								inputProps={{ 
-									readOnly: readOnly 
-								}}
-							/>
-						</FormControl>
+
+					<Grid item>
+						<Grid container spacing={1} direction={"row"}>
+							<Grid item xs={4} sm={4}>
+								<FormControl fullWidth size="small">
+									<DatePicker 
+										format="DD/MM/YYYY" 
+										label="Birth Date" 
+										readOnly={readOnly} 
+										slotProps={{ textField: { size: 'small', required: true }}} 
+										value={person.birthDate} 
+										onChange={ changedDate => setPerson(person => ({...person, birthDate:changedDate})) }
+									/>
+								</FormControl>
+							</Grid>
+							<Grid item xs={4} sm={4}>
+								<FormControl fullWidth size="small">
+									<TextField
+										required
+										fullWidth
+										value={person.birthPlace}
+										onChange={ (e) => setPerson(person => ({...person, birthPlace: e.target.value})) }
+										size="small"
+										id="birthPlace"
+										name="birthPlace"
+										label="Birth Place"
+										autoComplete="off"
+										variant="outlined"
+										inputProps={{ 
+											readOnly: readOnly 
+										}}
+									/>
+								</FormControl>
+							</Grid>
+							<Grid item xs={4} sm={4}>
+								<FormControl fullWidth size="small" >
+									<InputLabel id="birthStateLabel">Birth State</InputLabel>
+									<Select
+										required
+										fullWidth
+										size="small"
+										labelId="birthStateLabel"
+										id="birthState"
+										variant="outlined"
+										value={birthSt}
+										label="Birth State"
+										
+										onChange={(e) => setBirthSt(e.target.value)}
+									>
+										{
+											states.length > 0 && states.map(state => {
+												return(
+													<MenuItem key={state._links.self.href} value={state._links.self.href}>{state.designationLt}</MenuItem>
+												);
+											})
+										}
+									</Select>
+								</FormControl>
+							</Grid>
+
+							<Grid item xs={8} sm={8}>
+								<FormControl fullWidth size="small">
+									<TextField
+										required
+										fullWidth
+										value={person.address}
+										onChange={ (e) => setPerson(person => ({...person, address: e.target.value})) }
+										size="small"
+										id="address"
+										name="address"
+										label="Address"
+										autoComplete="off"
+										variant="outlined"
+										inputProps={{ 
+											readOnly: readOnly 
+										}}
+									/>
+								</FormControl>
+							</Grid>
+							<Grid item xs={4} sm={4}>
+								<FormControl fullWidth size="small" >
+									<InputLabel id="addressStateLabel">Address State</InputLabel>
+									<Select
+										required
+										fullWidth
+										size="small"
+										labelId="addressStateLabel"
+										id="addressState"
+										variant="outlined"
+										value={addressSt}
+										label="Address State"
+										
+										onChange={(e) => setAddressSt(e.target.value)}
+									>
+										{
+											states.length > 0 && states.map(state => {
+												return(
+													<MenuItem key={state._links.self.href} value={state._links.self.href}>{state.designationLt}</MenuItem>
+												);
+											})
+										}
+									</Select>
+								</FormControl>
+							</Grid>
+						</Grid>
 					</Grid>
-					<Grid item xs={4} sm={4}>
-						<FormControl fullWidth size="small" >
-							<InputLabel id="birthStateLabel">Birth State</InputLabel>
-							<Select
-								required
-								fullWidth
-								size="small"
-								labelId="birthStateLabel"
-								id="birthState"
-								variant="outlined"
-								value={birthSt}
-								label="Birth State"
-								
-								onChange={(e) => setBirthSt(e.target.value)}
-							>
-								{
-									states.length > 0 && states.map(state => {
-										return(
-											<MenuItem key={state._links.self.href} value={state._links.self.href}>{state.designationLt}</MenuItem>
-										);
-									})
-								}
-							</Select>
-						</FormControl>
-					</Grid>
+
+
 					
-					<Grid item xs={8} sm={8}>
-						<FormControl fullWidth size="small">
-							<TextField
-								required
-								fullWidth
-								value={person.address}
-								onChange={ (e) => setPerson(person => ({...person, address: e.target.value})) }
-								size="small"
-								id="address"
-								name="address"
-								label="Address"
-								autoComplete="off"
-								variant="outlined"
-								inputProps={{ 
-									readOnly: readOnly 
-								}}
-							/>
-						</FormControl>
-					</Grid>
-					<Grid item xs={4} sm={4}>
-						<FormControl fullWidth size="small" >
-							<InputLabel id="addressStateLabel">Address State</InputLabel>
-							<Select
-								required
-								fullWidth
-								size="small"
-								labelId="addressStateLabel"
-								id="addressState"
-								variant="outlined"
-								value={addressSt}
-								label="Address State"
-								
-								onChange={(e) => setAddressSt(e.target.value)}
-							>
-								{
-									states.length > 0 && states.map(state => {
-										return(
-											<MenuItem key={state._links.self.href} value={state._links.self.href}>{state.designationLt}</MenuItem>
-										);
-									})
-								}
-							</Select>
-						</FormControl>
-					</Grid>
 
-					<Grid item xs={4} sm={4}>
-						<FormControl fullWidth size="small">
-							<TextField
-								required
-								fullWidth
-								value={employee.serial}
-								onChange={ (e) => setEmployee(employee => ({...employee, serial: e.target.value})) }
-								size="small"
-								id="serial"
-								name="serial"
-								label="Serial"
-								autoComplete="off"
-								variant="outlined"
-								inputProps={{ 
-									readOnly: readOnly 
-								}}
-							/>
-						</FormControl>
-					</Grid>
-					<Grid item xs={4} sm={4}>
-						<FormControl fullWidth size="small">
-							<DatePicker 
-								format="DD/MM/YYYY" 
-								label="Hiring Date" 
-								readOnly={readOnly} 
-								slotProps={{ textField: { size: 'small', required: true }}} 
-								value={employee.hiringDate} 
-								onChange={ changedDate => setEmployee(employee => ({...employee, hiringDate:changedDate})) }
-							/>
-						</FormControl>
-					</Grid>
-					<Grid item xs={4} sm={4}></Grid>
 
-					<Grid item xs={4} sm={4}>
-						<FormControl fullWidth size="small" >
-							<InputLabel id="mCategoryLabel">Category</InputLabel>
-							<Select
-								required
-								fullWidth
-								size="small"
-								labelId="mCategoryLabel"
-								id="mCategory"
-								variant="outlined"
-								value={mCategory}
-								label="Category"
-								
-								onChange={(e) => {
-										setMCategory(e.target.value); 
-										getRanks(e.target.value);
-									}
-								}
-							>
-								{
-									mCategors.length > 0 && mCategors.map(category => {
-										return(
-											<MenuItem key={category._links.self.href} value={category._links.militaryRanks.href}>{category.designationFr}</MenuItem>
-										);
-									})
-								}
-							</Select>
-						</FormControl>
-					</Grid>
-					<Grid item xs={4} sm={4}>
-						<FormControl fullWidth size="small" >
-							<InputLabel id="mRankLabel">Rank</InputLabel>
-							<Select
-								required
-								fullWidth
-								size="small"
-								labelId="mRankLabel"
-								id="mRank"
-								variant="outlined"
-								value={mRank}
-								label="Rank"
-								
-								onChange={(e) => setMRank(e.target.value)}
-							>
-								{
-									mRanks.length > 0 && mRanks.map(rank => {
-										return(
-											<MenuItem key={rank._links.self.href} value={rank._links.self.href}>{rank.designationFr}</MenuItem>
-										);
-									})
-								}
-							</Select>
-						</FormControl>
-					</Grid>
-					<Grid item xs={4} sm={4}></Grid>
 
-					<Grid item xs={4} sm={4}>
-						<Autocomplete
-							id="structure"
-							fullWidth
-							size="small"
-							options={structures}
-							value={structure}
-							onChange={(e, value) => setStructure(value)}
-							getOptionLabel={(structure) => structure.designationFr}
-							isOptionEqualToValue={(option, value) => option._links.self.href === value._links.self.href}
-							renderInput={(params) => <TextField {...params} label="Structure" onChange={debounce(filterStrBy, 200)}/>}
-						/>
-					</Grid>
-					<Grid item xs={4} sm={4}>
-						<Autocomplete
-							id="job"
-							fullWidth
-							size="small"
-							options={jobs}
-							value={job}
-							onChange={(e, value) => setJob(value)}
-							getOptionLabel={(job) => job.designationFr}
-							isOptionEqualToValue={(option, value) => option._links.self.href === value._links.self.href}
-							renderInput={(params) => <TextField {...params} label="Job" onChange={debounce(filterJobBy, 200)}/>}
-						/>
-					</Grid>
-					<Grid item xs={4} sm={4}></Grid>
+
 					
 				</Grid>
 			</Paper>
