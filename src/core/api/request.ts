@@ -19,6 +19,27 @@ export const useHTTP = () => {
             return null;
     }
 
+    const uploadFile = (file : any) => {
+        const formData = new FormData();
+        formData.append('file',file)
+        return axios.post(API.uploadURL, formData, {
+            headers: { 
+                Authorization: `Bearer ${token}`,
+                'content-type': 'multipart/form-data'
+            }
+        });
+    }
+
+    const getFile = (fileId : number) => {
+        return API.uploadURL + "/" + fileId;
+        /*axios.get(API.uploadURL + "/" + fileId, {
+            headers: {  
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json; charset=utf-8'
+            }
+        });*/
+    }
+
     const getUrl = (url : string) => {
         return axios.get(url, {
             headers: {  
@@ -91,5 +112,5 @@ export const useHTTP = () => {
         });
     }
 
-    return {connect, getAuthority, getUrl, getBasedUrl, postUrl, postBasedUrl, patchUrl, patchBasedUrl, deleteUrl, deleteBasedUrl};
+    return {connect, getAuthority, uploadFile, getFile, getUrl, getBasedUrl, postUrl, postBasedUrl, patchUrl, patchBasedUrl, deleteUrl, deleteBasedUrl};
 }

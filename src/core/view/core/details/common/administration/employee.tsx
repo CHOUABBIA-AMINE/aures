@@ -1,3 +1,5 @@
+import "../../../../../picture.css"
+
 import dayjs 					from "dayjs";
 import { useSnackbar } 			from "notistack";
 
@@ -42,7 +44,7 @@ const EmployeeDetails = (props : any) => {
 	const { enqueueSnackbar } 		= useSnackbar();
 
 	let readOnly 					= params.action === 'edit' ? false : true;
-	const { getUrl, getBasedUrl, patchUrl, postBasedUrl} = useHTTP();
+	const { getUrl, getBasedUrl, patchUrl, postBasedUrl, uploadFile, getFile} = useHTTP();
 
 	const [ states, setStates ]			= useState<State[]>([]);
 	const [ birthSt, setBirthSt ]		= useState<string>("");
@@ -66,6 +68,10 @@ const EmployeeDetails = (props : any) => {
         setImage(e.target.files[0])
     }
 
+	const clickFileUploader = () => {
+		document.getElementById("imageSelector")?.click()
+	}
+
 	const [ person, setPerson ]			= useState<Person>({
 		firstnameAr     : "",
 		lastnameAr      : "",
@@ -74,6 +80,7 @@ const EmployeeDetails = (props : any) => {
 		birthDate       : dayjs(),
 		birthPlace      : "",
 		address         : "",
+		picture         : 0,
 		_links          : {
 			person          :{
 				href            : ""
@@ -85,9 +92,6 @@ const EmployeeDetails = (props : any) => {
 				href            : ""
 			},
 			addressState    :{
-				href            : ""
-			},
-			picture         :{
 				href            : ""
 			}
 		}
@@ -146,10 +150,16 @@ const EmployeeDetails = (props : any) => {
 					setPerson(person.data !== undefined ? aux.data : null );
 					getUrl(formatURL(person.data._links.birthState.href)).then((birthState) => {
 						setBirthSt(birthState.data._links.self.href)
-					})
+					});
 					getUrl(formatURL(person.data._links.addressState.href)).then((addressState) => {
 						setAddressSt(addressState.data._links.self.href)
-					})
+					});
+					/*if(person.data.picture !== 0){
+						getFile(person.data.picture).then((file) => {
+							setImage(file.data);
+							//console.log(file);
+						});
+					}*/
 				}
 			});
 			getUrl(formatURL(emp.data._links.militaryRank.href)).then((militaryRank) => {
@@ -194,49 +204,103 @@ const EmployeeDetails = (props : any) => {
 				if(employee.data !== undefined){
 					setEmployee(employee.data);
 					getUrl(formatURL(employee.data._links.person.href)).then((_person) => {
-						patchUrl(formatURL(_person.data._links.person.href), JSON.stringify({
-							firstnameAr     : person.firstnameAr,
-							lastnameAr      : person.lastnameAr,
-							firstnameLt     : person.firstnameLt,
-							lastnameLt      : person.lastnameLt,
-							birthDate       : person.birthDate,
-							birthPlace      : person.birthPlace,
-							address         : person.address,
-							birthState  	: birthSt,
-							addressState  	: addressSt
-						})).then((person) => {
-							setPerson(person.data !== undefined ? person.data : null);
-							enqueueSnackbar('Entity updated successfully !', {variant: 'success'});
-						})
+						if(image !== undefined){
+							uploadFile(image).then( _file => {
+								console.log(_file);
+								patchUrl(formatURL(_person.data._links.person.href), JSON.stringify({
+									firstnameAr     : person.firstnameAr,
+									lastnameAr      : person.lastnameAr,
+									firstnameLt     : person.firstnameLt,
+									lastnameLt      : person.lastnameLt,
+									birthDate       : person.birthDate,
+									birthPlace      : person.birthPlace,
+									address         : person.address,
+									birthState  	: birthSt,
+									addressState  	: addressSt,
+									picture  		: _file.data.id
+								})).then((person) => {
+									setPerson(person.data !== undefined ? person.data : null);
+									enqueueSnackbar('Entity updated successfully !', {variant: 'success'});
+								})
+							})
+						}else{
+							patchUrl(formatURL(_person.data._links.person.href), JSON.stringify({
+								firstnameAr     : person.firstnameAr,
+								lastnameAr      : person.lastnameAr,
+								firstnameLt     : person.firstnameLt,
+								lastnameLt      : person.lastnameLt,
+								birthDate       : person.birthDate,
+								birthPlace      : person.birthPlace,
+								address         : person.address,
+								birthState  	: birthSt,
+								addressState  	: addressSt
+							})).then((person) => {
+								setPerson(person.data !== undefined ? person.data : null);
+								enqueueSnackbar('Entity updated successfully !', {variant: 'success'});
+							})
+						}
 					})
 				}
 			})
 		}else{
-			postBasedUrl("person", JSON.stringify({
-				firstnameAr     : person.firstnameAr,
-				lastnameAr      : person.lastnameAr,
-				firstnameLt     : person.firstnameLt,
-				lastnameLt      : person.lastnameLt,
-				birthDate       : person.birthDate,
-				birthPlace      : person.birthPlace,
-				address         : person.address,
-				birthState  	: birthSt,
-				addressState  	: addressSt
-			})).then((person) => {
-				if(person.data !== undefined){
-					setPerson(person.data);
-					postBasedUrl("employee", JSON.stringify({
-						serial          : employee.serial,
-						hiringDate      : employee.hiringDate,
-						person     		: person.data._links.self.href,
-						militaryRank	: mRank,
-						job       		: job?._links.self.href
-					})).then((employee) => {
-						setEmployee(employee.data !== undefined ? employee.data : null);
-						enqueueSnackbar('Entity created successfully !', {variant: 'success'});
+			if(image !== undefined){
+				uploadFile(image).then( _file => {
+					console.log(_file);
+					postBasedUrl("person", JSON.stringify({
+						firstnameAr     : person.firstnameAr,
+						lastnameAr      : person.lastnameAr,
+						firstnameLt     : person.firstnameLt,
+						lastnameLt      : person.lastnameLt,
+						birthDate       : person.birthDate,
+						birthPlace      : person.birthPlace,
+						address         : person.address,
+						birthState  	: birthSt,
+						addressState  	: addressSt,
+						picture			: _file.data.id
+					})).then((person) => {
+						if(person.data !== undefined){
+							setPerson(person.data);
+							postBasedUrl("employee", JSON.stringify({
+								serial          : employee.serial,
+								hiringDate      : employee.hiringDate,
+								person     		: person.data._links.self.href,
+								militaryRank	: mRank,
+								job       		: job?._links.self.href
+							})).then((employee) => {
+								setEmployee(employee.data !== undefined ? employee.data : null);
+								enqueueSnackbar('Entity created successfully !', {variant: 'success'});
+							})
+						}
 					})
-				}
-			})
+				})
+			}else{
+				postBasedUrl("person", JSON.stringify({
+					firstnameAr     : person.firstnameAr,
+					lastnameAr      : person.lastnameAr,
+					firstnameLt     : person.firstnameLt,
+					lastnameLt      : person.lastnameLt,
+					birthDate       : person.birthDate,
+					birthPlace      : person.birthPlace,
+					address         : person.address,
+					birthState  	: birthSt,
+					addressState  	: addressSt,
+					picture			: 0
+				})).then((person) => {
+					if(person.data !== undefined){
+						setPerson(person.data);
+						postBasedUrl("employee", JSON.stringify({
+							serial          : employee.serial,
+							hiringDate      : employee.hiringDate,
+							person     		: person.data._links.self.href,
+							militaryRank	: mRank,
+							job       		: job?._links.self.href
+						})).then((employee) => {
+							setEmployee(employee.data !== undefined ? employee.data : null);
+							enqueueSnackbar('Entity created successfully !', {variant: 'success'});
+						})
+					}
+				})
+			}
 		}
 	}
 
@@ -490,10 +554,10 @@ const EmployeeDetails = (props : any) => {
 									</Grid>
 								</Grid>
 							</Grid>
-							<Grid item xs={4} sm={4}>
-								<Grid container spacing={1} direction={"row"}>
-									<input type='file' onChange={onSelectFile} />
-            						{image &&  <img src={preview} /> }
+							<Grid item xs={4} sm={4} >
+								<Grid container direction={"column"}>
+									<img src={person.picture !==0 ? getFile(person.picture) : preview !== undefined ? preview : ""} className="picture" alt="picture" onClick={clickFileUploader}/>
+									<input type='file' hidden id="imageSelector" onChange={onSelectFile} />
 								</Grid>
 							</Grid>
 						</Grid>
@@ -605,13 +669,6 @@ const EmployeeDetails = (props : any) => {
 						</Grid>
 					</Grid>
 
-
-					
-
-
-
-
-					
 				</Grid>
 			</Paper>
 		</Container>
