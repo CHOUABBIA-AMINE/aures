@@ -4,11 +4,14 @@ import { MenuBookOutlined }         from "@mui/icons-material"
 import { DescriptionOutlined }      from "@mui/icons-material"
 import { OnDeviceTrainingOutlined } from "@mui/icons-material"
 import { ShoppingCartOutlined }     from "@mui/icons-material"
+import { FactoryOutlined }          from "@mui/icons-material"
 
 import { NavItem }                 from "./nav.item"
 
 const coreMenu : NavItem[] = [
-    { name : "Provider",        icon : LocalShippingOutlined,   authority : "AUTH_PROVIDER",            link: "/about" },
+    { name : "Partner",         icon : FactoryOutlined,         authority : "AUTH_PROVIDER",            link: [
+        { name : "Provider",        icon : LocalShippingOutlined,   authority : "AUTH_ADMINISTRATION",       link: "/list/provider" }
+    ] },
     { name : "Budget",          icon : AccountBalanceOutlined,  authority : "AUTH_ADMINISTRATION",      link: [
         { name : "Provider",        icon : Login,  authority : "AUTH_ADMINISTRATION",       link: "/login" }
     ] },

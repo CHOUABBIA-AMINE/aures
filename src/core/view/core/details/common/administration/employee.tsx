@@ -80,7 +80,6 @@ const EmployeeDetails = (props : any) => {
 		birthDate       : dayjs(),
 		birthPlace      : "",
 		address         : "",
-		picture         : 0,
 		_links          : {
 			person          :{
 				href            : ""
@@ -92,6 +91,9 @@ const EmployeeDetails = (props : any) => {
 				href            : ""
 			},
 			addressState    :{
+				href            : ""
+			},
+			picture    		:{
 				href            : ""
 			}
 		}
@@ -149,17 +151,14 @@ const EmployeeDetails = (props : any) => {
 					aux.data.birthDate = dayjs(aux.data.birthDate);
 					setPerson(person.data !== undefined ? aux.data : null );
 					getUrl(formatURL(person.data._links.birthState.href)).then((birthState) => {
-						setBirthSt(birthState.data._links.self.href)
+						setBirthSt(birthState.data._links.self.href);
 					});
 					getUrl(formatURL(person.data._links.addressState.href)).then((addressState) => {
-						setAddressSt(addressState.data._links.self.href)
+						setAddressSt(addressState.data._links.self.href);
 					});
-					/*if(person.data.picture !== 0){
-						getFile(person.data.picture).then((file) => {
-							setImage(file.data);
-							//console.log(file);
-						});
-					}*/
+					getUrl(formatURL(person.data._links.picture.href)).then((picture) => {
+						setPreview(picture.data._links.self.href);
+					}).catch(e => {});
 				}
 			});
 			getUrl(formatURL(emp.data._links.militaryRank.href)).then((militaryRank) => {
@@ -206,7 +205,6 @@ const EmployeeDetails = (props : any) => {
 					getUrl(formatURL(employee.data._links.person.href)).then((_person) => {
 						if(image !== undefined){
 							uploadFile(image).then( _file => {
-								console.log(_file);
 								patchUrl(formatURL(_person.data._links.person.href), JSON.stringify({
 									firstnameAr     : person.firstnameAr,
 									lastnameAr      : person.lastnameAr,
@@ -217,7 +215,7 @@ const EmployeeDetails = (props : any) => {
 									address         : person.address,
 									birthState  	: birthSt,
 									addressState  	: addressSt,
-									picture  		: _file.data.id
+									picture  		: getFile(_file.data.id)
 								})).then((person) => {
 									setPerson(person.data !== undefined ? person.data : null);
 									enqueueSnackbar('Entity updated successfully !', {variant: 'success'});
@@ -245,7 +243,6 @@ const EmployeeDetails = (props : any) => {
 		}else{
 			if(image !== undefined){
 				uploadFile(image).then( _file => {
-					console.log(_file);
 					postBasedUrl("person", JSON.stringify({
 						firstnameAr     : person.firstnameAr,
 						lastnameAr      : person.lastnameAr,
@@ -256,7 +253,7 @@ const EmployeeDetails = (props : any) => {
 						address         : person.address,
 						birthState  	: birthSt,
 						addressState  	: addressSt,
-						picture			: _file.data.id
+						picture			: getFile(_file.data.id)
 					})).then((person) => {
 						if(person.data !== undefined){
 							setPerson(person.data);
@@ -284,7 +281,6 @@ const EmployeeDetails = (props : any) => {
 					address         : person.address,
 					birthState  	: birthSt,
 					addressState  	: addressSt,
-					picture			: 0
 				})).then((person) => {
 					if(person.data !== undefined){
 						setPerson(person.data);
@@ -488,8 +484,10 @@ const EmployeeDetails = (props : any) => {
 												label="First Name (Ar)"
 												autoComplete="off"
 												variant="outlined"
+												
 												inputProps={{ 
-													readOnly: readOnly 
+													readOnly: readOnly,
+													dir: "rtl"
 												}}
 											/>
 										</FormControl>
@@ -508,7 +506,8 @@ const EmployeeDetails = (props : any) => {
 												autoComplete="off"
 												variant="outlined"
 												inputProps={{ 
-													readOnly: readOnly 
+													readOnly: readOnly,
+													dir: "rtl" 
 												}}
 											/>
 										</FormControl>
@@ -556,7 +555,7 @@ const EmployeeDetails = (props : any) => {
 							</Grid>
 							<Grid item xs={4} sm={4} >
 								<Grid container direction={"column"}>
-									<img src={person.picture !==0 ? getFile(person.picture) : preview !== undefined ? preview : ""} className="picture" alt="picture" onClick={clickFileUploader}/>
+									<img src={preview !== undefined ? preview : ""} className="picture" alt="picture" onClick={clickFileUploader}/>
 									<input type='file' hidden id="imageSelector" onChange={onSelectFile} />
 								</Grid>
 							</Grid>

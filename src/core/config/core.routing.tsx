@@ -8,6 +8,8 @@ import Login                    from "../view/public/login";
 
 import ModelList                from "../view/core/model.list";
 
+import ProviderDetails          from "../view/core/details/realization/provider/provider";
+
 import StructureDetails         from "../view/core/details/common/administration/structure";
 import JobDetails               from "../view/core/details/common/administration/job";
 import EmployeeDetails          from "../view/core/details/common/administration/employee";
@@ -37,6 +39,8 @@ function CoreRouting(){
 
             <Route path="list/:entity"          element={<ModelList />}></Route>
             <Route path="list/:entity/:proj"    element={<ModelList />}></Route>
+
+            <Route path="provider/:action"      element={<ProviderDetails />}></Route>
 
             <Route path="structure/:action"     element={<StructureDetails />}></Route>
             <Route path="job/:action"           element={<JobDetails />}></Route>

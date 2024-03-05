@@ -1,5 +1,10 @@
 const Lists = new Map();
 
+const provider = [
+    { id: 'id',             name: 'Id',                 width: '20px',              align: 'center',    type:"number" },
+    { id: 'designationLt',  name: 'Designation',        width: '60%',               align: 'left',      type:"text" },
+    { id: 'acronymLt',      name: 'Acronyme',           width: 'calc(40%-120px)',   align: 'left',      type:"text" }
+];
 const structure = [
     { id: 'id',             name: 'Id',                 width: '20px',              align: 'center',    type:"number" },
     { id: 'designationFr',  name: 'Designation',        width: '60%',               align: 'left',      type:"text" },
@@ -27,6 +32,8 @@ const role = [
     { id: 'id',             name: 'Id',                 width: '20px',              align: 'center',    type:"number" },
     { id: 'name',           name: 'Name',               width: 'calc(100%-120px)',  align: 'left',      type:"text" }
 ];
+
+Lists.set("provider", provider);
 
 Lists.set("structure", structure);
 Lists.set("job", job);

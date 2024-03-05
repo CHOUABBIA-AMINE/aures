@@ -8,7 +8,6 @@ interface Person {
     birthDate       : Dayjs | null;
     birthPlace      : string;
     address         : string;
-    picture         : number;
     _links          : {
         person          :{
             href            : string
@@ -20,6 +19,9 @@ interface Person {
             href            : string
         },
         addressState    :{
+            href            : string
+        },
+        picture         :{
             href            : string
         }
     }
