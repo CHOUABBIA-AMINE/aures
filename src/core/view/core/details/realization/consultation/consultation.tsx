@@ -35,7 +35,7 @@ import { EconomicNature } 		from "../../../../../model/realization/provider/econ
 import { Country } 				from "../../../../../model/common/country";
 import { State } 				from "../../../../../model/common/state";
 
-const ProviderDetails = (props : any) => {
+const ConsultationDetails = (props : any) => {
 
 	const location 					= useLocation();
 	const params 					= useParams();
@@ -373,7 +373,11 @@ const ProviderDetails = (props : any) => {
 												value={economicNature}
 												label="Economic Nature"
 												
-												onChange={(e) => setEconomicNature(e.target.value)}
+												onChange={(e) => {
+														//setMCategory(e.target.value); 
+														//getRanks(e.target.value);
+													}
+												}
 											>
 												{
 													economicNatures.length > 0 && economicNatures.map(economicNature => {
@@ -787,5 +791,5 @@ const ProviderDetails = (props : any) => {
 		</Container>
 	);
 }
-export default ProviderDetails;
+export default ConsultationDetails;
 

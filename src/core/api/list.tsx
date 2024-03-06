@@ -5,6 +5,21 @@ const provider = [
     { id: 'designationLt',  name: 'Designation',        width: '60%',               align: 'left',      type:"text" },
     { id: 'acronymLt',      name: 'Acronyme',           width: 'calc(40%-120px)',   align: 'left',      type:"text" }
 ];
+const project = [
+    { id: 'id',             name: 'Id',                 width: '20px',              align: 'center',    type:"number" },
+    { id: 'internalOrder',  name: 'Internal Id',        width: '30%',               align: 'center',    type:"text" },
+    { id: 'designationFr',  name: 'Designation',        width: 'calc(50%-120px)',   align: 'left',      type:"text" }
+];
+const consultation = [
+    { id: 'id',             name: 'Id',                 width: '20px',              align: 'center',    type:"number" },
+    { id: 'internalOrder',  name: 'Internal Id',        width: '30%',               align: 'center',    type:"text" },
+    { id: 'designationFr',  name: 'Designation',        width: 'calc(50%-120px)',   align: 'left',      type:"text" }
+];
+const contract = [
+    { id: 'id',             name: 'Id',                 width: '20px',              align: 'center',    type:"number" },
+    { id: 'reference',      name: 'Reference',          width: '30%',               align: 'center',    type:"text" },
+    { id: 'designationFr',  name: 'Designation',        width: 'calc(50%-120px)',   align: 'left',      type:"text" }
+];
 const structure = [
     { id: 'id',             name: 'Id',                 width: '20px',              align: 'center',    type:"number" },
     { id: 'designationFr',  name: 'Designation',        width: '60%',               align: 'left',      type:"text" },
@@ -34,6 +49,7 @@ const role = [
 ];
 
 Lists.set("provider", provider);
+Lists.set("project", project);
 
 Lists.set("structure", structure);
 Lists.set("job", job);

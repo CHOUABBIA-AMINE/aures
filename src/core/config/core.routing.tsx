@@ -9,6 +9,7 @@ import Login                    from "../view/public/login";
 import ModelList                from "../view/core/model.list";
 
 import ProviderDetails          from "../view/core/details/realization/provider/provider";
+import ProjectDetails           from "../view/core/details/realization/project";
 
 import StructureDetails         from "../view/core/details/common/administration/structure";
 import JobDetails               from "../view/core/details/common/administration/job";
@@ -16,6 +17,7 @@ import EmployeeDetails          from "../view/core/details/common/administration
 
 import UserDetails              from "../view/core/details/common/security/user";
 import RoleDetails              from "../view/core/details/common/security/role";
+import ConsultationDetails from "../view/core/details/realization/consultation/consultation";
 
 function CoreRouting(){
 	return (
@@ -41,6 +43,8 @@ function CoreRouting(){
             <Route path="list/:entity/:proj"    element={<ModelList />}></Route>
 
             <Route path="provider/:action"      element={<ProviderDetails />}></Route>
+            <Route path="project/:action"       element={<ProjectDetails />}></Route>
+            <Route path="consultation/:action"  element={<ConsultationDetails />}></Route>
 
             <Route path="structure/:action"     element={<StructureDetails />}></Route>
             <Route path="job/:action"           element={<JobDetails />}></Route>
