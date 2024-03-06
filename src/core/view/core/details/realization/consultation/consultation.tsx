@@ -150,7 +150,6 @@ const ConsultationDetails = (props : any) => {
 
 	const filterBy = (e : any) =>{
 		getBasedUrl("project/search/filterBy?filter=" + e.target.value).then((projects) => {
-			console.log(projects.data._embedded.project)
 			setProjects(projects.data._embedded.project);
 		})
 	}
