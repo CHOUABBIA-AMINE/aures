@@ -10,6 +10,7 @@ interface Consultation {
     allocatedAmount         : number;
     financialEstimation     : number;
     startDate               : Dayjs | null;
+    approvalReference       : string;
     approvalDate            : Dayjs | null;
     publishDate             : Dayjs | null;
     deadline                : Dayjs | null;

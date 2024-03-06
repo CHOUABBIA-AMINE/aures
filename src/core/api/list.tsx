@@ -50,6 +50,8 @@ const role = [
 
 Lists.set("provider", provider);
 Lists.set("project", project);
+Lists.set("consultation", consultation);
+Lists.set("contract", contract);
 
 Lists.set("structure", structure);
 Lists.set("job", job);

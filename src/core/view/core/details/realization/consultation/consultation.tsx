@@ -34,6 +34,16 @@ import { Provider } 			from "../../../../../model/realization/provider/provider"
 import { EconomicNature } 		from "../../../../../model/realization/provider/economic.nature";
 import { Country } 				from "../../../../../model/common/country";
 import { State } 				from "../../../../../model/common/state";
+import { Consultation } 		from "../../../../../model/realization/consultation/consultation";
+import { RealizationNature } 	from "../../../../../model/realization/realization.nature";
+import { AwardMethod } 			from "../../../../../model/realization/consultation/award.method";
+import { BudgetType } 			from "../../../../../model/financial/budget.type";
+import { RealizationStatus } 	from "../../../../../model/realization/realization.status";
+import { ApprovalStatus } 		from "../../../../../model/realization/approval.status";
+import { Project } 				from "../../../../../model/realization/project";
+import { RealizationDirector } 	from "../../../../../model/realization/realization.director";
+import { ConsultationStep } 	from "../../../../../model/realization/consultation/consultation.step";
+import { ConsultationPhase } from "../../../../../model/realization/consultation/consultation.phase";
 
 const ConsultationDetails = (props : any) => {
 
@@ -44,293 +54,309 @@ const ConsultationDetails = (props : any) => {
 	let readOnly 					= params.action === 'edit' ? false : true;
 	const { getUrl, getBasedUrl, patchUrl, postBasedUrl, uploadFile, getFile} = useHTTP();
 
-	const [ economicNatures, setEconomicNatures ]	= useState<EconomicNature[]>([]);
-	const [ economicNature, setEconomicNature ]		= useState<string>("");
+	const [ awardMethods, setAwardMethods ]				= useState<AwardMethod[]>([]);
+	const [ awardMethod, setAwardMethod ]				= useState<string>("");
 
-	const [ countries, setCountries ]				= useState<Country[]>([]);
-	const [ country, setCountry ]					= useState<Country | null>(null);
+	const [ realizationNatures, setRealizationNatures ]	= useState<RealizationNature[]>([]);
+	const [ realizationNature, setRealizationNature ]	= useState<string>("");
 
-	const [ states, setStates ]						= useState<State[]>([]);
-	const [ state, setState ]						= useState<string>("");
-	const [ disState, setDisState ]					= useState<boolean>(false);
+	const [ budgetTypes, setBudgetTypes ]				= useState<BudgetType[]>([]);
+	const [ budgetType, setBudgetType ]					= useState<string>("");
 
-	const [ image, setImage ] 						= useState()
-    const [ preview, setPreview] 					= useState<string>()
+	const [ realizationStatuss, setRealizationStatuss ]	= useState<RealizationStatus[]>([]);
+	const [ realizationStatus, setRealizationStatus ]	= useState<string>("");
 
-	const onSelectFile = (e : any) => {
-        if (!e.target.files || e.target.files.length === 0) {
-            setImage(undefined);
-            return;
-        }
-        setImage(e.target.files[0])
-    }
+	const [ approvalStatuss, setApprovalStatuss ]		= useState<ApprovalStatus[]>([]);
+	const [ approvalStatus, setApprovalStatus ]			= useState<string>("");
 
-	const clickFileUploader = () => {
-		document.getElementById("imageSelector")?.click()
-	}
+	const [ realizationDirectors, setRealizationDirectors ]	= useState<RealizationDirector[]>([]);
+	const [ realizationDirector, setRealizationDirector ]	= useState<string>("");
 
-	const [ provider, setProvider ]		= useState<Provider>({
-		designationLt           : "",
+	const [ consultationPhases, setConsultationPhases ]	= useState<ConsultationPhase[]>([]);
+	const [ consultationPhase, setConsultationPhase ]	= useState<string>("");
+
+	const [ consultationSteps, setConsultationSteps ]	= useState<ConsultationStep[]>([]);
+	const [ consultationStep, setConsultationStep ]		= useState<string>("");
+
+	const [ projects, setProjects ]						= useState<Project[]>([]);
+	const [ project, setProject ]						= useState<Project | null>(null);
+
+	let years : string []			= [];
+	for (let i = 2010; i < 2031; i++) years.push(""+i); 
+
+	const [ consultation, setConsultation ]	= useState<Consultation>({
+		internalId              : "",
+		consultationYear        : "",
+		reference               : "",
 		designationAr           : "",
-		acronymLt               : "",
-		acronymAr               : "",
-		address                 : "",
-		capital                 : 0.00,
-		comercialRegistryNumber : "",
-		comercialRegistryDate   : dayjs(),
-		taxeIdentityNumber      : "",
-		statIdentityNumber      : "",
-		bank                    : "",
-		bankAccount             : "",
-		swiftNumber             : "",
-		phoneNumbers            : "",
-		faxNumbers              : "",
-		mail                    : "",
-		website                 : "",
-		_links          : {
-			provider                :{
+		designationEn           : "",
+		designationFr           : "",
+		allocatedAmount         : 0.00,
+		financialEstimation     : 0.00,
+		startDate               : dayjs(),
+		approvalReference       : "",
+		approvalDate            : dayjs(),
+		publishDate             : dayjs(),
+		deadline                : dayjs(),
+		observation             : "",
+		_links          		: {
+			consultation            :{
 				href                    : ""
 			},
 			self                    :{
 				href                    : ""
 			},
-			logo                    :{
+			awardMethod             :{
 				href                    : ""
 			},
-			economicNature          :{
+			realizationNature       :{
 				href                    : ""
 			},
-			country                 :{
+			budgetType              :{
 				href                    : ""
 			},
-			state                   :{
+			realizationStatus       :{
+				href                    : ""
+			},
+			approvalStatus          :{
+				href                    : ""
+			},
+			realizationDirector     :{
+				href                    : ""
+			},
+			consultationStep        :{
+				href                    : ""
+			},
+			project                 :{
+				href                    : ""
+			},
+			beneficiaries           :{
+				href                    : ""
+			},
+			documents               :{
+				href                    : ""
+			},
+			referencedMails         :{
+				href                    : ""
+			},
+			budgetGoals             :{
+				href                    : ""
+			},
+			tenders                 :{
 				href                    : ""
 			}
 		}
 	});
 
-	const filterCountryBy = (e : any) =>{
-		getBasedUrl("country/search/filterBy?filter=" + e.target.value).then((countries) => {
-			setCountries(countries.data._embedded.country);
+	const filterBy = (e : any) =>{
+		getBasedUrl("project/search/filterBy?filter=" + e.target.value).then((projects) => {
+			console.log(projects.data._embedded.project)
+			setProjects(projects.data._embedded.project);
 		})
 	}
 
 	const fetchData = ()=>{
 
-		getUrl(formatURL(location.state.modelId)).then((prvd : any) => {
-			setProvider({
-				designationLt           : prvd.data.designationLt,
-				designationAr           : prvd.data.designationAr,
-				acronymLt               : prvd.data.acronymLt,
-				acronymAr               : prvd.data.acronymAr,
-				address                 : prvd.data.address,
-				capital                 : prvd.data.capital,
-				comercialRegistryNumber : prvd.data.comercialRegistryNumber,
-				comercialRegistryDate   : prvd.data.comercialRegistryDate !== null ? dayjs(prvd.data.comercialRegistryDate) : dayjs(),
-				taxeIdentityNumber      : prvd.data.taxeIdentityNumber,
-				statIdentityNumber      : prvd.data.statIdentityNumber,
-				bank                    : prvd.data.bank,
-				bankAccount             : prvd.data.bankAccount,
-				swiftNumber             : prvd.data.swiftNumber,
-				phoneNumbers            : prvd.data.phoneNumbers,
-				faxNumbers              : prvd.data.faxNumbers,
-				mail                    : prvd.data.mail,
-				website                 : prvd.data.website,
+		getUrl(formatURL(location.state.modelId)).then((consultation : any) => {
+			setConsultation({
+				internalId              : consultation.data.internalId,
+				consultationYear        : consultation.data.consultationYear,
+				reference               : consultation.data.reference,
+				designationAr           : consultation.data.designationAr,
+				designationEn           : consultation.data.designationEn,
+				designationFr           : consultation.data.designationFr,
+				allocatedAmount         : consultation.data.allocatedAmount,
+				financialEstimation     : consultation.data.financialEstimation,
+				startDate               : consultation.data.startDate,
+				approvalReference       : consultation.data.approvalReference,
+				approvalDate            : consultation.data.approvalDate,
+				publishDate             : consultation.data.publishDate,
+				deadline                : consultation.data.deadline,
+				observation             : consultation.data.observation,
 				_links          		: {
-					provider       			:{
-						href            		: prvd.data._links.provider.href
+					consultation       		:{
+						href            		: consultation.data._links.consultation.href
 					},
 					self            		:{
-						href            		: prvd.data._links.self.href
+						href            		: consultation.data._links.self.href
 					},
-					logo   					:{
-						href            		: prvd.data._links.logo.href
+					awardMethod             :{
+						href                    : consultation.data._links.awardMethod.href
 					},
-					economicNature			:{
-						href            		: prvd.data._links.economicNature.href
+					realizationNature       :{
+						href                    : consultation.data._links.realizationNature.href
 					},
-					country   				:{
-						href            		: prvd.data._links.country.href
+					budgetType              :{
+						href                    : consultation.data._links.budgetType.href
 					},
-					state   				:{
-						href            		: prvd.data._links.state.href
+					realizationStatus       :{
+						href                    : consultation.data._links.realizationStatus.href
+					},
+					approvalStatus          :{
+						href                    : consultation.data._links.approvalStatus.href
+					},
+					realizationDirector     :{
+						href                    : consultation.data._links.realizationDirector.href
+					},
+					consultationStep        :{
+						href                    : consultation.data._links.consultationStep.href
+					},
+					project                 :{
+						href                    : consultation.data._links.project.href
+					},
+					beneficiaries           :{
+						href                    : consultation.data._links.beneficiaries.href
+					},
+					documents               :{
+						href                    : consultation.data._links.documents.href
+					},
+					referencedMails         :{
+						href                    : consultation.data._links.referencedMails.href
+					},
+					budgetGoals             :{
+						href                    : consultation.data._links.budgetGoals.href
+					},
+					tenders                 :{
+						href                    : consultation.data._links.tenders.href
 					}
 				}
 			})
-			getUrl(formatURL(prvd.data._links.logo.href)).then((logo) => {
-				setPreview(logo.data._links.self.href);
+
+			getUrl(formatURL(consultation.data._links.awardMethod.href)).then((awardMethod) => {
+				setAwardMethod(awardMethod.data._links.self.href);
 			}).catch(e => {});
-
-			getUrl(formatURL(prvd.data._links.economicNature.href)).then((data) => {
-				getUrl(formatURL(data.data._links.economicNature.href)).then((economicNature) => {
-					setEconomicNature(economicNature.data._links.economicNature.href);
+			
+			getUrl(formatURL(consultation.data._links.realizationNature.href)).then((realizationNature) => {
+				setRealizationNature(realizationNature.data._links.self.href);
+			}).catch(e => {});
+			
+			getUrl(formatURL(consultation.data._links.budgetType.href)).then((budgetType) => {
+				setBudgetType(budgetType.data._links.self.href);
+			}).catch(e => {});
+			
+			getUrl(formatURL(consultation.data._links.realizationStatus.href)).then((realizationStatus) => {
+				setRealizationStatus(realizationStatus.data._links.self.href);
+			}).catch(e => {});
+			
+			getUrl(formatURL(consultation.data._links.approvalStatus.href)).then((approvalStatus) => {
+				setApprovalStatus(approvalStatus.data._links.self.href);
+			}).catch(e => {});
+			
+			getUrl(formatURL(consultation.data._links.realizationDirector.href)).then((realizationDirector) => {
+				setRealizationDirector(realizationDirector.data._links.self.href);
+			}).catch(e => {});
+			
+			getUrl(formatURL(consultation.data._links.consultationStep.href)).then((consultationStep) => {
+				getUrl(formatURL(consultation.data._links.consultationPhase.href)).then((consultationPhase) => {
+					setConsultationPhase(consultationPhase.data._links.self.href);
+					getUrl(consultationPhase.data._links.consultationSteps.href).then((consultationSteps) => {
+						setConsultationSteps(consultationSteps.data._embedded.consultationStep);
+						setConsultationStep(consultationStep.data._links.self.href);
+					})
 				})
-			});
-
-			getUrl(formatURL(prvd.data._links.country.href)).then((data) => {
-				getUrl(formatURL(data.data._links.country.href)).then((country) => {
-					setCountry(country.data);
-					if(country.data?.designationFr === "la République algérienne démocratique et populaire"){
-						setDisState(true);
-						getUrl(formatURL(prvd.data._links.state.href)).then((state) => {
-							setState(state.data._links.state.href);
-						}).catch(e => {});
-					}else{
-						setDisState(false);
-					}
-				})
-			});
-
+				
+			}).catch(e => {});
+			
+			getUrl(formatURL(consultation.data._links.project.href)).then((project) => {
+				setProject(project.data);
+			}).catch(e => {});
 			
 		});
 	}
 
 	const patchData = ()=>{
 		if(location.state != null){
-			if(image !== undefined){
-				uploadFile(image).then( _file => {
-					patchUrl(formatURL(location.state.modelId), JSON.stringify({
-						designationLt           : provider.designationLt,
-						designationAr           : provider.designationAr,
-						acronymLt               : provider.acronymLt,
-						acronymAr               : provider.acronymAr,
-						address                 : provider.address,
-						capital                 : provider.capital,
-						comercialRegistryNumber : provider.comercialRegistryNumber,
-						comercialRegistryDate   : dayjs(provider.comercialRegistryDate),
-						taxeIdentityNumber      : provider.taxeIdentityNumber,
-						statIdentityNumber      : provider.statIdentityNumber,
-						bank                    : provider.bank,
-						bankAccount             : provider.bankAccount,
-						swiftNumber             : provider.swiftNumber,
-						phoneNumbers            : provider.phoneNumbers,
-						faxNumbers              : provider.faxNumbers,
-						mail                    : provider.mail,
-						website                 : provider.website,
-						economicNature			: economicNature,
-						country					: country?._links.self.href,
-						state					: state,
-						logo  					: getFile(_file.data.id)
-					})).then((provider) => {
-						
-						if(provider.data !== undefined){
-							setProvider(provider.data);
-							enqueueSnackbar('Entity updated successfully !', {variant: 'success'});
-						}
-					});
-				});
-			}else{
-				patchUrl(formatURL(location.state.modelId), JSON.stringify({
-					designationLt           : provider.designationLt,
-					designationAr           : provider.designationAr,
-					acronymLt               : provider.acronymLt,
-					acronymAr               : provider.acronymAr,
-					address                 : provider.address,
-					capital                 : provider.capital,
-					comercialRegistryNumber : provider.comercialRegistryNumber,
-					comercialRegistryDate   : dayjs(provider.comercialRegistryDate),
-					taxeIdentityNumber      : provider.taxeIdentityNumber,
-					statIdentityNumber      : provider.statIdentityNumber,
-					bank                    : provider.bank,
-					bankAccount             : provider.bankAccount,
-					swiftNumber             : provider.swiftNumber,
-					phoneNumbers            : provider.phoneNumbers,
-					faxNumbers              : provider.faxNumbers,
-					mail                    : provider.mail,
-					website                 : provider.website,
-					economicNature			: economicNature,
-					country					: country?._links.self.href,
-					state					: state
-				})).then((provider) => {
-					
-					if(provider.data !== undefined){
-						setProvider(provider.data);
-						enqueueSnackbar('Entity updated successfully !', {variant: 'success'});
-					}
-				});
-			}
+			
+			patchUrl(formatURL(location.state.modelId), JSON.stringify({
+				internalId              : consultation.internalId,
+				consultationYear        : consultation.consultationYear,
+				reference               : consultation.reference,
+				designationAr           : consultation.designationAr,
+				designationEn           : consultation.designationEn,
+				designationFr           : consultation.designationFr,
+				allocatedAmount         : consultation.allocatedAmount,
+				financialEstimation     : consultation.financialEstimation,
+				startDate               : consultation.startDate,
+				approvalReference       : consultation.approvalReference,
+				approvalDate            : consultation.approvalDate,
+				publishDate             : consultation.publishDate,
+				deadline                : consultation.deadline,
+				observation             : consultation.observation,
+				awardMethod             : awardMethod,
+				realizationNature       : realizationNature,
+				budgetType              : budgetType,
+				realizationStatus       : realizationStatus,
+				approvalStatus          : approvalStatus,
+				realizationDirector     : realizationDirector,
+				consultationStep        : consultationStep,
+				project                 : project
+			})).then((consultation) => {
+				if(consultation.data !== undefined){
+					setConsultation(consultation.data);
+					enqueueSnackbar('Entity created successfully !', {variant: 'success'});
+				}
+			})
 		}else{
-			if(image !== undefined){
-				uploadFile(image).then( _file => {
-					postBasedUrl("provider", JSON.stringify({
-						designationLt           : provider.designationLt,
-						designationAr           : provider.designationAr,
-						acronymLt               : provider.acronymLt,
-						acronymAr               : provider.acronymAr,
-						address                 : provider.address,
-						capital                 : provider.capital,
-						comercialRegistryNumber : provider.comercialRegistryNumber,
-						comercialRegistryDate   : dayjs(provider.comercialRegistryDate),
-						taxeIdentityNumber      : provider.taxeIdentityNumber,
-						statIdentityNumber      : provider.statIdentityNumber,
-						bank                    : provider.bank,
-						bankAccount             : provider.bankAccount,
-						swiftNumber             : provider.swiftNumber,
-						phoneNumbers            : provider.phoneNumbers,
-						faxNumbers              : provider.faxNumbers,
-						mail                    : provider.mail,
-						website                 : provider.website,
-						economicNature			: economicNature,
-						country					: country?._links.self.href,
-						state					: state,
-						logo  					: getFile(_file.data.id)
-					})).then((provider) => {
-						if(provider.data !== undefined){
-							setProvider(provider.data);
-							enqueueSnackbar('Entity created successfully !', {variant: 'success'});
-						}
-					})
-				})
-			}else{
-				postBasedUrl("provider", JSON.stringify({
-					designationLt           : provider.designationLt,
-					designationAr           : provider.designationAr,
-					acronymLt               : provider.acronymLt,
-					acronymAr               : provider.acronymAr,
-					address                 : provider.address,
-					capital                 : provider.capital,
-					comercialRegistryNumber : provider.comercialRegistryNumber,
-					comercialRegistryDate   : dayjs(provider.comercialRegistryDate),
-					taxeIdentityNumber      : provider.taxeIdentityNumber,
-					statIdentityNumber      : provider.statIdentityNumber,
-					bank                    : provider.bank,
-					bankAccount             : provider.bankAccount,
-					swiftNumber             : provider.swiftNumber,
-					phoneNumbers            : provider.phoneNumbers,
-					faxNumbers              : provider.faxNumbers,
-					mail                    : provider.mail,
-					website                 : provider.website,
-					economicNature			: economicNature,
-					country					: country?._links.self.href,
-					state					: state
-				})).then((provider) => {
-					if(provider.data !== undefined){
-						setProvider(provider.data);
-						enqueueSnackbar('Entity created successfully !', {variant: 'success'});
-					}
-				})
-			}
+			postBasedUrl("provider", JSON.stringify({
+				internalId              : consultation.internalId,
+				consultationYear        : consultation.consultationYear,
+				reference               : consultation.reference,
+				designationAr           : consultation.designationAr,
+				designationEn           : consultation.designationEn,
+				designationFr           : consultation.designationFr,
+				allocatedAmount         : consultation.allocatedAmount,
+				financialEstimation     : consultation.financialEstimation,
+				startDate               : consultation.startDate !== null ? dayjs(consultation.startDate) : dayjs(),
+				approvalReference       : consultation.approvalReference,
+				approvalDate            : consultation.approvalDate !== null ? dayjs(consultation.approvalDate) : dayjs(),
+				publishDate             : consultation.publishDate !== null ? dayjs(consultation.publishDate) : dayjs(),
+				deadline                : consultation.deadline !== null ? dayjs(consultation.deadline) : dayjs(),
+				observation             : consultation.observation,
+				awardMethod             : awardMethod,
+				realizationNature       : realizationNature,
+				budgetType              : budgetType,
+				realizationStatus       : realizationStatus,
+				approvalStatus          : approvalStatus,
+				realizationDirector     : realizationDirector,
+				consultationStep        : consultationStep,
+				project                 : project
+			})).then((consultation) => {
+				if(consultation.data !== undefined){
+					setConsultation(consultation.data);
+					enqueueSnackbar('Entity created successfully !', {variant: 'success'});
+				}
+			})
 		}
 	}
 
 	useEffect(() => {
-        if (!image) {
-            setPreview(undefined)
-            return
-        }
-        const objectUrl = URL.createObjectURL(image)
-        setPreview(objectUrl)
-        return () => URL.revokeObjectURL(objectUrl)
-    }, [image])
 
-	useEffect(() => {
-
-		getBasedUrl("economicNature").then((economicNatures) => {
-			setEconomicNatures(economicNatures.data._embedded.economicNature);
+		getBasedUrl("awardMethod").then((awardMethods) => {
+			setAwardMethods(awardMethods.data._embedded.awardMethod);
 		});
 
-		getBasedUrl("state").then((states) => {
-			setStates(states.data._embedded.state);
+		getBasedUrl("realizationNature").then((realizationNatures) => {
+			setRealizationNatures(realizationNatures.data._embedded.realizationNature);
+		});
+
+		getBasedUrl("budgetType").then((budgetTypes) => {
+			setBudgetTypes(budgetTypes.data._embedded.budgetType);
+		});
+
+		getBasedUrl("realizationStatus").then((realizationStatuss) => {
+			setRealizationStatuss(realizationStatuss.data._embedded.realizationStatus);
+		});
+
+		getBasedUrl("approvalStatus").then((approvalStatuss) => {
+			setApprovalStatuss(approvalStatuss.data._embedded.approvalStatus);
+		});
+
+		getBasedUrl("realizationDirector").then((realizationDirectors) => {
+			setRealizationDirectors(realizationDirectors.data._embedded.realizationDirector);
+		});
+
+		getBasedUrl("consultationPhase").then((consultationPhases) => {
+			setConsultationPhases(consultationPhases.data._embedded.consultationPhase);
 		});
 
 		if(location.state !== null){
@@ -343,7 +369,7 @@ const ConsultationDetails = (props : any) => {
 			<Paper variant="outlined" sx={{ marginTop: "60px", padding:'30px' }}>
 				<Box sx={{display : "flex", paddingBottom: 5 , justifyContent: "space-between"}}>
 					<Typography variant="h6" >
-						Employee Details
+						Consultation Details
 					</Typography>
 					<Box>
 						<Button color="primary" variant="outlined" size="small" sx={{ marginRight:'5px' }} onClick={e => patchData()}>
@@ -354,438 +380,377 @@ const ConsultationDetails = (props : any) => {
 						</Button>
 					</Box>
 				</Box>
-				<Grid container spacing={1} direction={"column"}>			
-					
-					<Grid item>
-						<Grid container spacing={1} direction={"row"}>
-							<Grid item xs={8} sm={8}>
-								<Grid container spacing={1} direction={"row"}>
-									<Grid item xs={6} sm={6}>
-										<FormControl fullWidth size="small" >
-											<InputLabel id="economicNatureLabel">Economic Nature</InputLabel>
-											<Select
-												required
-												fullWidth
-												size="small"
-												labelId="economicNatureLabel"
-												id="economicNature"
-												variant="outlined"
-												value={economicNature}
-												label="Economic Nature"
-												
-												onChange={(e) => {
-														//setMCategory(e.target.value); 
-														//getRanks(e.target.value);
-													}
-												}
-											>
-												{
-													economicNatures.length > 0 && economicNatures.map(economicNature => {
-														return(
-															<MenuItem key={economicNature._links.self.href} value={economicNature._links.economicNature.href}>{economicNature.designationFr}</MenuItem>
-														);
-													})
-												}
-											</Select>
-										</FormControl>
-									</Grid>
-									<Grid item xs={6} sm={6}></Grid>
+				<Grid container spacing={1} direction={"row"}>	
+					<Grid item xs={2} sm={2}>
+						<FormControl fullWidth size="small">
+							<TextField
+								required
+								fullWidth
+								value={consultation.internalId}
+								onChange={ (e) => setConsultation(consultation => ({...consultation, internalId: e.target.value})) }
+								size="small"
+								id="internalId"
+								name="internalId"
+								label="Internal Id"
+								autoComplete="off"
+								variant="outlined"
+								
+								inputProps={{ 
+									readOnly: readOnly,
+								}}
+							/>
+						</FormControl>
+					</Grid>
+					<Grid item xs={2} sm={2}>
+						<FormControl fullWidth size="small" >
+							<InputLabel id="projectYear">Project Year</InputLabel>
+							<Select
+								required
+								fullWidth
+								size="small"
+								labelId="consultationYear"
+								id="consultationYear"
+								variant="outlined"
+								value={consultation.consultationYear}
+								label="Project Year"
+								
+								onChange={(e) => setConsultation(consultation => ({...consultation, consultationYear: e.target.value})) }
+							>
+								{ years.map(year => { return (<MenuItem key={year} value={year}>{year}</MenuItem> );}) }
+							</Select>
+						</FormControl>
+					</Grid>
+					<Grid item xs={2} sm={2}>
+						<FormControl fullWidth size="small">
+							<DatePicker 
+								format="DD/MM/YYYY" 
+								label="Start Date" 
+								readOnly={readOnly} 
+								slotProps={{ textField: { size: 'small', required: true }}} 
+								value={consultation.startDate} 
+								onChange={ changedDate=>setConsultation(consultation => ({...consultation, startDate:changedDate})) }
+							/>
+						</FormControl>
+					</Grid>
+					<Grid item xs={4} sm={4}></Grid>
 
-									<Grid item xs={6} sm={6}>
-										<FormControl fullWidth size="small">
-											<TextField
-												required
-												fullWidth
-												value={provider.designationAr}
-												onChange={ (e) => setProvider(provider => ({...provider, designationAr: e.target.value})) }
-												size="small"
-												id="designationAr"
-												name="designationAr"
-												label="Designation (Ar)"
-												autoComplete="off"
-												variant="outlined"
-												
-												inputProps={{ 
-													readOnly: readOnly,
-													dir: "rtl"
-												}}
-											/>
-										</FormControl>
-									</Grid>
-									<Grid item xs={6} sm={6}>
-										<FormControl sx={{width : "50%"}} size="small">
-											<TextField
-												required
-												fullWidth
-												value={provider.acronymAr}
-												onChange={ (e) => setProvider(provider => ({...provider, acronymAr: e.target.value})) }
-												size="small"
-												id="acronymAr"
-												name="acronymAr"
-												label="Acronym (Ar)"
-												autoComplete="off"
-												variant="outlined"
-												inputProps={{ 
-													readOnly: readOnly,
-													dir: "rtl" 
-												}}
-											/>
-										</FormControl>
-									</Grid>
-
-									<Grid item xs={6} sm={6}>
-										<FormControl fullWidth size="small">
-											<TextField
-												required
-												fullWidth
-												value={provider.designationLt}
-												onChange={ (e) => setProvider(provider => ({...provider, designationLt: e.target.value})) }
-												size="small"
-												id="designationLt"
-												name="designationLt"
-												label="Designation (Lt)"
-												autoComplete="off"
-												variant="outlined"
-												inputProps={{ 
-													readOnly: readOnly 
-												}}
-											/>
-										</FormControl>
-									</Grid>
-									<Grid item xs={6} sm={6}>
-										<FormControl sx={{width : "50%"}} size="small">
-											<TextField
-												required
-												fullWidth
-												value={provider.acronymLt}
-												onChange={ (e) => setProvider(provider => ({...provider, acronymLt: e.target.value})) }
-												size="small"
-												id="acronymLt"
-												name="acronymLt"
-												label="Acronym (Lt)"
-												autoComplete="off"
-												variant="outlined"
-												inputProps={{ 
-													readOnly: readOnly 
-												}}
-											/>
-										</FormControl>
-									</Grid>
-
-									<Grid item xs={6} sm={6}>
-										<FormControl fullWidth size="small">
-											<TextField
-												required
-												fullWidth
-												value={provider.capital}
-												onChange={ (e) => setProvider(provider => ({...provider, capital: Number(e.target.value)})) }
-												size="small"
-												id="capital"
-												name="capital"
-												label="Capital"
-												autoComplete="off"
-												variant="outlined"
-												inputProps={{ 
-													readOnly: readOnly 
-												}}
-											/>
-										</FormControl>
-									</Grid>
-									<Grid item xs={6} sm={6}></Grid>
-
-									<Grid item xs={6} sm={6}>
-										<FormControl fullWidth size="small">
-											<TextField
-												required
-												fullWidth
-												value={provider.comercialRegistryNumber}
-												onChange={ (e) => setProvider(provider => ({...provider, comercialRegistryNumber: e.target.value})) }
-												size="small"
-												id="comercialRegistryNumber"
-												name="comercialRegistryNumber"
-												label="Comercial Registry Number"
-												autoComplete="off"
-												variant="outlined"
-												inputProps={{ 
-													readOnly: readOnly 
-												}}
-											/>
-										</FormControl>
-									</Grid>
-									<Grid item xs={6} sm={6}>
-										<FormControl fullWidth size="small">
-											<DatePicker 
-												format="DD/MM/YYYY" 
-												label="Comercial Registry Date" 
-												readOnly={readOnly} 
-												slotProps={{ textField: { size: 'small', required: true }}} 
-												value={provider.comercialRegistryDate} 
-												onChange={ changedDate=>setProvider(provider => ({...provider, comercialRegistryDate:changedDate})) }
-											/>
-										</FormControl>
-									</Grid>
-
-									<Grid item xs={6} sm={6}>
-										<FormControl fullWidth size="small">
-											<TextField
-												required
-												fullWidth
-												value={provider.taxeIdentityNumber}
-												onChange={ (e) => setProvider(provider => ({...provider, taxeIdentityNumber: e.target.value})) }
-												size="small"
-												id="taxeIdentityNumber"
-												name="taxeIdentityNumber"
-												label="Taxe Identity Number"
-												autoComplete="off"
-												variant="outlined"
-												inputProps={{ 
-													readOnly: readOnly 
-												}}
-											/>
-										</FormControl>
-									</Grid>
-									<Grid item xs={6} sm={6}>
-										<FormControl fullWidth size="small">
-											<TextField
-												required
-												fullWidth
-												value={provider.statIdentityNumber}
-												onChange={ (e) => setProvider(provider => ({...provider, statIdentityNumber: e.target.value})) }
-												size="small"
-												id="statIdentityNumber"
-												name="statIdentityNumber"
-												label="Stat Identity Number"
-												autoComplete="off"
-												variant="outlined"
-												inputProps={{ 
-													readOnly: readOnly 
-												}}
-											/>
-										</FormControl>
-									</Grid>
-
-								</Grid>
-							</Grid>
-							<Grid item xs={4} sm={4} >
-								<Grid container direction={"column"}>
-									<img src={preview !== undefined ? preview : ""} className="picture" onClick={clickFileUploader}/>
-									<input type='file' hidden id="imageSelector" onChange={onSelectFile} />
-								</Grid>
-							</Grid>
-						</Grid>
+					<Grid item xs={6} sm={6}>
+						<Autocomplete
+							id="project"
+							fullWidth
+							size="small"
+							options={projects}
+							value={project}
+							onChange={(e, value) => setProject(value)}
+							getOptionLabel={(project) => project.designationFr}
+							isOptionEqualToValue={(option, value) => option._links.self.href === value._links.self.href}
+							renderInput={(params) => <TextField {...params} label="project" onChange={debounce(filterBy, 200)}/>}
+						/>
 					</Grid>
 
-					<Grid item>
-						<Grid container spacing={1} direction={"row"}>
-							<Grid item xs={4} sm={4}>
-								<FormControl fullWidth size="small">
-									<TextField
-										required
-										fullWidth
-										value={provider.bank}
-										onChange={ (e) => setProvider(provider => ({...provider, bank: e.target.value})) }
-										size="small"
-										id="bank"
-										name="bank"
-										label="Bank"
-										autoComplete="off"
-										variant="outlined"
-										inputProps={{ 
-											readOnly: readOnly 
-										}}
-									/>
-								</FormControl>
-							</Grid>
-							<Grid item xs={4} sm={4}>
-								<FormControl fullWidth size="small">
-									<TextField
-										required
-										fullWidth
-										value={provider.bankAccount}
-										onChange={ (e) => setProvider(provider => ({...provider, bankAccount: e.target.value})) }
-										size="small"
-										id="bankAccount"
-										name="bankAccount"
-										label="Bank Account"
-										autoComplete="off"
-										variant="outlined"
-										inputProps={{ 
-											readOnly: readOnly 
-										}}
-									/>
-								</FormControl>
-							</Grid>
-							<Grid item xs={4} sm={4}>
-								<FormControl fullWidth size="small">
-									<TextField
-										required
-										fullWidth
-										value={provider.swiftNumber}
-										onChange={ (e) => setProvider(provider => ({...provider, swiftNumber: e.target.value})) }
-										size="small"
-										id="swiftNumber"
-										name="swiftNumber"
-										label="Swift Number"
-										autoComplete="off"
-										variant="outlined"
-										inputProps={{ 
-											readOnly: readOnly 
-										}}
-									/>
-								</FormControl>
-							</Grid>
+					<Grid item xs={12} sm={12}>
+						<FormControl fullWidth size="small">
+							<TextField
+								required
+								fullWidth
+								value={consultation.designationAr}
+								onChange={ (e) => setConsultation(consultation => ({...consultation, designationAr: e.target.value})) }
+								size="small"
+								id="designationAr"
+								name="designationAr"
+								label="Designation (Ar)"
+								autoComplete="off"
+								variant="outlined"
+								
+								inputProps={{ 
+									readOnly: readOnly,
+									dir: "rtl"
+								}}
+							/>
+						</FormControl>
+					</Grid>
 
-							<Grid item xs={6} sm={6}>
-								<FormControl fullWidth size="small">
-									<TextField
-										required
-										fullWidth
-										value={provider.phoneNumbers}
-										onChange={ (e) => setProvider(provider => ({...provider, phoneNumbers: e.target.value})) }
-										size="small"
-										id="phoneNumbers"
-										name="phoneNumbers"
-										label="Phone Numbers"
-										autoComplete="off"
-										variant="outlined"
-										inputProps={{ 
-											readOnly: readOnly 
-										}}
-									/>
-								</FormControl>
-							</Grid>
-							<Grid item xs={6} sm={6}>
-								<FormControl fullWidth size="small">
-									<TextField
-										required
-										fullWidth
-										value={provider.faxNumbers}
-										onChange={ (e) => setProvider(provider => ({...provider, faxNumbers: e.target.value})) }
-										size="small"
-										id="faxNumbers"
-										name="faxNumbers"
-										label="Fax Numbers"
-										autoComplete="off"
-										variant="outlined"
-										inputProps={{ 
-											readOnly: readOnly 
-										}}
-									/>
-								</FormControl>
-							</Grid>
+					<Grid item xs={12} sm={12}>
+						<FormControl fullWidth size="small">
+							<TextField
+								required
+								fullWidth
+								value={consultation.designationEn}
+								onChange={ (e) => setConsultation(consultation => ({...consultation, designationEn: e.target.value})) }
+								size="small"
+								id="designationEn"
+								name="designationEn"
+								label="Designation (En)"
+								autoComplete="off"
+								variant="outlined"
+								
+								inputProps={{ 
+									readOnly: readOnly,
+								}}
+							/>
+						</FormControl>
+					</Grid>
 
-							<Grid item xs={6} sm={6}>
-								<FormControl fullWidth size="small">
-									<TextField
-										required
-										fullWidth
-										value={provider.mail}
-										onChange={ (e) => setProvider(provider => ({...provider, mail: e.target.value})) }
-										size="small"
-										id="mail"
-										name="mail"
-										label="Mail"
-										autoComplete="off"
-										variant="outlined"
-										inputProps={{ 
-											readOnly: readOnly 
-										}}
-									/>
-								</FormControl>
-							</Grid>
-							<Grid item xs={6} sm={6}></Grid>
+					<Grid item xs={12} sm={12}>
+						<FormControl fullWidth size="small">
+							<TextField
+								required
+								fullWidth
+								value={consultation.designationFr}
+								onChange={ (e) => setConsultation(consultation => ({...consultation, designationFr: e.target.value})) }
+								size="small"
+								id="designationFr"
+								name="designationFr"
+								label="Designation (Fr)"
+								autoComplete="off"
+								variant="outlined"
+								
+								inputProps={{ 
+									readOnly: readOnly,
+								}}
+							/>
+						</FormControl>
+					</Grid>
 
-							<Grid item xs={6} sm={6}>
-								<FormControl fullWidth size="small">
-									<TextField
-										required
-										fullWidth
-										value={provider.website}
-										onChange={ (e) => setProvider(provider => ({...provider, website: e.target.value})) }
-										size="small"
-										id="website"
-										name="website"
-										label="Web Site"
-										autoComplete="off"
-										variant="outlined"
-										inputProps={{ 
-											readOnly: readOnly 
-										}}
-									/>
-								</FormControl>
-							</Grid>
-							<Grid item xs={6} sm={6}></Grid>
-							
-							<Grid item xs={12} sm={12}>
-								<FormControl fullWidth size="small">
-									<TextField
-										required
-										fullWidth
-										value={provider.address}
-										onChange={ (e) => setProvider(provider => ({...provider, address: e.target.value})) }
-										size="small"
-										id="address"
-										name="address"
-										label="Address"
-										autoComplete="off"
-										variant="outlined"
-										inputProps={{ 
-											readOnly: readOnly 
-										}}
-									/>
-								</FormControl>
-							</Grid>
+					<Grid item xs={12} sm={12}>
+						<FormControl fullWidth size="small">
+							<TextField
+								required
+								fullWidth
+								value={consultation.observation}
+								onChange={ (e) => setConsultation(consultation => ({...consultation, observation: e.target.value})) }
+								size="small"
+								id="observation"
+								name="observation"
+								label="Observation"
+								autoComplete="off"
+								variant="outlined"
+								multiline
+								rows={4}
+								inputProps={{ 
+									readOnly: readOnly,
+								}}
+							/>
+						</FormControl>
+					</Grid>
 
-							<Grid item xs={4} sm={4}></Grid>
-							<Grid item xs={4} sm={4}>
-								<Autocomplete
-									id="parent"
-									fullWidth
-									size="small"
-									options={countries}
-									value={country}
-									onChange={(e, value) => { setCountry(value); value?.designationFr === "la République algérienne démocratique et populaire" ? setDisState(true) : setDisState(false)}}
-									getOptionLabel={(country) => country.designationFr}
-									isOptionEqualToValue={(option, value) => option._links.self.href === value._links.self.href}
-									renderInput={(params) => <TextField {...params} label="Parent" onChange={debounce(filterCountryBy, 200)}/>}
-								/>
-							</Grid>
-							<Grid item xs={4} sm={4}>
-								{	disState &&
-
-									
-									<FormControl fullWidth size="small" >
-										<InputLabel id="state">State</InputLabel>
-										<Select
-											required
-											fullWidth
-											size="small"
-											labelId="state"
-											id="state"
-											variant="outlined"
-											value={state}
-											label="State"
-											
-											onChange={(e) => { setState(e.target.value)
-													//setMCategory(e.target.value); 
-													//getRanks(e.target.value);
-												}
-											}
-										>
-											{
-												states.length > 0 && states.map(state => {
-													return(
-														<MenuItem key={state._links.self.href} value={state._links.state.href}>{state.designationLt}</MenuItem>
-													);
-												})
-											}
-										</Select>
-									</FormControl>
+					<Grid item xs={6} sm={6}>
+						<FormControl fullWidth size="small" >
+							<InputLabel id="realizationNatureLabel">Realization Nature</InputLabel>
+							<Select
+								required
+								fullWidth
+								size="small"
+								labelId="realizationNatureLabel"
+								id="realizationNature"
+								variant="outlined"
+								value={realizationNature}
+								label="Realization Nature"
+								
+								onChange={(e) => setRealizationNature(e.target.value)}
+							>
+								{
+									realizationNatures.length > 0 && realizationNatures.map(realizationNature => {
+										return(
+											<MenuItem key={realizationNature._links.self.href} value={realizationNature._links.realizationNature.href}>{realizationNature.designationFr}</MenuItem>
+										);
+									})
 								}
-							</Grid>
-						</Grid>
+							</Select>
+						</FormControl>
+					</Grid>
+					<Grid item xs={6} sm={6}>
+						<FormControl fullWidth size="small" >
+							<InputLabel id="realizationDirectorLabel">Realization Director</InputLabel>
+							<Select
+								required
+								fullWidth
+								size="small"
+								labelId="realizationDirectorLabel"
+								id="realizationDirector"
+								variant="outlined"
+								value={realizationDirector}
+								label="Realization Director"
+								
+								onChange={(e) => setRealizationDirector(e.target.value)}
+							>
+								{
+									realizationDirectors.length > 0 && realizationDirectors.map(realizationDirector => {
+										return(
+											<MenuItem key={realizationDirector._links.self.href} value={realizationDirector._links.realizationDirector.href}>{realizationDirector.designationFr}</MenuItem>
+										);
+									})
+								}
+							</Select>
+						</FormControl>
 					</Grid>
 
+					<Grid item xs={6} sm={6}>
+						<FormControl fullWidth size="small" >
+							<InputLabel id="awardMethodLabel">Award Method</InputLabel>
+							<Select
+								required
+								fullWidth
+								size="small"
+								labelId="awardMethodLabel"
+								id="awardMethod"
+								variant="outlined"
+								value={awardMethod}
+								label="Award Method"
+								
+								onChange={(e) => setAwardMethod(e.target.value)}
+							>
+								{
+									awardMethods.length > 0 && awardMethods.map(awardMethod => {
+										return(
+											<MenuItem key={awardMethod._links.self.href} value={awardMethod._links.awardMethod.href}>{awardMethod.designationFr}</MenuItem>
+										);
+									})
+								}
+							</Select>
+						</FormControl>
+					</Grid>
+					<Grid item xs={6} sm={6}></Grid>
+
+					<Grid item xs={6} sm={6}>
+						<FormControl fullWidth size="small" >
+							<InputLabel id="budgetTypeLabel">Budget Type</InputLabel>
+							<Select
+								required
+								fullWidth
+								size="small"
+								labelId="budgetTypeLabel"
+								id="budgetType"
+								variant="outlined"
+								value={budgetType}
+								label="Budget Type"
+								
+								onChange={(e) => setBudgetType(e.target.value)}
+							>
+								{
+									budgetTypes.length > 0 && budgetTypes.map(budgetType => {
+										return(
+											<MenuItem key={budgetType._links.self.href} value={budgetType._links.budgetType.href}>{budgetType.designationFr}</MenuItem>
+										);
+									})
+								}
+							</Select>
+						</FormControl>
+					</Grid>
+					<Grid item xs={3} sm={3}>
+						<FormControl fullWidth size="small">
+							<TextField
+								required
+								fullWidth
+								value={consultation.allocatedAmount}
+								onChange={ (e) => setConsultation(consultation => ({...consultation, allocatedAmount: Number(e.target.value)})) }
+								size="small"
+								id="allocatedAmount"
+								name="allocatedAmount"
+								label="Allocated Amount"
+								autoComplete="off"
+								variant="outlined"
+								inputProps={{ 
+									readOnly: readOnly,
+								}}
+							/>
+						</FormControl>
+					</Grid>
+					<Grid item xs={3} sm={3}>
+						<FormControl fullWidth size="small">
+							<TextField
+								required
+								fullWidth
+								value={consultation.financialEstimation}
+								onChange={ (e) => setConsultation(consultation => ({...consultation, financialEstimation: Number(e.target.value)})) }
+								size="small"
+								id="financialEstimation"
+								name="financialEstimation"
+								label="Financial Estimation"
+								autoComplete="off"
+								variant="outlined"
+								inputProps={{ 
+									readOnly: readOnly,
+								}}
+							/>
+						</FormControl>
+					</Grid>
+
+					<Grid item xs={6} sm={6}>
+						<FormControl fullWidth size="small">
+							<TextField
+								required
+								fullWidth
+								value={consultation.approvalReference}
+								onChange={ (e) => setConsultation(consultation => ({...consultation, approvalReference: e.target.value})) }
+								size="small"
+								id="approvalReference"
+								name="approvalReference"
+								label="Approval Reference"
+								autoComplete="off"
+								variant="outlined"
+								inputProps={{ 
+									readOnly: readOnly,
+								}}
+							/>
+						</FormControl>
+					</Grid>
+					<Grid item xs={3} sm={3}>
+						<FormControl fullWidth size="small">
+							<DatePicker 
+								format="DD/MM/YYYY" 
+								label="Approval Date" 
+								readOnly={readOnly} 
+								slotProps={{ textField: { size: 'small', required: true }}} 
+								value={consultation.approvalDate} 
+								onChange={ changedDate=>setConsultation(consultation => ({...consultation, approvalDate:changedDate})) }
+							/>
+						</FormControl>
+					</Grid>
+
+					<Grid item xs={6} sm={6}>
+						<FormControl fullWidth size="small">
+							<TextField
+								required
+								fullWidth
+								value={consultation.reference}
+								onChange={ (e) => setConsultation(consultation => ({...consultation, reference: e.target.value})) }
+								size="small"
+								id="reference"
+								name="reference"
+								label="Reference"
+								autoComplete="off"
+								variant="outlined"
+								inputProps={{ 
+									readOnly: readOnly,
+								}}
+							/>
+						</FormControl>
+					</Grid>
+					<Grid item xs={3} sm={3}>
+						<FormControl fullWidth size="small">
+							<DatePicker 
+								format="DD/MM/YYYY" 
+								label="Publication Date" 
+								readOnly={readOnly} 
+								slotProps={{ textField: { size: 'small', required: true }}} 
+								value={consultation.publishDate} 
+								onChange={ changedDate=>setConsultation(consultation => ({...consultation, publishDate:changedDate})) }
+							/>
+						</FormControl>
+					</Grid>
+					<Grid item xs={3} sm={3}>
+						<FormControl fullWidth size="small">
+							<DatePicker 
+								format="DD/MM/YYYY" 
+								label="Deadline" 
+								readOnly={readOnly} 
+								slotProps={{ textField: { size: 'small', required: true }}} 
+								value={consultation.deadline} 
+								onChange={ changedDate=>setConsultation(consultation => ({...consultation, deadline:changedDate})) }
+							/>
+						</FormControl>
+					</Grid>
 				</Grid>
 			</Paper>
 		</Container>

@@ -161,7 +161,6 @@ const ProjectDetails = (props : any) => {
 							/>
 						</FormControl>
 					</Grid>
-
 					<Grid item xs={2} sm={2}>
 						<FormControl fullWidth size="small" >
 							<InputLabel id="projectYear">Project Year</InputLabel>
@@ -193,7 +192,7 @@ const ProjectDetails = (props : any) => {
 							/>
 						</FormControl>
 					</Grid>
-					<Grid item xs={4} sm={4}></Grid>
+					<Grid item xs={6} sm={6}></Grid>
 
 					<Grid item xs={12} sm={12}>
 						<FormControl fullWidth size="small">

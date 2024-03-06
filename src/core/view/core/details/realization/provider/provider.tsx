@@ -735,7 +735,7 @@ const ProviderDetails = (props : any) => {
 							<Grid item xs={4} sm={4}></Grid>
 							<Grid item xs={4} sm={4}>
 								<Autocomplete
-									id="parent"
+									id="country"
 									fullWidth
 									size="small"
 									options={countries}
@@ -743,7 +743,7 @@ const ProviderDetails = (props : any) => {
 									onChange={(e, value) => { setCountry(value); value?.designationFr === "la République algérienne démocratique et populaire" ? setDisState(true) : setDisState(false)}}
 									getOptionLabel={(country) => country.designationFr}
 									isOptionEqualToValue={(option, value) => option._links.self.href === value._links.self.href}
-									renderInput={(params) => <TextField {...params} label="Parent" onChange={debounce(filterCountryBy, 200)}/>}
+									renderInput={(params) => <TextField {...params} label="country" onChange={debounce(filterCountryBy, 200)}/>}
 								/>
 							</Grid>
 							<Grid item xs={4} sm={4}>

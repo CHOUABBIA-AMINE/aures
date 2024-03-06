@@ -9,6 +9,9 @@ interface ConsultationPhase {
         self                    :{
             href                    : string
         }
+        consultationSteps       :{
+            href                    : string
+        },
     }
 }
 
