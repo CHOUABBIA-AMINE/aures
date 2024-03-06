@@ -435,7 +435,7 @@ const ConsultationDetails = (props : any) => {
 
 					<Grid item xs={6} sm={6}>
 						<Autocomplete
-							id="project"
+							id="Project"
 							fullWidth
 							size="small"
 							options={projects}
