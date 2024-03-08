@@ -30,6 +30,10 @@ import { DatePicker } 			from "@mui/x-date-pickers/DatePicker";
 import { useHTTP } 				from "../../../../../api/request";
 import { formatURL } 			from "../../../../../api/tools";
 
+import { Provider } 			from "../../../../../model/realization/provider/provider";
+import { EconomicNature } 		from "../../../../../model/realization/provider/economic.nature";
+import { Country } 				from "../../../../../model/common/country";
+import { State } 				from "../../../../../model/common/state";
 import { Consultation } 		from "../../../../../model/realization/consultation/consultation";
 import { RealizationNature } 	from "../../../../../model/realization/realization.nature";
 import { AwardMethod } 			from "../../../../../model/realization/consultation/award.method";
@@ -41,7 +45,7 @@ import { RealizationDirector } 	from "../../../../../model/realization/realizati
 import { ConsultationStep } 	from "../../../../../model/realization/consultation/consultation.step";
 import { ConsultationPhase } from "../../../../../model/realization/consultation/consultation.phase";
 
-const ConsultationDetails = (props : any) => {
+const ContractDetails = (props : any) => {
 
 	const location 					= useLocation();
 	const params 					= useParams();
@@ -751,5 +755,5 @@ const ConsultationDetails = (props : any) => {
 		</Container>
 	);
 }
-export default ConsultationDetails;
+export default ContractDetails;
 

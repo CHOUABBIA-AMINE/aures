@@ -53,7 +53,7 @@ function ModelList() {
 
     const [rows, setRow]        = useState([]);
     const [page, setPage]       = useState(0);
-    const [size, setSize]       = useState(5);
+    const [size, setSize]       = useState(10);
     const [total, setTotal]     = useState(0);
 
     const decodeId = (id : string, row : any) => {
@@ -116,7 +116,7 @@ function ModelList() {
         if(entity !== undefined){
             setModel(entity);
             if(model !== entity){
-                setSize(5);
+                setSize(10);
                 setPage(0);
             }
         }else{
