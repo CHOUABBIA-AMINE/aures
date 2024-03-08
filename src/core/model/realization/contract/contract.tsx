@@ -1,52 +1,46 @@
 import { Dayjs }                from 'dayjs';
 
-interface Consultation {
+interface Contract {
     internalId              : string;
-    consultationYear        : string;
+    contractYear            : string;
     reference               : string;
     designationAr           : string;
     designationEn           : string;
     designationFr           : string;
-    allocatedAmount         : number;
-    financialEstimation     : number;
+    amount                  : number;
+    transferableAmount      : number;
     startDate               : Dayjs | null;
     approvalReference       : string;
     approvalDate            : Dayjs | null;
-    publishDate             : Dayjs | null;
-    deadline                : Dayjs | null;
+    notifyDate              : Dayjs | null;
+    contractDuration        : number;
     observation             : string;
     _links                  : {
-        consultation            :{
+        contract                :{
             href                    : string
         },
         self                    :{
             href                    : string
         },
-        awardMethod             :{
+        contractType             :{
             href                    : string
         },
-        realizationNature       :{
+        provider       :{
             href                    : string
         },
-        budgetType              :{
+        realizationStatus              :{
             href                    : string
         },
-        realizationStatus       :{
+        contractStep       :{
             href                    : string
         },
         approvalStatus          :{
             href                    : string
         },
-        realizationDirector     :{
-            href                    : string
-        },
-        consultationStep        :{
+        currency     :{
             href                    : string
         },
         project                 :{
-            href                    : string
-        },
-        beneficiaries           :{
             href                    : string
         },
         documents               :{
@@ -57,11 +51,8 @@ interface Consultation {
         },
         budgetItems             :{
             href                    : string
-        },
-        tenders                 :{
-            href                    : string
         }
     }
 }
 
-export type { Consultation };
+export type { Contract };

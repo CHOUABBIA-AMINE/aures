@@ -30,20 +30,15 @@ import { DatePicker } 			from "@mui/x-date-pickers/DatePicker";
 import { useHTTP } 				from "../../../../../api/request";
 import { formatURL } 			from "../../../../../api/tools";
 
-import { Provider } 			from "../../../../../model/realization/provider/provider";
-import { EconomicNature } 		from "../../../../../model/realization/provider/economic.nature";
-import { Country } 				from "../../../../../model/common/country";
-import { State } 				from "../../../../../model/common/state";
-import { Consultation } 		from "../../../../../model/realization/consultation/consultation";
-import { RealizationNature } 	from "../../../../../model/realization/realization.nature";
-import { AwardMethod } 			from "../../../../../model/realization/consultation/award.method";
-import { BudgetType } 			from "../../../../../model/financial/budget.type";
+import { Contract } 			from "../../../../../model/realization/contract/contract";
 import { RealizationStatus } 	from "../../../../../model/realization/realization.status";
 import { ApprovalStatus } 		from "../../../../../model/realization/approval.status";
 import { Project } 				from "../../../../../model/realization/project";
-import { RealizationDirector } 	from "../../../../../model/realization/realization.director";
-import { ConsultationStep } 	from "../../../../../model/realization/consultation/consultation.step";
-import { ConsultationPhase } from "../../../../../model/realization/consultation/consultation.phase";
+import { ContractStep } 		from "../../../../../model/realization/contract/contract.step";
+import { ContractPhase } 		from "../../../../../model/realization/contract/contract.phase";
+import { ContractType } 		from "../../../../../model/realization/contract/contract.type";
+import { Provider } 			from "../../../../../model/realization/provider/provider";
+import { Currency } 			from "../../../../../model/common/currency";
 
 const ContractDetails = (props : any) => {
 
@@ -52,31 +47,28 @@ const ContractDetails = (props : any) => {
 	const { enqueueSnackbar } 		= useSnackbar();
 
 	let readOnly 					= params.action === 'edit' ? false : true;
-	const { getUrl, getBasedUrl, patchUrl, postBasedUrl, uploadFile, getFile} = useHTTP();
+	const { getUrl, getBasedUrl, patchUrl, postBasedUrl } = useHTTP();
 
-	const [ awardMethods, setAwardMethods ]				= useState<AwardMethod[]>([]);
-	const [ awardMethod, setAwardMethod ]				= useState<string>("");
+	const [ contractTypes, setContractTypes ]			= useState<ContractType[]>([]);
+	const [ contractType, setContractType ]				= useState<string>("");
 
-	const [ realizationNatures, setRealizationNatures ]	= useState<RealizationNature[]>([]);
-	const [ realizationNature, setRealizationNature ]	= useState<string>("");
-
-	const [ budgetTypes, setBudgetTypes ]				= useState<BudgetType[]>([]);
-	const [ budgetType, setBudgetType ]					= useState<string>("");
+	const [ providers, setProviders ]					= useState<Provider[]>([]);
+	const [ provider, setProvider ]						= useState<Provider | null>(null);
 
 	const [ realizationStatuss, setRealizationStatuss ]	= useState<RealizationStatus[]>([]);
 	const [ realizationStatus, setRealizationStatus ]	= useState<string>("");
 
+	const [ contractPhases, setContractPhases ]			= useState<ContractPhase[]>([]);
+	const [ contractPhase, setContractPhase ]			= useState<string>("");
+
+	const [ contractSteps, setContractSteps ]			= useState<ContractStep[]>([]);
+	const [ contractStep, setContractStep ]				= useState<string>("");
+
 	const [ approvalStatuss, setApprovalStatuss ]		= useState<ApprovalStatus[]>([]);
 	const [ approvalStatus, setApprovalStatus ]			= useState<string>("");
 
-	const [ realizationDirectors, setRealizationDirectors ]	= useState<RealizationDirector[]>([]);
-	const [ realizationDirector, setRealizationDirector ]	= useState<string>("");
-
-	const [ consultationPhases, setConsultationPhases ]	= useState<ConsultationPhase[]>([]);
-	const [ consultationPhase, setConsultationPhase ]	= useState<string>("");
-
-	const [ consultationSteps, setConsultationSteps ]	= useState<ConsultationStep[]>([]);
-	const [ consultationStep, setConsultationStep ]		= useState<string>("");
+	const [ currencies, setCurrencies ]					= useState<Currency[]>([]);
+	const [ currency, setCurrency ]						= useState<string>("");
 
 	const [ projects, setProjects ]						= useState<Project[]>([]);
 	const [ project, setProject ]						= useState<Project | null>(null);
@@ -84,53 +76,47 @@ const ContractDetails = (props : any) => {
 	let years : string []			= [];
 	for (let i = 2010; i < 2031; i++) years.push(""+i); 
 
-	const [ consultation, setConsultation ]	= useState<Consultation>({
+	const [ contract, setContract ]	= useState<Contract>({
 		internalId              : "",
-		consultationYear        : "",
-		reference               : "",
+		contractYear            : "",
+		reference            	: "",
 		designationAr           : "",
 		designationEn           : "",
 		designationFr           : "",
-		allocatedAmount         : 0.00,
-		financialEstimation     : 0.00,
+		amount         			: 0.00,
+		transferableAmount	    : 0.00,
 		startDate               : dayjs(),
 		approvalReference       : "",
 		approvalDate            : dayjs(),
-		publishDate             : dayjs(),
-		deadline                : dayjs(),
+		notifyDate              : dayjs(),
+		contractDuration        : 0,
 		observation             : "",
 		_links          		: {
-			consultation            :{
+			contract            	:{
 				href                    : ""
 			},
 			self                    :{
 				href                    : ""
 			},
-			awardMethod             :{
+			contractType            :{
 				href                    : ""
 			},
-			realizationNature       :{
-				href                    : ""
-			},
-			budgetType              :{
+			provider       			:{
 				href                    : ""
 			},
 			realizationStatus       :{
 				href                    : ""
 			},
+			contractStep       		:{
+				href                    : ""
+			},
 			approvalStatus          :{
 				href                    : ""
 			},
-			realizationDirector     :{
-				href                    : ""
-			},
-			consultationStep        :{
+			currency     			:{
 				href                    : ""
 			},
 			project                 :{
-				href                    : ""
-			},
-			beneficiaries           :{
 				href                    : ""
 			},
 			documents               :{
@@ -139,124 +125,114 @@ const ContractDetails = (props : any) => {
 			referencedMails         :{
 				href                    : ""
 			},
-			budgetGoals             :{
-				href                    : ""
-			},
-			tenders                 :{
+			budgetItems             :{
 				href                    : ""
 			}
 		}
 	});
 
-	const filterBy = (e : any) =>{
+	const filterProjectBy = (e : any) =>{
 		getBasedUrl("project/search/filterBy?filter=" + e.target.value).then((projects) => {
 			setProjects(projects.data._embedded.project);
 		})
 	}
 
+	const filterProviderBy = (e : any) =>{
+		getBasedUrl("provider/search/filterBy?filter=" + e.target.value).then((providers) => {
+			setProviders(providers.data._embedded.provider);
+		})
+	}
+
 	const fetchData = ()=>{
 
-		getUrl(formatURL(location.state.modelId)).then((consultation : any) => {
-			setConsultation({
-				internalId              : consultation.data.internalId,
-				consultationYear        : consultation.data.consultationYear,
-				reference               : consultation.data.reference,
-				designationAr           : consultation.data.designationAr,
-				designationEn           : consultation.data.designationEn,
-				designationFr           : consultation.data.designationFr,
-				allocatedAmount         : consultation.data.allocatedAmount,
-				financialEstimation     : consultation.data.financialEstimation,
-				startDate               : consultation.data.startDate,
-				approvalReference       : consultation.data.approvalReference,
-				approvalDate            : consultation.data.approvalDate,
-				publishDate             : consultation.data.publishDate,
-				deadline                : consultation.data.deadline,
-				observation             : consultation.data.observation,
+		getUrl(formatURL(location.state.modelId)).then((contract : any) => {
+			setContract({
+				internalId              : contract.data.internalId,
+				contractYear        	: contract.data.contractYear,
+				reference        		: contract.data.reference,
+				designationAr           : contract.data.designationAr,
+				designationEn           : contract.data.designationEn,
+				designationFr           : contract.data.designationFr,
+				amount         			: contract.data.amount,
+				transferableAmount    	: contract.data.transferableAmount,
+				startDate               : contract.data.startDate,
+				approvalReference       : contract.data.approvalReference,
+				approvalDate            : contract.data.approvalDate,
+				notifyDate             	: contract.data.notifyDate,
+				contractDuration        : contract.data.contractDuration,
+				observation             : contract.data.observation,
 				_links          		: {
-					consultation       		:{
-						href            		: consultation.data._links.consultation.href
+					contract       			:{
+						href            		: contract.data._links.contract.href
 					},
 					self            		:{
-						href            		: consultation.data._links.self.href
+						href            		: contract.data._links.self.href
 					},
-					awardMethod             :{
-						href                    : consultation.data._links.awardMethod.href
+					contractType            :{
+						href                    : contract.data._links.contractType.href
 					},
-					realizationNature       :{
-						href                    : consultation.data._links.realizationNature.href
-					},
-					budgetType              :{
-						href                    : consultation.data._links.budgetType.href
+					provider       			:{
+						href                    : contract.data._links.provider.href
 					},
 					realizationStatus       :{
-						href                    : consultation.data._links.realizationStatus.href
+						href                    : contract.data._links.realizationStatus.href
+					},
+					contractStep        	:{
+						href                    : contract.data._links.contractStep.href
 					},
 					approvalStatus          :{
-						href                    : consultation.data._links.approvalStatus.href
+						href                    : contract.data._links.approvalStatus.href
 					},
-					realizationDirector     :{
-						href                    : consultation.data._links.realizationDirector.href
-					},
-					consultationStep        :{
-						href                    : consultation.data._links.consultationStep.href
+					currency                :{
+						href                    : contract.data._links.currency.href
 					},
 					project                 :{
-						href                    : consultation.data._links.project.href
-					},
-					beneficiaries           :{
-						href                    : consultation.data._links.beneficiaries.href
+						href                    : contract.data._links.project.href
 					},
 					documents               :{
-						href                    : consultation.data._links.documents.href
+						href                    : contract.data._links.documents.href
 					},
 					referencedMails         :{
-						href                    : consultation.data._links.referencedMails.href
+						href                    : contract.data._links.referencedMails.href
 					},
-					budgetGoals             :{
-						href                    : consultation.data._links.budgetGoals.href
-					},
-					tenders                 :{
-						href                    : consultation.data._links.tenders.href
+					budgetItems             :{
+						href                    : contract.data._links.budgetGoals.href
 					}
 				}
 			})
-
-			getUrl(formatURL(consultation.data._links.awardMethod.href)).then((awardMethod) => {
-				setAwardMethod(awardMethod.data._links.self.href);
+			
+			getUrl(formatURL(contract.data._links.contractType.href)).then((contractType) => {
+				setContractType(contractType.data._links.self.href);
 			}).catch(e => {});
 			
-			getUrl(formatURL(consultation.data._links.realizationNature.href)).then((realizationNature) => {
-				setRealizationNature(realizationNature.data._links.self.href);
+			getUrl(formatURL(contract.data._links.provider.href)).then((provider) => {
+				setProvider(provider.data);
 			}).catch(e => {});
 			
-			getUrl(formatURL(consultation.data._links.budgetType.href)).then((budgetType) => {
-				setBudgetType(budgetType.data._links.self.href);
-			}).catch(e => {});
-			
-			getUrl(formatURL(consultation.data._links.realizationStatus.href)).then((realizationStatus) => {
+			getUrl(formatURL(contract.data._links.realizationStatus.href)).then((realizationStatus) => {
 				setRealizationStatus(realizationStatus.data._links.self.href);
 			}).catch(e => {});
 			
-			getUrl(formatURL(consultation.data._links.approvalStatus.href)).then((approvalStatus) => {
-				setApprovalStatus(approvalStatus.data._links.self.href);
-			}).catch(e => {});
-			
-			getUrl(formatURL(consultation.data._links.realizationDirector.href)).then((realizationDirector) => {
-				setRealizationDirector(realizationDirector.data._links.self.href);
-			}).catch(e => {});
-			
-			getUrl(formatURL(consultation.data._links.consultationStep.href)).then((consultationStep) => {
-				getUrl(formatURL(consultation.data._links.consultationPhase.href)).then((consultationPhase) => {
-					setConsultationPhase(consultationPhase.data._links.self.href);
-					getUrl(consultationPhase.data._links.consultationSteps.href).then((consultationSteps) => {
-						setConsultationSteps(consultationSteps.data._embedded.consultationStep);
-						setConsultationStep(consultationStep.data._links.self.href);
+			getUrl(formatURL(contract.data._links.contractStep.href)).then((contractStep) => {
+				getUrl(formatURL(contract.data._links.contractPhase.href)).then((contractPhase) => {
+					setContractPhase(contractPhase.data._links.self.href);
+					getUrl(contractPhase.data._links.contractSteps.href).then((contractSteps) => {
+						setContractSteps(contractSteps.data._embedded.contractStep);
+						setContractStep(contractStep.data._links.self.href);
 					})
 				})
 				
 			}).catch(e => {});
+
+			getUrl(formatURL(contract.data._links.approvalStatus.href)).then((approvalStatus) => {
+				setApprovalStatus(approvalStatus.data._links.self.href);
+			}).catch(e => {});
 			
-			getUrl(formatURL(consultation.data._links.project.href)).then((project) => {
+			getUrl(formatURL(contract.data._links.currency.href)).then((currency) => {
+				setCurrency(currency.data._links.self.href);
+			}).catch(e => {});
+			
+			getUrl(formatURL(contract.data._links.project.href)).then((project) => {
 				setProject(project.data);
 			}).catch(e => {});
 			
@@ -264,64 +240,40 @@ const ContractDetails = (props : any) => {
 	}
 
 	const patchData = ()=>{
+		let data = {
+			internalId              : contract.internalId,
+			contractYear        	: contract.contractYear,
+			referenc        		: contract.reference,
+			designationAr           : contract.designationAr,
+			designationEn           : contract.designationEn,
+			designationFr           : contract.designationFr,
+			amount         			: contract.amount,
+			transferableAmount     	: contract.transferableAmount,
+			startDate               : contract.startDate,
+			approvalReference       : contract.approvalReference,
+			approvalDate            : contract.approvalDate,
+			notifyDate             	: contract.notifyDate,
+			contractDuration        : contract.contractDuration,
+			observation             : contract.observation,
+			contractType            : contractType,
+			provider       			: provider?._links.self.href,
+			realizationStatus       : realizationStatus,
+			contractStep        	: contractStep,
+			approvalStatus          : approvalStatus,
+			currency     			: currency,
+			project                 : project?._links.self.href
+		};
 		if(location.state != null){
-			
-			patchUrl(formatURL(location.state.modelId), JSON.stringify({
-				internalId              : consultation.internalId,
-				consultationYear        : consultation.consultationYear,
-				reference               : consultation.reference,
-				designationAr           : consultation.designationAr,
-				designationEn           : consultation.designationEn,
-				designationFr           : consultation.designationFr,
-				allocatedAmount         : consultation.allocatedAmount,
-				financialEstimation     : consultation.financialEstimation,
-				startDate               : consultation.startDate,
-				approvalReference       : consultation.approvalReference,
-				approvalDate            : consultation.approvalDate,
-				publishDate             : consultation.publishDate,
-				deadline                : consultation.deadline,
-				observation             : consultation.observation,
-				awardMethod             : awardMethod,
-				realizationNature       : realizationNature,
-				budgetType              : budgetType,
-				realizationStatus       : realizationStatus,
-				approvalStatus          : approvalStatus,
-				realizationDirector     : realizationDirector,
-				consultationStep        : consultationStep,
-				project                 : project
-			})).then((consultation) => {
-				if(consultation.data !== undefined){
-					setConsultation(consultation.data);
+			patchUrl(formatURL(location.state.modelId), JSON.stringify({data})).then((contract) => {
+				if(contract.data !== undefined){
+					setContract(contract.data);
 					enqueueSnackbar('Entity created successfully !', {variant: 'success'});
 				}
 			})
 		}else{
-			postBasedUrl("provider", JSON.stringify({
-				internalId              : consultation.internalId,
-				consultationYear        : consultation.consultationYear,
-				reference               : consultation.reference,
-				designationAr           : consultation.designationAr,
-				designationEn           : consultation.designationEn,
-				designationFr           : consultation.designationFr,
-				allocatedAmount         : consultation.allocatedAmount,
-				financialEstimation     : consultation.financialEstimation,
-				startDate               : consultation.startDate !== null ? dayjs(consultation.startDate) : dayjs(),
-				approvalReference       : consultation.approvalReference,
-				approvalDate            : consultation.approvalDate !== null ? dayjs(consultation.approvalDate) : dayjs(),
-				publishDate             : consultation.publishDate !== null ? dayjs(consultation.publishDate) : dayjs(),
-				deadline                : consultation.deadline !== null ? dayjs(consultation.deadline) : dayjs(),
-				observation             : consultation.observation,
-				awardMethod             : awardMethod,
-				realizationNature       : realizationNature,
-				budgetType              : budgetType,
-				realizationStatus       : realizationStatus,
-				approvalStatus          : approvalStatus,
-				realizationDirector     : realizationDirector,
-				consultationStep        : consultationStep,
-				project                 : project
-			})).then((consultation) => {
-				if(consultation.data !== undefined){
-					setConsultation(consultation.data);
+			postBasedUrl("provider", JSON.stringify({data})).then((contract) => {
+				if(contract.data !== undefined){
+					setContract(contract.data);
 					enqueueSnackbar('Entity created successfully !', {variant: 'success'});
 				}
 			})
@@ -329,17 +281,20 @@ const ContractDetails = (props : any) => {
 	}
 
 	useEffect(() => {
+		if(contractPhase !== ""){
+			getUrl(contractPhase).then((contractPhase) => {
+				setContractSteps([])
+				getUrl(contractPhase.data._links.contractSteps.href).then((contractSteps) => {
+					setContractSteps(contractSteps.data._embedded.contractStep);
+				});
+			});
+		}
+	}, [contractPhase]);
 
-		getBasedUrl("awardMethod").then((awardMethods) => {
-			setAwardMethods(awardMethods.data._embedded.awardMethod);
-		});
+	useEffect(() => {
 
-		getBasedUrl("realizationNature").then((realizationNatures) => {
-			setRealizationNatures(realizationNatures.data._embedded.realizationNature);
-		});
-
-		getBasedUrl("budgetType").then((budgetTypes) => {
-			setBudgetTypes(budgetTypes.data._embedded.budgetType);
+		getBasedUrl("contractType").then((contractTypes) => {
+			setContractTypes(contractTypes.data._embedded.contractType);
 		});
 
 		getBasedUrl("realizationStatus").then((realizationStatuss) => {
@@ -350,12 +305,12 @@ const ContractDetails = (props : any) => {
 			setApprovalStatuss(approvalStatuss.data._embedded.approvalStatus);
 		});
 
-		getBasedUrl("realizationDirector").then((realizationDirectors) => {
-			setRealizationDirectors(realizationDirectors.data._embedded.realizationDirector);
+		getBasedUrl("currency").then((currencies) => {
+			setCurrencies(currencies.data._embedded.currency);
 		});
 
-		getBasedUrl("consultationPhase").then((consultationPhases) => {
-			setConsultationPhases(consultationPhases.data._embedded.consultationPhase);
+		getBasedUrl("contractPhase").then((contractPhases) => {
+			setContractPhases(contractPhases.data._embedded.contractPhase);
 		});
 
 		if(location.state !== null){
@@ -368,7 +323,7 @@ const ContractDetails = (props : any) => {
 			<Paper variant="outlined" sx={{ marginTop: "60px", padding:'30px' }}>
 				<Box sx={{display : "flex", paddingBottom: 5 , justifyContent: "space-between"}}>
 					<Typography variant="h6" >
-						Consultation Details
+						Contract Details
 					</Typography>
 					<Box>
 						<Button color="primary" variant="outlined" size="small" sx={{ marginRight:'5px' }} onClick={e => patchData()}>
@@ -385,8 +340,8 @@ const ContractDetails = (props : any) => {
 							<TextField
 								required
 								fullWidth
-								value={consultation.internalId}
-								onChange={ (e) => setConsultation(consultation => ({...consultation, internalId: e.target.value})) }
+								value={contract.internalId}
+								onChange={ (e) => setContract(contract => ({...contract, internalId: e.target.value})) }
 								size="small"
 								id="internalId"
 								name="internalId"
@@ -402,18 +357,18 @@ const ContractDetails = (props : any) => {
 					</Grid>
 					<Grid item xs={2} sm={2}>
 						<FormControl fullWidth size="small" >
-							<InputLabel id="projectYear">Project Year</InputLabel>
+							<InputLabel id="ContractYear">Contract Year</InputLabel>
 							<Select
 								required
 								fullWidth
 								size="small"
-								labelId="consultationYear"
-								id="consultationYear"
+								labelId="contractYear"
+								id="contractYear"
 								variant="outlined"
-								value={consultation.consultationYear}
+								value={contract.contractYear}
 								label="Project Year"
 								
-								onChange={(e) => setConsultation(consultation => ({...consultation, consultationYear: e.target.value})) }
+								onChange={(e) => setContract(contract => ({...contract, contractYear: e.target.value})) }
 							>
 								{ years.map(year => { return (<MenuItem key={year} value={year}>{year}</MenuItem> );}) }
 							</Select>
@@ -426,8 +381,8 @@ const ContractDetails = (props : any) => {
 								label="Start Date" 
 								readOnly={readOnly} 
 								slotProps={{ textField: { size: 'small', required: true }}} 
-								value={consultation.startDate} 
-								onChange={ changedDate=>setConsultation(consultation => ({...consultation, startDate:changedDate})) }
+								value={contract.startDate} 
+								onChange={ changedDate=>setContract(contract => ({...contract, startDate:changedDate})) }
 							/>
 						</FormControl>
 					</Grid>
@@ -435,7 +390,7 @@ const ContractDetails = (props : any) => {
 
 					<Grid item xs={6} sm={6}>
 						<Autocomplete
-							id="Project"
+							id="project"
 							fullWidth
 							size="small"
 							options={projects}
@@ -443,8 +398,113 @@ const ContractDetails = (props : any) => {
 							onChange={(e, value) => setProject(value)}
 							getOptionLabel={(project) => project.designationFr}
 							isOptionEqualToValue={(option, value) => option._links.self.href === value._links.self.href}
-							renderInput={(params) => <TextField {...params} label="project" onChange={debounce(filterBy, 200)}/>}
+							renderInput={(params) => <TextField {...params} label="Project" onChange={debounce(filterProjectBy, 200)}/>}
 						/>
+					</Grid>
+					<Grid item xs={6} sm={6}></Grid>
+
+					<Grid item xs={6} sm={6}>
+						<Autocomplete
+							id="provider"
+							fullWidth
+							size="small"
+							options={providers}
+							value={provider}
+							onChange={(e, value) => setProvider(value)}
+							getOptionLabel={(provider) => provider.designationLt}
+							isOptionEqualToValue={(option, value) => option._links.self.href === value._links.self.href}
+							renderInput={(params) => <TextField {...params} label="Provider" onChange={debounce(filterProviderBy, 200)}/>}
+						/>
+					</Grid>
+					<Grid item xs={6} sm={6}></Grid>
+
+					<Grid item xs={3} sm={3}>
+						<FormControl fullWidth size="small" >
+							<InputLabel id="contractTypeLabel">Contract Type</InputLabel>
+							<Select
+								required
+								fullWidth
+								size="small"
+								labelId="contractTypeLabel"
+								id="contractType"
+								variant="outlined"
+								value={contractType}
+								label="Contract Type"
+								
+								onChange={(e) => setContractType(e.target.value)}
+							>
+								{
+									contractTypes.length > 0 && contractTypes.map(contractType => {
+										return(
+											<MenuItem key={contractType._links.self.href} value={contractType._links.contractType.href}>{contractType.designationFr}</MenuItem>
+										);
+									})
+								}
+							</Select>
+						</FormControl>
+					</Grid>
+					<Grid item xs={3} sm={3}>
+						<FormControl fullWidth size="small">
+							<TextField
+								required
+								fullWidth
+								value={contract.amount}
+								onChange={ (e) => setContract(contract => ({...contract, amount: Number(e.target.value)})) }
+								size="small"
+								id="amount"
+								name="amount"
+								label="Amount"
+								autoComplete="off"
+								variant="outlined"
+								inputProps={{ 
+									readOnly: readOnly,
+								}}
+							/>
+						</FormControl>
+					</Grid>
+					<Grid item xs={3} sm={3}>
+						<FormControl fullWidth size="small">
+							<TextField
+								required
+								fullWidth
+								value={contract.transferableAmount}
+								onChange={ (e) => setContract(contract => ({...contract, transferableAmount: Number(e.target.value)})) }
+								size="small"
+								id="transferableAmount"
+								name="transferableAmount"
+								label="Transferable Amount"
+								autoComplete="off"
+								variant="outlined"
+								inputProps={{ 
+									readOnly: readOnly,
+								}}
+							/>
+						</FormControl>
+					</Grid>
+					<Grid item xs={3} sm={3}>
+						<FormControl fullWidth size="small" >
+							<InputLabel id="currencyLabel">Currency</InputLabel>
+							<Select
+								required
+								fullWidth
+								size="small"
+								labelId="currencyLabel"
+								id="currency"
+								variant="outlined"
+								value={currency}
+								label="Currency"
+								
+								onChange={(e) => setCurrency(e.target.value)}
+							>
+								{
+									currencies.length > 0 && currencies.map(currency => {
+										return(
+											<MenuItem key={currency._links.self.href} value={currency._links.currency.href}>{currency.codeLt}</MenuItem>
+										);
+									})
+								}
+							</Select>
+						</FormControl>
 					</Grid>
 
 					<Grid item xs={12} sm={12}>
@@ -452,8 +512,8 @@ const ContractDetails = (props : any) => {
 							<TextField
 								required
 								fullWidth
-								value={consultation.designationAr}
-								onChange={ (e) => setConsultation(consultation => ({...consultation, designationAr: e.target.value})) }
+								value={contract.designationAr}
+								onChange={ (e) => setContract(contract => ({...contract, designationAr: e.target.value})) }
 								size="small"
 								id="designationAr"
 								name="designationAr"
@@ -474,8 +534,8 @@ const ContractDetails = (props : any) => {
 							<TextField
 								required
 								fullWidth
-								value={consultation.designationEn}
-								onChange={ (e) => setConsultation(consultation => ({...consultation, designationEn: e.target.value})) }
+								value={contract.designationEn}
+								onChange={ (e) => setContract(contract => ({...contract, designationEn: e.target.value})) }
 								size="small"
 								id="designationEn"
 								name="designationEn"
@@ -495,8 +555,8 @@ const ContractDetails = (props : any) => {
 							<TextField
 								required
 								fullWidth
-								value={consultation.designationFr}
-								onChange={ (e) => setConsultation(consultation => ({...consultation, designationFr: e.target.value})) }
+								value={contract.designationFr}
+								onChange={ (e) => setContract(contract => ({...contract, designationFr: e.target.value})) }
 								size="small"
 								id="designationFr"
 								name="designationFr"
@@ -516,8 +576,8 @@ const ContractDetails = (props : any) => {
 							<TextField
 								required
 								fullWidth
-								value={consultation.observation}
-								onChange={ (e) => setConsultation(consultation => ({...consultation, observation: e.target.value})) }
+								value={contract.observation}
+								onChange={ (e) => setContract(contract => ({...contract, observation: e.target.value})) }
 								size="small"
 								id="observation"
 								name="observation"
@@ -535,101 +595,23 @@ const ContractDetails = (props : any) => {
 
 					<Grid item xs={6} sm={6}>
 						<FormControl fullWidth size="small" >
-							<InputLabel id="realizationNatureLabel">Realization Nature</InputLabel>
+							<InputLabel id="realizationStatusLabel">Realization Status</InputLabel>
 							<Select
 								required
 								fullWidth
 								size="small"
-								labelId="realizationNatureLabel"
-								id="realizationNature"
+								labelId="realizationStatusLabel"
+								id="realizationStatus"
 								variant="outlined"
-								value={realizationNature}
-								label="Realization Nature"
+								value={realizationStatus}
+								label="Realization Status"
 								
-								onChange={(e) => setRealizationNature(e.target.value)}
+								onChange={(e) => setRealizationStatus(e.target.value)}
 							>
 								{
-									realizationNatures.length > 0 && realizationNatures.map(realizationNature => {
+									realizationStatuss.length > 0 && realizationStatuss.map(realizationStatus => {
 										return(
-											<MenuItem key={realizationNature._links.self.href} value={realizationNature._links.realizationNature.href}>{realizationNature.designationFr}</MenuItem>
-										);
-									})
-								}
-							</Select>
-						</FormControl>
-					</Grid>
-					<Grid item xs={6} sm={6}>
-						<FormControl fullWidth size="small" >
-							<InputLabel id="realizationDirectorLabel">Realization Director</InputLabel>
-							<Select
-								required
-								fullWidth
-								size="small"
-								labelId="realizationDirectorLabel"
-								id="realizationDirector"
-								variant="outlined"
-								value={realizationDirector}
-								label="Realization Director"
-								
-								onChange={(e) => setRealizationDirector(e.target.value)}
-							>
-								{
-									realizationDirectors.length > 0 && realizationDirectors.map(realizationDirector => {
-										return(
-											<MenuItem key={realizationDirector._links.self.href} value={realizationDirector._links.realizationDirector.href}>{realizationDirector.designationFr}</MenuItem>
-										);
-									})
-								}
-							</Select>
-						</FormControl>
-					</Grid>
-
-					<Grid item xs={6} sm={6}>
-						<FormControl fullWidth size="small" >
-							<InputLabel id="awardMethodLabel">Award Method</InputLabel>
-							<Select
-								required
-								fullWidth
-								size="small"
-								labelId="awardMethodLabel"
-								id="awardMethod"
-								variant="outlined"
-								value={awardMethod}
-								label="Award Method"
-								
-								onChange={(e) => setAwardMethod(e.target.value)}
-							>
-								{
-									awardMethods.length > 0 && awardMethods.map(awardMethod => {
-										return(
-											<MenuItem key={awardMethod._links.self.href} value={awardMethod._links.awardMethod.href}>{awardMethod.designationFr}</MenuItem>
-										);
-									})
-								}
-							</Select>
-						</FormControl>
-					</Grid>
-					<Grid item xs={6} sm={6}></Grid>
-
-					<Grid item xs={6} sm={6}>
-						<FormControl fullWidth size="small" >
-							<InputLabel id="budgetTypeLabel">Budget Type</InputLabel>
-							<Select
-								required
-								fullWidth
-								size="small"
-								labelId="budgetTypeLabel"
-								id="budgetType"
-								variant="outlined"
-								value={budgetType}
-								label="Budget Type"
-								
-								onChange={(e) => setBudgetType(e.target.value)}
-							>
-								{
-									budgetTypes.length > 0 && budgetTypes.map(budgetType => {
-										return(
-											<MenuItem key={budgetType._links.self.href} value={budgetType._links.budgetType.href}>{budgetType.designationFr}</MenuItem>
+											<MenuItem key={realizationStatus._links.self.href} value={realizationStatus._links.realizationStatus.href}>{realizationStatus.designationFr}</MenuItem>
 										);
 									})
 								}
@@ -637,51 +619,88 @@ const ContractDetails = (props : any) => {
 						</FormControl>
 					</Grid>
 					<Grid item xs={3} sm={3}>
-						<FormControl fullWidth size="small">
-							<TextField
+						<FormControl fullWidth size="small" >
+							<InputLabel id="contractPhaseLabel">Contract Phase</InputLabel>
+							<Select
 								required
 								fullWidth
-								value={consultation.allocatedAmount}
-								onChange={ (e) => setConsultation(consultation => ({...consultation, allocatedAmount: Number(e.target.value)})) }
 								size="small"
-								id="allocatedAmount"
-								name="allocatedAmount"
-								label="Allocated Amount"
-								autoComplete="off"
+								labelId="contractPhaseLabel"
+								id="contractPhase"
 								variant="outlined"
-								inputProps={{ 
-									readOnly: readOnly,
-								}}
-							/>
+								value={contractPhase}
+								label="Contract Phase"
+								
+								onChange={(e) => setContractPhase(e.target.value)}
+							>
+								{
+									contractPhases.length > 0 && contractPhases.map(contractPhase => {
+										return(
+											<MenuItem key={contractPhase._links.self.href} value={contractPhase._links.contractPhase.href}>{contractPhase.designationFr}</MenuItem>
+										);
+									})
+								}
+							</Select>
 						</FormControl>
 					</Grid>
 					<Grid item xs={3} sm={3}>
-						<FormControl fullWidth size="small">
-							<TextField
+						<FormControl fullWidth size="small" >
+							<InputLabel id="contractStepLabel">Contract Step</InputLabel>
+							<Select
 								required
 								fullWidth
-								value={consultation.financialEstimation}
-								onChange={ (e) => setConsultation(consultation => ({...consultation, financialEstimation: Number(e.target.value)})) }
 								size="small"
-								id="financialEstimation"
-								name="financialEstimation"
-								label="Financial Estimation"
-								autoComplete="off"
+								labelId="contractStepLabel"
+								id="contractStep"
 								variant="outlined"
-								inputProps={{ 
-									readOnly: readOnly,
-								}}
-							/>
+								value={contractStep}
+								label="Contract Step"
+								
+								onChange={(e) => setContractStep(e.target.value)}
+							>
+								{
+									contractSteps.length > 0 && contractSteps.map(contractStep => {
+										return(
+											<MenuItem key={contractStep._links.self.href} value={contractStep._links.contractStep.href}>{contractStep.designationFr}</MenuItem>
+										);
+									})
+								}
+							</Select>
 						</FormControl>
 					</Grid>
 
+					<Grid item xs={3} sm={3}>
+						<FormControl fullWidth size="small" >
+							<InputLabel id="approvalStatusLabel">Approval Status</InputLabel>
+							<Select
+								required
+								fullWidth
+								size="small"
+								labelId="approvalStatusLabel"
+								id="approvalStatus"
+								variant="outlined"
+								value={approvalStatus}
+								label="Approval Status"
+								
+								onChange={(e) => setContractStep(e.target.value)}
+							>
+								{
+									approvalStatuss.length > 0 && approvalStatuss.map(approvalStatus => {
+										return(
+											<MenuItem key={approvalStatus._links.self.href} value={approvalStatus._links.approvalStatus.href}>{approvalStatus.designationFr}</MenuItem>
+										);
+									})
+								}
+							</Select>
+						</FormControl>
+					</Grid>
 					<Grid item xs={6} sm={6}>
 						<FormControl fullWidth size="small">
 							<TextField
 								required
 								fullWidth
-								value={consultation.approvalReference}
-								onChange={ (e) => setConsultation(consultation => ({...consultation, approvalReference: e.target.value})) }
+								value={contract.approvalReference}
+								onChange={ (e) => setContract(contract => ({...contract, approvalReference: e.target.value})) }
 								size="small"
 								id="approvalReference"
 								name="approvalReference"
@@ -701,19 +720,20 @@ const ContractDetails = (props : any) => {
 								label="Approval Date" 
 								readOnly={readOnly} 
 								slotProps={{ textField: { size: 'small', required: true }}} 
-								value={consultation.approvalDate} 
-								onChange={ changedDate=>setConsultation(consultation => ({...consultation, approvalDate:changedDate})) }
+								value={contract.approvalDate} 
+								onChange={ changedDate=>setContract(contract => ({...contract, approvalDate:changedDate})) }
 							/>
 						</FormControl>
 					</Grid>
 
-					<Grid item xs={6} sm={6}>
+					<Grid item xs={3} sm={3}></Grid>
+					<Grid item xs={3} sm={3}>
 						<FormControl fullWidth size="small">
 							<TextField
 								required
 								fullWidth
-								value={consultation.reference}
-								onChange={ (e) => setConsultation(consultation => ({...consultation, reference: e.target.value})) }
+								value={contract.reference}
+								onChange={ (e) => setContract(contract => ({...contract, reference: e.target.value})) }
 								size="small"
 								id="reference"
 								name="reference"
@@ -730,23 +750,30 @@ const ContractDetails = (props : any) => {
 						<FormControl fullWidth size="small">
 							<DatePicker 
 								format="DD/MM/YYYY" 
-								label="Publication Date" 
+								label="Notification Date" 
 								readOnly={readOnly} 
 								slotProps={{ textField: { size: 'small', required: true }}} 
-								value={consultation.publishDate} 
-								onChange={ changedDate=>setConsultation(consultation => ({...consultation, publishDate:changedDate})) }
+								value={contract.notifyDate} 
+								onChange={ changedDate=>setContract(contract => ({...contract, notifyDate:changedDate})) }
 							/>
 						</FormControl>
 					</Grid>
 					<Grid item xs={3} sm={3}>
 						<FormControl fullWidth size="small">
-							<DatePicker 
-								format="DD/MM/YYYY" 
-								label="Deadline" 
-								readOnly={readOnly} 
-								slotProps={{ textField: { size: 'small', required: true }}} 
-								value={consultation.deadline} 
-								onChange={ changedDate=>setConsultation(consultation => ({...consultation, deadline:changedDate})) }
+							<TextField
+								required
+								fullWidth
+								value={contract.contractDuration}
+								onChange={ (e) => setContract(contract => ({...contract, contractDuration: Number(e.target.value)})) }
+								size="small"
+								id="contractDuration"
+								name="contractDuration"
+								label="Contract Duration"
+								autoComplete="off"
+								variant="outlined"
+								inputProps={{ 
+									readOnly: readOnly,
+								}}
 							/>
 						</FormControl>
 					</Grid>

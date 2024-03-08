@@ -17,7 +17,8 @@ import EmployeeDetails          from "../view/core/details/common/administration
 
 import UserDetails              from "../view/core/details/common/security/user";
 import RoleDetails              from "../view/core/details/common/security/role";
-import ConsultationDetails from "../view/core/details/realization/consultation/consultation";
+import ConsultationDetails      from "../view/core/details/realization/consultation/consultation";
+import ContractDetails          from "../view/core/details/realization/contract/contract";
 
 function CoreRouting(){
 	return (
@@ -45,6 +46,7 @@ function CoreRouting(){
             <Route path="provider/:action"      element={<ProviderDetails />}></Route>
             <Route path="project/:action"       element={<ProjectDetails />}></Route>
             <Route path="consultation/:action"  element={<ConsultationDetails />}></Route>
+            <Route path="contract/:action"      element={<ContractDetails />}></Route>
 
             <Route path="structure/:action"     element={<StructureDetails />}></Route>
             <Route path="job/:action"           element={<JobDetails />}></Route>

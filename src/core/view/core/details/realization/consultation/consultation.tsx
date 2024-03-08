@@ -48,7 +48,7 @@ const ConsultationDetails = (props : any) => {
 	const { enqueueSnackbar } 		= useSnackbar();
 
 	let readOnly 					= params.action === 'edit' ? false : true;
-	const { getUrl, getBasedUrl, patchUrl, postBasedUrl, uploadFile, getFile} = useHTTP();
+	const { getUrl, getBasedUrl, patchUrl, postBasedUrl } = useHTTP();
 
 	const [ awardMethods, setAwardMethods ]				= useState<AwardMethod[]>([]);
 	const [ awardMethod, setAwardMethod ]				= useState<string>("");
@@ -135,7 +135,7 @@ const ConsultationDetails = (props : any) => {
 			referencedMails         :{
 				href                    : ""
 			},
-			budgetGoals             :{
+			budgetItems             :{
 				href                    : ""
 			},
 			tenders                 :{
@@ -208,7 +208,7 @@ const ConsultationDetails = (props : any) => {
 					referencedMails         :{
 						href                    : consultation.data._links.referencedMails.href
 					},
-					budgetGoals             :{
+					budgetItems             :{
 						href                    : consultation.data._links.budgetGoals.href
 					},
 					tenders                 :{
@@ -284,7 +284,7 @@ const ConsultationDetails = (props : any) => {
 				approvalStatus          : approvalStatus,
 				realizationDirector     : realizationDirector,
 				consultationStep        : consultationStep,
-				project                 : project
+				project                 : project?._links.self.href
 			})).then((consultation) => {
 				if(consultation.data !== undefined){
 					setConsultation(consultation.data);
@@ -314,7 +314,7 @@ const ConsultationDetails = (props : any) => {
 				approvalStatus          : approvalStatus,
 				realizationDirector     : realizationDirector,
 				consultationStep        : consultationStep,
-				project                 : project
+				project                 : project?._links.self.href
 			})).then((consultation) => {
 				if(consultation.data !== undefined){
 					setConsultation(consultation.data);
@@ -323,6 +323,17 @@ const ConsultationDetails = (props : any) => {
 			})
 		}
 	}
+
+	useEffect(() => {
+		if(consultationPhase !== ""){
+			getUrl(consultationPhase).then((consultationPhase) => {
+				setConsultationSteps([])
+				getUrl(consultationPhase.data._links.consultationSteps.href).then((consultationSteps) => {
+					setConsultationSteps(consultationSteps.data._embedded.consultationStep);
+				});
+			});
+		}
+	}, [consultationPhase]);
 
 	useEffect(() => {
 
@@ -398,7 +409,7 @@ const ConsultationDetails = (props : any) => {
 					</Grid>
 					<Grid item xs={2} sm={2}>
 						<FormControl fullWidth size="small" >
-							<InputLabel id="projectYear">Project Year</InputLabel>
+							<InputLabel id="consultationYear">Consultation Year</InputLabel>
 							<Select
 								required
 								fullWidth
@@ -407,7 +418,7 @@ const ConsultationDetails = (props : any) => {
 								id="consultationYear"
 								variant="outlined"
 								value={consultation.consultationYear}
-								label="Project Year"
+								label="Consultation Year"
 								
 								onChange={(e) => setConsultation(consultation => ({...consultation, consultationYear: e.target.value})) }
 							>
@@ -431,7 +442,7 @@ const ConsultationDetails = (props : any) => {
 
 					<Grid item xs={6} sm={6}>
 						<Autocomplete
-							id="Project"
+							id="project"
 							fullWidth
 							size="small"
 							options={projects}
@@ -439,10 +450,149 @@ const ConsultationDetails = (props : any) => {
 							onChange={(e, value) => setProject(value)}
 							getOptionLabel={(project) => project.designationFr}
 							isOptionEqualToValue={(option, value) => option._links.self.href === value._links.self.href}
-							renderInput={(params) => <TextField {...params} label="project" onChange={debounce(filterBy, 200)}/>}
+							renderInput={(params) => <TextField {...params} label="Project" onChange={debounce(filterBy, 200)}/>}
 						/>
 					</Grid>
+					<Grid item xs={3} sm={3}>
+						<FormControl fullWidth size="small" >
+							<InputLabel id="realizationNatureLabel">Realization Nature</InputLabel>
+							<Select
+								required
+								fullWidth
+								size="small"
+								labelId="realizationNatureLabel"
+								id="realizationNature"
+								variant="outlined"
+								value={realizationNature}
+								label="Realization Nature"
+								
+								onChange={(e) => setRealizationNature(e.target.value)}
+							>
+								{
+									realizationNatures.length > 0 && realizationNatures.map(realizationNature => {
+										return(
+											<MenuItem key={realizationNature._links.self.href} value={realizationNature._links.realizationNature.href}>{realizationNature.designationFr}</MenuItem>
+										);
+									})
+								}
+							</Select>
+						</FormControl>
+					</Grid>
+					<Grid item xs={3} sm={3}>
+						<FormControl fullWidth size="small" >
+							<InputLabel id="realizationDirectorLabel">Realization Director</InputLabel>
+							<Select
+								required
+								fullWidth
+								size="small"
+								labelId="realizationDirectorLabel"
+								id="realizationDirector"
+								variant="outlined"
+								value={realizationDirector}
+								label="Realization Director"
+								
+								onChange={(e) => setRealizationDirector(e.target.value)}
+							>
+								{
+									realizationDirectors.length > 0 && realizationDirectors.map(realizationDirector => {
+										return(
+											<MenuItem key={realizationDirector._links.self.href} value={realizationDirector._links.realizationDirector.href}>{realizationDirector.designationFr}</MenuItem>
+										);
+									})
+								}
+							</Select>
+						</FormControl>
+					</Grid>
 
+					<Grid item xs={3} sm={3}>
+						<FormControl fullWidth size="small" >
+							<InputLabel id="awardMethodLabel">Award Method</InputLabel>
+							<Select
+								required
+								fullWidth
+								size="small"
+								labelId="awardMethodLabel"
+								id="awardMethod"
+								variant="outlined"
+								value={awardMethod}
+								label="Award Method"
+								
+								onChange={(e) => setAwardMethod(e.target.value)}
+							>
+								{
+									awardMethods.length > 0 && awardMethods.map(awardMethod => {
+										return(
+											<MenuItem key={awardMethod._links.self.href} value={awardMethod._links.awardMethod.href}>{awardMethod.designationFr}</MenuItem>
+										);
+									})
+								}
+							</Select>
+						</FormControl>
+					</Grid>
+					<Grid item xs={3} sm={3}>
+						<FormControl fullWidth size="small" >
+							<InputLabel id="budgetTypeLabel">Budget Type</InputLabel>
+							<Select
+								required
+								fullWidth
+								size="small"
+								labelId="budgetTypeLabel"
+								id="budgetType"
+								variant="outlined"
+								value={budgetType}
+								label="Budget Type"
+								
+								onChange={(e) => setBudgetType(e.target.value)}
+							>
+								{
+									budgetTypes.length > 0 && budgetTypes.map(budgetType => {
+										return(
+											<MenuItem key={budgetType._links.self.href} value={budgetType._links.budgetType.href}>{budgetType.designationFr}</MenuItem>
+										);
+									})
+								}
+							</Select>
+						</FormControl>
+					</Grid>
+					<Grid item xs={3} sm={3}>
+						<FormControl fullWidth size="small">
+							<TextField
+								required
+								fullWidth
+								value={consultation.allocatedAmount}
+								onChange={ (e) => setConsultation(consultation => ({...consultation, allocatedAmount: Number(e.target.value)})) }
+								size="small"
+								id="allocatedAmount"
+								name="allocatedAmount"
+								label="Allocated Amount"
+								autoComplete="off"
+								variant="outlined"
+								inputProps={{ 
+									readOnly: readOnly,
+								}}
+							/>
+						</FormControl>
+					</Grid>
+					<Grid item xs={3} sm={3}>
+						<FormControl fullWidth size="small">
+							<TextField
+								required
+								fullWidth
+								value={consultation.financialEstimation}
+								onChange={ (e) => setConsultation(consultation => ({...consultation, financialEstimation: Number(e.target.value)})) }
+								size="small"
+								id="financialEstimation"
+								name="financialEstimation"
+								label="Financial Estimation"
+								autoComplete="off"
+								variant="outlined"
+								inputProps={{ 
+									readOnly: readOnly,
+								}}
+							/>
+						</FormControl>
+					</Grid>
+					
 					<Grid item xs={12} sm={12}>
 						<FormControl fullWidth size="small">
 							<TextField
@@ -531,101 +681,23 @@ const ConsultationDetails = (props : any) => {
 
 					<Grid item xs={6} sm={6}>
 						<FormControl fullWidth size="small" >
-							<InputLabel id="realizationNatureLabel">Realization Nature</InputLabel>
+							<InputLabel id="realizationStatusLabel">Realization Status</InputLabel>
 							<Select
 								required
 								fullWidth
 								size="small"
-								labelId="realizationNatureLabel"
-								id="realizationNature"
+								labelId="realizationStatusLabel"
+								id="realizationStatus"
 								variant="outlined"
-								value={realizationNature}
-								label="Realization Nature"
+								value={realizationStatus}
+								label="Realization Status"
 								
-								onChange={(e) => setRealizationNature(e.target.value)}
+								onChange={(e) => setRealizationStatus(e.target.value)}
 							>
 								{
-									realizationNatures.length > 0 && realizationNatures.map(realizationNature => {
+									realizationStatuss.length > 0 && realizationStatuss.map(realizationStatus => {
 										return(
-											<MenuItem key={realizationNature._links.self.href} value={realizationNature._links.realizationNature.href}>{realizationNature.designationFr}</MenuItem>
-										);
-									})
-								}
-							</Select>
-						</FormControl>
-					</Grid>
-					<Grid item xs={6} sm={6}>
-						<FormControl fullWidth size="small" >
-							<InputLabel id="realizationDirectorLabel">Realization Director</InputLabel>
-							<Select
-								required
-								fullWidth
-								size="small"
-								labelId="realizationDirectorLabel"
-								id="realizationDirector"
-								variant="outlined"
-								value={realizationDirector}
-								label="Realization Director"
-								
-								onChange={(e) => setRealizationDirector(e.target.value)}
-							>
-								{
-									realizationDirectors.length > 0 && realizationDirectors.map(realizationDirector => {
-										return(
-											<MenuItem key={realizationDirector._links.self.href} value={realizationDirector._links.realizationDirector.href}>{realizationDirector.designationFr}</MenuItem>
-										);
-									})
-								}
-							</Select>
-						</FormControl>
-					</Grid>
-
-					<Grid item xs={6} sm={6}>
-						<FormControl fullWidth size="small" >
-							<InputLabel id="awardMethodLabel">Award Method</InputLabel>
-							<Select
-								required
-								fullWidth
-								size="small"
-								labelId="awardMethodLabel"
-								id="awardMethod"
-								variant="outlined"
-								value={awardMethod}
-								label="Award Method"
-								
-								onChange={(e) => setAwardMethod(e.target.value)}
-							>
-								{
-									awardMethods.length > 0 && awardMethods.map(awardMethod => {
-										return(
-											<MenuItem key={awardMethod._links.self.href} value={awardMethod._links.awardMethod.href}>{awardMethod.designationFr}</MenuItem>
-										);
-									})
-								}
-							</Select>
-						</FormControl>
-					</Grid>
-					<Grid item xs={6} sm={6}></Grid>
-
-					<Grid item xs={6} sm={6}>
-						<FormControl fullWidth size="small" >
-							<InputLabel id="budgetTypeLabel">Budget Type</InputLabel>
-							<Select
-								required
-								fullWidth
-								size="small"
-								labelId="budgetTypeLabel"
-								id="budgetType"
-								variant="outlined"
-								value={budgetType}
-								label="Budget Type"
-								
-								onChange={(e) => setBudgetType(e.target.value)}
-							>
-								{
-									budgetTypes.length > 0 && budgetTypes.map(budgetType => {
-										return(
-											<MenuItem key={budgetType._links.self.href} value={budgetType._links.budgetType.href}>{budgetType.designationFr}</MenuItem>
+											<MenuItem key={realizationStatus._links.self.href} value={realizationStatus._links.realizationStatus.href}>{realizationStatus.designationFr}</MenuItem>
 										);
 									})
 								}
@@ -633,44 +705,81 @@ const ConsultationDetails = (props : any) => {
 						</FormControl>
 					</Grid>
 					<Grid item xs={3} sm={3}>
-						<FormControl fullWidth size="small">
-							<TextField
+						<FormControl fullWidth size="small" >
+							<InputLabel id="consultationPhaseLabel">Consultation Phase</InputLabel>
+							<Select
 								required
 								fullWidth
-								value={consultation.allocatedAmount}
-								onChange={ (e) => setConsultation(consultation => ({...consultation, allocatedAmount: Number(e.target.value)})) }
 								size="small"
-								id="allocatedAmount"
-								name="allocatedAmount"
-								label="Allocated Amount"
-								autoComplete="off"
+								labelId="consultationPhaseLabel"
+								id="consultationPhase"
 								variant="outlined"
-								inputProps={{ 
-									readOnly: readOnly,
-								}}
-							/>
+								value={consultationPhase}
+								label="Consultation Phase"
+								
+								onChange={(e) => setConsultationPhase(e.target.value)}
+							>
+								{
+									consultationPhases.length > 0 && consultationPhases.map(consultationPhase => {
+										return(
+											<MenuItem key={consultationPhase._links.self.href} value={consultationPhase._links.consultationPhase.href}>{consultationPhase.designationFr}</MenuItem>
+										);
+									})
+								}
+							</Select>
 						</FormControl>
 					</Grid>
 					<Grid item xs={3} sm={3}>
-						<FormControl fullWidth size="small">
-							<TextField
+						<FormControl fullWidth size="small" >
+							<InputLabel id="consultationStepLabel">Consultation Step</InputLabel>
+							<Select
 								required
 								fullWidth
-								value={consultation.financialEstimation}
-								onChange={ (e) => setConsultation(consultation => ({...consultation, financialEstimation: Number(e.target.value)})) }
 								size="small"
-								id="financialEstimation"
-								name="financialEstimation"
-								label="Financial Estimation"
-								autoComplete="off"
+								labelId="consultationStepLabel"
+								id="consultationStep"
 								variant="outlined"
-								inputProps={{ 
-									readOnly: readOnly,
-								}}
-							/>
+								value={consultationStep}
+								label="Consultation Step"
+								
+								onChange={(e) => setConsultationStep(e.target.value)}
+							>
+								{
+									consultationSteps.length > 0 && consultationSteps.map(consultationStep => {
+										return(
+											<MenuItem key={consultationStep._links.self.href} value={consultationStep._links.consultationStep.href}>{consultationStep.designationFr}</MenuItem>
+										);
+									})
+								}
+							</Select>
 						</FormControl>
 					</Grid>
 
+					<Grid item xs={3} sm={3}>
+						<FormControl fullWidth size="small" >
+							<InputLabel id="approvalStatusLabel">Approval Status</InputLabel>
+							<Select
+								required
+								fullWidth
+								size="small"
+								labelId="approvalStatusLabel"
+								id="approvalStatus"
+								variant="outlined"
+								value={approvalStatus}
+								label="Approval Status"
+								
+								onChange={(e) => setConsultationStep(e.target.value)}
+							>
+								{
+									approvalStatuss.length > 0 && approvalStatuss.map(approvalStatus => {
+										return(
+											<MenuItem key={approvalStatus._links.self.href} value={approvalStatus._links.approvalStatus.href}>{approvalStatus.designationFr}</MenuItem>
+										);
+									})
+								}
+							</Select>
+						</FormControl>
+					</Grid>
 					<Grid item xs={6} sm={6}>
 						<FormControl fullWidth size="small">
 							<TextField
