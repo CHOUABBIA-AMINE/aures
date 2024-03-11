@@ -46,9 +46,6 @@ interface Consultation {
         project                 :{
             href                    : string
         },
-        beneficiaries           :{
-            href                    : string
-        },
         documents               :{
             href                    : string
         },

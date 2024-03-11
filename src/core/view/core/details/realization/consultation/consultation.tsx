@@ -126,9 +126,6 @@ const ConsultationDetails = (props : any) => {
 			project                 :{
 				href                    : ""
 			},
-			beneficiaries           :{
-				href                    : ""
-			},
 			documents               :{
 				href                    : ""
 			},
@@ -162,11 +159,11 @@ const ConsultationDetails = (props : any) => {
 				designationFr           : consultation.data.designationFr,
 				allocatedAmount         : consultation.data.allocatedAmount,
 				financialEstimation     : consultation.data.financialEstimation,
-				startDate               : consultation.data.startDate,
+				startDate               : consultation.data.startDate !== null ? dayjs(consultation.data.startDate) : dayjs(),
 				approvalReference       : consultation.data.approvalReference,
-				approvalDate            : consultation.data.approvalDate,
-				publishDate             : consultation.data.publishDate,
-				deadline                : consultation.data.deadline,
+				approvalDate            : consultation.data.approvalDate !== null ? dayjs(consultation.data.approvalDate) : dayjs(),
+				publishDate             : consultation.data.publishDate !== null ? dayjs(consultation.data.publishDate) : dayjs(),
+				deadline                : consultation.data.deadline !== null ? dayjs(consultation.data.deadline) : dayjs(),
 				observation             : consultation.data.observation,
 				_links          		: {
 					consultation       		:{
@@ -199,9 +196,6 @@ const ConsultationDetails = (props : any) => {
 					project                 :{
 						href                    : consultation.data._links.project.href
 					},
-					beneficiaries           :{
-						href                    : consultation.data._links.beneficiaries.href
-					},
 					documents               :{
 						href                    : consultation.data._links.documents.href
 					},
@@ -209,7 +203,7 @@ const ConsultationDetails = (props : any) => {
 						href                    : consultation.data._links.referencedMails.href
 					},
 					budgetItems             :{
-						href                    : consultation.data._links.budgetGoals.href
+						href                    : consultation.data._links.budgetItems.href
 					},
 					tenders                 :{
 						href                    : consultation.data._links.tenders.href
@@ -242,7 +236,7 @@ const ConsultationDetails = (props : any) => {
 			}).catch(e => {});
 			
 			getUrl(formatURL(consultation.data._links.consultationStep.href)).then((consultationStep) => {
-				getUrl(formatURL(consultation.data._links.consultationPhase.href)).then((consultationPhase) => {
+				getUrl(formatURL(consultationStep.data._links.consultationPhase.href)).then((consultationPhase) => {
 					setConsultationPhase(consultationPhase.data._links.self.href);
 					getUrl(consultationPhase.data._links.consultationSteps.href).then((consultationSteps) => {
 						setConsultationSteps(consultationSteps.data._embedded.consultationStep);
@@ -271,11 +265,11 @@ const ConsultationDetails = (props : any) => {
 				designationFr           : consultation.designationFr,
 				allocatedAmount         : consultation.allocatedAmount,
 				financialEstimation     : consultation.financialEstimation,
-				startDate               : consultation.startDate,
+				startDate               : consultation.startDate !== null ? dayjs(consultation.startDate) : dayjs(),
 				approvalReference       : consultation.approvalReference,
-				approvalDate            : consultation.approvalDate,
-				publishDate             : consultation.publishDate,
-				deadline                : consultation.deadline,
+				approvalDate            : consultation.approvalDate !== null ? dayjs(consultation.approvalDate) : dayjs(),
+				publishDate             : consultation.publishDate !== null ? dayjs(consultation.publishDate) : dayjs(),
+				deadline                : consultation.deadline !== null ? dayjs(consultation.deadline) : dayjs(),
 				observation             : consultation.observation,
 				awardMethod             : awardMethod,
 				realizationNature       : realizationNature,
@@ -292,7 +286,7 @@ const ConsultationDetails = (props : any) => {
 				}
 			})
 		}else{
-			postBasedUrl("provider", JSON.stringify({
+			postBasedUrl("consultation", JSON.stringify({
 				internalId              : consultation.internalId,
 				consultationYear        : consultation.consultationYear,
 				reference               : consultation.reference,
