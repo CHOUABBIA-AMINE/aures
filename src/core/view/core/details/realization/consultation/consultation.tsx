@@ -22,8 +22,12 @@ import { Select } 				from "@mui/material";
 import { TextField } 			from "@mui/material";
 import { Typography } 			from "@mui/material";
 
+import { AttachEmailOutlined} 	from "@mui/icons-material";
+import { FireTruckOutlined } 	from "@mui/icons-material";
+import { FolderCopyOutlined } 	from "@mui/icons-material";
 import { Replay } 				from "@mui/icons-material";
 import { Save } 				from "@mui/icons-material";
+import { ViewHeadlineOutlined} 	from "@mui/icons-material";
 
 import { DatePicker } 			from "@mui/x-date-pickers/DatePicker";
 
@@ -372,6 +376,18 @@ const ConsultationDetails = (props : any) => {
 						Consultation Details
 					</Typography>
 					<Box>
+						<Button color="secondary" variant="outlined" size="small" sx={{ marginRight:'5px' }} onClick={e => patchData()}>
+							<FolderCopyOutlined />
+						</Button>
+						<Button color="error" variant="outlined" size="small" sx={{ marginRight:'5px' }} onClick={e => patchData()}>
+							<FireTruckOutlined />
+						</Button>
+						<Button color="warning" variant="outlined" size="small" sx={{ marginRight:'5px' }} onClick={e => patchData()}>
+							<AttachEmailOutlined />
+						</Button>
+						<Button color="info" variant="outlined" size="small" sx={{ marginRight:'5px' }} onClick={e => patchData()}>
+							<ViewHeadlineOutlined />
+						</Button>
 						<Button color="primary" variant="outlined" size="small" sx={{ marginRight:'5px' }} onClick={e => patchData()}>
 							<Save />
 						</Button>
