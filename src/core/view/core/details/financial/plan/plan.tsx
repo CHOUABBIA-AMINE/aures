@@ -28,7 +28,6 @@ import { formatURL } 			from "../../../../../api/tools";
 import { BudgetPlanStatus } 	from "../../../../../model/financial/budget.plan.status";
 import { BudgetType } 			from "../../../../../model/financial/budget.type";
 import { BudgetPlan } 			from "../../../../../model/financial/budget.plan";
-import { FinancialOperation } 	from "../../../../../model/financial/financial.operation";
 
 const PlanDetails = (props : any) => {
 

@@ -18,6 +18,7 @@ const coreMenu : NavItem[] = [
     ] },
     { name : "Budget",          icon : AccountBalanceOutlined,  authority : "AUTH_ADMINISTRATION",      link: [
         { name : "Plan",            icon : MapOutlined,             authority : "AUTH_ADMINISTRATION",       link: "/list/budgetPlan" },
+        { name : "Operation",       icon : MapOutlined,             authority : "AUTH_ADMINISTRATION",       link: "/list/financialOperation/operationList" },
         { name : "Item",            icon : ReceiptLongOutlined,     authority : "AUTH_ADMINISTRATION",       link: "/list/budgetItem" }
     ] },
     { name : "Realization",     icon : SquareFootOutlined,      authority : "AUTH_ADMINISTRATION",      link: [

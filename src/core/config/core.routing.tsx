@@ -11,6 +11,7 @@ import ModelList                from "../view/core/model.list";
 import ProviderDetails          from "../view/core/details/realization/provider/provider";
 
 import PlanDetails              from "../view/core/details/financial/plan/plan";
+import OperationDetails         from "../view/core/details/financial/operation/operation";
 
 import ProjectDetails           from "../view/core/details/realization/project";
 import ConsultationDetails      from "../view/core/details/realization/consultation/consultation";
@@ -48,6 +49,8 @@ function CoreRouting(){
             <Route path="list/:entity/:proj"    element={<ModelList />}></Route>
 
             <Route path="provider/:action"      element={<ProviderDetails />}></Route>
+            <Route path="budgetPlan/:action"    element={<PlanDetails />}></Route>
+            <Route path="financialOperation/:action"    element={<OperationDetails />}></Route>
             <Route path="budgetPlan/:action"    element={<PlanDetails />}></Route>
             <Route path="project/:action"       element={<ProjectDetails />}></Route>
             <Route path="consultation/:action"  element={<ConsultationDetails />}></Route>

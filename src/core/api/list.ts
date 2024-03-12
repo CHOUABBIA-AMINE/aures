@@ -10,6 +10,11 @@ const budgetPlan = [
     { id: 'designationFr',  name: 'Designation',        width: '80%',               align: 'left',      type:"text" },
     { id: 'budgetYear',     name: 'Year',               width: 'calc(20%-120px)',   align: 'center',    type:"text" }
 ];
+const financialOperation = [
+    { id: 'id',             name: 'Id',                 width: '20px',              align: 'center',    type:"number" },
+    { id: 'year',           name: 'Year',               width: 'calc(20%-120px)',   align: 'center',    type:"text" },
+    { id: 'operation',      name: 'Operation',          width: '80%',               align: 'left',      type:"text" }
+];
 const budgetItem = [
     { id: 'id',             name: 'Id',                 width: '20px',              align: 'center',    type:"number" },
     { id: 'designationFr',  name: 'Designation',        width: '70%',               align: 'left',      type:"text" },
@@ -60,6 +65,7 @@ const role = [
 ];
 
 Lists.set("provider", provider);
+Lists.set("financialOperation", financialOperation);
 
 Lists.set("budgetPlan", budgetPlan);
 Lists.set("budgetItem", budgetItem);
