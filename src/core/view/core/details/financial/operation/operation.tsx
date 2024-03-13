@@ -42,11 +42,12 @@ const OperationDetails = (props : any) => {
 	const [ budgetTypes, setBudgetTypes ]				= useState<BudgetType[]>([]);
 	const [ budgetType, setBudgetType ]					= useState<string>("");
 
-	const [ budgetPlans, setBudgetPlans ]				= useState<BudgetPlan[]>([]);
-	const [ budgetPlan, setBudgetPlan ]					= useState<string>("");
+	let years : string []								= [];
+	for (let i = 2020; i < 2031; i++) years.push(""+i);
 
 	const [ financialOperation, setFinancialOperation ]	= useState<FinancialOperation>({
 		operation              	: "",
+		budgetYear				: "",
 		_links          		: {
 			financialOperation      :{
 				href                    : ""
@@ -54,7 +55,7 @@ const OperationDetails = (props : any) => {
 			self                    :{
 				href                    : ""
 			},
-			budgetPlan         		:{
+			budgetType         		:{
 				href                    : ""
 			}
 		}
@@ -66,6 +67,7 @@ const OperationDetails = (props : any) => {
 			getUrl(formatURL(location.state.modelId)).then((operation : any) => {
 				setFinancialOperation({
 					operation           	: operation.data.operation,
+					budgetYear				: operation.data.budgetYear,
 					_links          		: {
 						financialOperation		:{
 							href            		: operation.data._links.financialOperation.href
@@ -73,19 +75,15 @@ const OperationDetails = (props : any) => {
 						self            		:{
 							href            		: operation.data._links.self.href
 						},
-						budgetPlan				:{
-							href            		: operation.data._links.budgetPlan.href
+						budgetType				:{
+							href            		: operation.data._links.budgetType.href
 						}
 					}
 				})
 
-				getUrl(formatURL(operation.data._links.budgetPlan.href)).then((plan) => {
-					getUrl(formatURL(plan.data._links.budgetType.href)).then((budgetType) => {
+				getUrl(formatURL(operation.data._links.budgetType.href)).then((type) => {
+					getUrl(formatURL(type.data._links.budgetType.href)).then((budgetType) => {
 						setBudgetType(budgetType.data._links.budgetType.href);
-						getUrl(formatURL(budgetType.data._links.budgetPlans.href)).then((plans) => {
-							setBudgetPlans(plans.data._embedded.budgetPlan);
-							setBudgetPlan(plan.data._links.budgetPlan.href);
-						});
 					})
 				});
 
@@ -98,7 +96,8 @@ const OperationDetails = (props : any) => {
 
 			patchUrl(formatURL(location.state.modelId), JSON.stringify({
 				operation           	: financialOperation.operation,
-				budgetPlan				: budgetPlan
+				budgetYear           	: financialOperation.budgetYear,
+				budgetType				: budgetType
 			})).then((financialOperation) => {
 				
 				if(financialOperation.data !== undefined){
@@ -111,25 +110,16 @@ const OperationDetails = (props : any) => {
 
 			postBasedUrl("financialOperation", JSON.stringify({
 				operation           	: financialOperation.operation,
-				budgetPlan				: budgetPlan
+				budgetYear           	: financialOperation.budgetYear,
+				budgetType				: budgetType
 			})).then((financialOperation) => {
 				if(financialOperation.data !== undefined){
-					setBudgetPlan(financialOperation.data);
+					setFinancialOperation(financialOperation.data);
 					enqueueSnackbar('Entity created successfully !', {variant: 'success'});
 				}
 			})
 		}
 	}
-
-	useEffect(() => {
-		if(budgetType !== "")
-		getUrl(formatURL(budgetType)).then((type) => {
-			console.log(type);
-			getUrl(formatURL(type.data._links.budgetPlans.href)).then((plans) => {
-				setBudgetPlans(plans.data._embedded.budgetPlan);
-			});
-		});
-    },[budgetType])
 
 	useEffect(() => {
 
@@ -190,26 +180,21 @@ const OperationDetails = (props : any) => {
 							</Grid>
 							<Grid item xs={2} sm={2}>
 								<FormControl fullWidth size="small" >
-								<InputLabel id="budgetPlanLabel">Budget Plan</InputLabel>
+								<InputLabel id="budgetYearLabel">Budget Year</InputLabel>
 									<Select
 										required
 										fullWidth
 										size="small"
-										labelId="budgetPlanLabel"
-										id="budgetPlan"
+										labelId="budgetYearLabel"
+										id="budgetYear"
 										variant="outlined"
-										value={budgetPlan}
-										label="Budget Plan"
+										value={financialOperation.budgetYear}
+										label="Budget Year"
 										
-										onChange={(e) => setBudgetPlan(e.target.value)}
+										onChange={(e) => setFinancialOperation(financialOperation => ({...financialOperation, budgetYear: e.target.value})) }
 									>
-										{
-											budgetPlans.length > 0 && budgetPlans.map(budgetPlan => {
-												return(
-													<MenuItem key={budgetPlan._links.self.href} value={budgetPlan._links.budgetPlan.href}>{budgetPlan.budgetYear}</MenuItem>
-												);
-											})
-										}
+										{ }
+										{ years.map(year => { return (<MenuItem key={year} value={year}>{year}</MenuItem> );}) }
 									</Select>
 								</FormControl>
 							</Grid>

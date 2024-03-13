@@ -17,7 +17,6 @@ const coreMenu : NavItem[] = [
         { name : "Provider",        icon : LocalShippingOutlined,   authority : "AUTH_ADMINISTRATION",       link: "/list/provider" }
     ] },
     { name : "Budget",          icon : AccountBalanceOutlined,  authority : "AUTH_ADMINISTRATION",      link: [
-        { name : "Plan",            icon : MapOutlined,             authority : "AUTH_ADMINISTRATION",       link: "/list/budgetPlan" },
         { name : "Operation",       icon : MapOutlined,             authority : "AUTH_ADMINISTRATION",       link: "/list/financialOperation/operationList" },
         { name : "Item",            icon : ReceiptLongOutlined,     authority : "AUTH_ADMINISTRATION",       link: "/list/budgetItem" }
     ] },

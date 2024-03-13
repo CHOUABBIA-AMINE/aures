@@ -1,5 +1,6 @@
 interface FinancialOperation {
     operation               : string;
+    budgetYear              : string
     _links                  : {
         financialOperation      :{
             href                    : string
@@ -7,7 +8,7 @@ interface FinancialOperation {
         self                    :{
             href                    : string
         },
-        budgetPlan              :{
+        budgetType              :{
             href                    : string
         },
     }

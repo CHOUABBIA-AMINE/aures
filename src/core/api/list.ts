@@ -5,15 +5,11 @@ const provider = [
     { id: 'designationLt',  name: 'Designation',        width: '60%',               align: 'left',      type:"text" },
     { id: 'acronymLt',      name: 'Acronyme',           width: 'calc(40%-120px)',   align: 'left',      type:"text" }
 ];
-const budgetPlan = [
-    { id: 'id',             name: 'Id',                 width: '20px',              align: 'center',    type:"number" },
-    { id: 'designationFr',  name: 'Designation',        width: '80%',               align: 'left',      type:"text" },
-    { id: 'budgetYear',     name: 'Year',               width: 'calc(20%-120px)',   align: 'center',    type:"text" }
-];
 const financialOperation = [
     { id: 'id',             name: 'Id',                 width: '20px',              align: 'center',    type:"number" },
-    { id: 'year',           name: 'Year',               width: 'calc(20%-120px)',   align: 'center',    type:"text" },
-    { id: 'operation',      name: 'Operation',          width: '80%',               align: 'left',      type:"text" }
+    { id: 'type',           name: 'Budget Type',        width: '40%',               align: 'left',      type:"text" },
+    { id: 'budgetYear',     name: 'Year',               width: 'calc(20%-120px)',   align: 'left',      type:"text" },
+    { id: 'operation',      name: 'Operation',          width: '40%',               align: 'left',      type:"text" }
 ];
 const budgetItem = [
     { id: 'id',             name: 'Id',                 width: '20px',              align: 'center',    type:"number" },
@@ -67,7 +63,6 @@ const role = [
 Lists.set("provider", provider);
 Lists.set("financialOperation", financialOperation);
 
-Lists.set("budgetPlan", budgetPlan);
 Lists.set("budgetItem", budgetItem);
 
 Lists.set("project", project);
