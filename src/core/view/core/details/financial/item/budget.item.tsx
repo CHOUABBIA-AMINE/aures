@@ -180,21 +180,22 @@ const BudgetItemDetails = (props : any) => {
 		}
 	}
 
-	/*useEffect(() => {
+	useEffect(() => {
 		getUrl(formatURL(budgetDomain)).then((domain) => {
-			getUrl(formatURL(domain.data._links.budgetSubDomains)).then((subDomains) => {
-				setBudgetSubDomains(subDomains.data._embedded.BudgetSubDomain);
+			getUrl(formatURL(domain.data._links.budgetSubDomains.href)).then((subDomains) => {
+				setBudgetSubDomains(subDomains.data._embedded.budgetSubDomain);
 			})
 		});
+		
 	},[budgetDomain]);
 
 	useEffect(() => {
 		getUrl(formatURL(budgetSubDomain)).then((subDomain) => {
-			getUrl(formatURL(subDomain.data._links.budgetRubrics)).then((rubrics) => {
-				setBudgetRubrics(rubrics.data._embedded.BudgetRubric);
+			getUrl(formatURL(subDomain.data._links.budgetRubrics.href)).then((rubrics) => {
+				setBudgetRubrics(rubrics.data._embedded.budgetRubric);
 			})
 		});
-	},[budgetSubDomain]);*/
+	},[budgetSubDomain]);
 
 	useEffect(() => {
 
@@ -235,7 +236,7 @@ const BudgetItemDetails = (props : any) => {
 					
 					<Grid item>
 						<Grid container spacing={1} direction={"row"}>
-							<Grid item xs={3} sm={3}>
+							<Grid item xs={4} sm={4}>
 								<FormControl fullWidth size="small" >
 									<InputLabel id="budgetDomainLabel">Budget Domain</InputLabel>
 									<Select
@@ -260,7 +261,7 @@ const BudgetItemDetails = (props : any) => {
 									</Select>
 								</FormControl>
 							</Grid>
-							<Grid item xs={3} sm={3}>
+							<Grid item xs={4} sm={4}>
 								<FormControl fullWidth size="small" >
 									<InputLabel id="budgetSubDomainLabel">Budget Sub-Domain</InputLabel>
 									<Select
@@ -285,7 +286,7 @@ const BudgetItemDetails = (props : any) => {
 									</Select>
 								</FormControl>
 							</Grid>
-							<Grid item xs={6} sm={6}>
+							<Grid item xs={12} sm={12}>
 								<FormControl fullWidth size="small" >
 									<InputLabel id="budgetRubricLabel">Budget Rubric</InputLabel>
 									<Select
