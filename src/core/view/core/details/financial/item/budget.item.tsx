@@ -86,7 +86,7 @@ const BudgetItemDetails = (props : any) => {
 	});
 
 	const fetchData = ()=>{
-
+		
 		getUrl(formatURL(location.state.modelId)).then((item : any) => {
 			setBudgetItem({
 				designationAr           : item.data.designationAr,
@@ -129,11 +129,15 @@ const BudgetItemDetails = (props : any) => {
 				})
 			});
 
-			// getUrl(formatURL(plan.data._links.budgetPlanStatus.href)).then((planStatus) => {
-			// 	getUrl(formatURL(planStatus.data._links.budgetPlanStatus.href)).then((budgetPlanStatus) => {
-			// 		setBudgetPlanStatus(budgetPlanStatus.data._links.budgetPlanStatus.href);
-			// 	})
-			// });
+			getUrl(formatURL(item.data._links.budgetRubric.href)).then((rubricURL) => {
+			 	getUrl(formatURL(rubricURL.data._links.budgetSubDomain.href)).then((subDomainURL) => {
+					getUrl(formatURL(subDomainURL.data._links.budgetDomain.href)).then((domainURL) => {
+						setBudgetDomain(domainURL.data._links.self.href);
+						setBudgetSubDomain(subDomainURL.data._links.self.href);
+						setBudgetRubric(rubricURL.data._links.self.href);
+					});
+			 	})
+			});
 
 		});
 	}
@@ -181,6 +185,7 @@ const BudgetItemDetails = (props : any) => {
 	}
 
 	useEffect(() => {
+		if(budgetDomain !== "")
 		getUrl(formatURL(budgetDomain)).then((domain) => {
 			getUrl(formatURL(domain.data._links.budgetSubDomains.href)).then((subDomains) => {
 				setBudgetSubDomains(subDomains.data._embedded.budgetSubDomain);
@@ -190,6 +195,7 @@ const BudgetItemDetails = (props : any) => {
 	},[budgetDomain]);
 
 	useEffect(() => {
+		if(budgetSubDomain !== "")
 		getUrl(formatURL(budgetSubDomain)).then((subDomain) => {
 			getUrl(formatURL(subDomain.data._links.budgetRubrics.href)).then((rubrics) => {
 				setBudgetRubrics(rubrics.data._embedded.budgetRubric);
@@ -214,6 +220,7 @@ const BudgetItemDetails = (props : any) => {
 		if(location.state !== null){
 			fetchData();
 		}
+
     },[])
 
 	return (

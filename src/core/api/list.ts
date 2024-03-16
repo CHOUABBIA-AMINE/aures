@@ -13,9 +13,9 @@ const financialOperation = [
 ];
 const budgetItem = [
     { id: 'id',             name: 'Id',                 width: '20px',              align: 'center',    type:"number" },
-    { id: 'designationFr',  name: 'Designation',        width: '70%',               align: 'left',      type:"text" },
+    { id: 'designationFr',  name: 'Designation',        width: 'calc(70%-120px)',   align: 'left',      type:"text" },
     { id: 'planedQuantity', name: 'Quantity',           width: '15%',               align: 'center',    type:"number" },
-    { id: 'allocatedAmount',name: 'Amount',             width: 'calc(15%-120px)',   align: 'right',     type:"number" }
+    { id: 'allocatedAmount',name: 'Amount',             width: '15%',               align: 'right',     type:"number" }
 ];
 const project = [
     { id: 'id',             name: 'Id',                 width: '20px',              align: 'center',    type:"number" },
