@@ -19,7 +19,7 @@ const SidenavItem = (props : NavItem)=>{
     
     const { hasAuthority }  = useContext(AuthContext);
     const {menu, setMenu}   = useContext(NavContext);
-    const navigate = useNavigate();
+    const navigate          = useNavigate();
     //const [open, setOpen] = useState(false);
     return (
         <>

@@ -9,7 +9,7 @@ interface BudgetRubric {
         self                    :{
             href                    : string
         },
-        budgetSubDomain         :{
+        budgetDomain            :{
             href                    : string
         },
         budgetItems             :{

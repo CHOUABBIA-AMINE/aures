@@ -1,18 +1,15 @@
-interface StructureType {
+interface AURESDocumentType {
     designationAr   : string;
     designationEn   : string;
     designationFr   : string;
-    acronymAr       : string;
-    acronymEn       : string;
-    acronymFr       : string;
     _links          : {
-        structureType   :{
+        documentType    :{
             href            : string
         },
         self            :{
             href            : string
         }
-    }
+    };
 }
 
-export type { StructureType };
+export type { AURESDocumentType };

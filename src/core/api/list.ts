@@ -15,22 +15,28 @@ const budgetItem = [
     { id: 'id',             name: 'Id',                 width: '20px',              align: 'center',    type:"number" },
     { id: 'designationFr',  name: 'Designation',        width: 'calc(70%-120px)',   align: 'left',      type:"text" },
     { id: 'planedQuantity', name: 'Quantity',           width: '15%',               align: 'center',    type:"number" },
-    { id: 'allocatedAmount',name: 'Amount',             width: '15%',               align: 'right',     type:"number" }
+    { id: 'allocatedAmount',name: 'Amount',             width: '15%',               align: 'right',     type:"money" }
 ];
 const project = [
     { id: 'id',             name: 'Id',                 width: '20px',              align: 'center',    type:"number" },
-    { id: 'internalOrder',  name: 'Internal Id',        width: '30%',               align: 'center',    type:"text" },
-    { id: 'designationFr',  name: 'Designation',        width: 'calc(50%-120px)',   align: 'left',      type:"text" }
+    { id: 'internalOrder',  name: 'Internal Id',        width: '15%',               align: 'center',    type:"text" },
+    { id: 'designationFr',  name: 'Designation',        width: 'calc(85%-120px)',   align: 'left',      type:"text" }
 ];
 const consultation = [
     { id: 'id',             name: 'Id',                 width: '20px',              align: 'center',    type:"number" },
-    { id: 'internalOrder',  name: 'Internal Id',        width: '30%',               align: 'center',    type:"text" },
-    { id: 'designationFr',  name: 'Designation',        width: 'calc(50%-120px)',   align: 'left',      type:"text" }
+    { id: 'internalOrder',  name: 'Internal Id',        width: '15%',               align: 'center',    type:"text" },
+    { id: 'designationFr',  name: 'Designation',        width: 'calc(85%-120px)',   align: 'left',      type:"text" }
 ];
 const contract = [
     { id: 'id',             name: 'Id',                 width: '20px',              align: 'center',    type:"number" },
-    { id: 'reference',      name: 'Reference',          width: '30%',               align: 'center',    type:"text" },
-    { id: 'designationFr',  name: 'Designation',        width: 'calc(50%-120px)',   align: 'left',      type:"text" }
+    { id: 'reference',      name: 'Reference',          width: '15%',               align: 'center',    type:"text" },
+    { id: 'designationFr',  name: 'Designation',        width: 'calc(85%-120px)',   align: 'left',      type:"text" }
+];
+const document = [
+    { id: 'id',             name: 'Id',                 width: '20px',              align: 'center',    type:"number" },
+    { id: 'reference',      name: 'Reference',          width: 'calc(40%-120px)',   align: 'left',      type:"text" },
+    { id: 'documentType',   name: 'Type',               width: '40%',               align: 'left',      type:"text" },
+    { id: 'issueDate',      name: 'Date',               width: '20%',               align: 'center',    type:"date" }
 ];
 const structure = [
     { id: 'id',             name: 'Id',                 width: '20px',              align: 'center',    type:"number" },
@@ -68,6 +74,8 @@ Lists.set("budgetItem", budgetItem);
 Lists.set("project", project);
 Lists.set("consultation", consultation);
 Lists.set("contract", contract);
+
+Lists.set("document", document);
 
 Lists.set("structure", structure);
 Lists.set("job", job);

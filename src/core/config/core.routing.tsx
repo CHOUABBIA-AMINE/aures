@@ -15,6 +15,7 @@ import BudgetItemDetails        from "../view/core/details/financial/item/budget
 
 import ProjectDetails           from "../view/core/details/realization/project";
 import ConsultationDetails      from "../view/core/details/realization/consultation/consultation";
+import ConsultationDocuments    from "../view/core/details/realization/consultation/consultation.documents";
 import ContractDetails          from "../view/core/details/realization/contract/contract";
 
 import StructureDetails         from "../view/core/details/common/administration/structure";
@@ -53,6 +54,7 @@ function CoreRouting(){
             <Route path="budgetItem/:action"            element={<BudgetItemDetails />}></Route>
             <Route path="project/:action"               element={<ProjectDetails />}></Route>
             <Route path="consultation/:action"          element={<ConsultationDetails />}></Route>
+            <Route path="consultation/documents"        element={<ConsultationDocuments />}></Route>
             <Route path="contract/:action"              element={<ContractDetails />}></Route>
 
             <Route path="structure/:action"             element={<StructureDetails />}></Route>

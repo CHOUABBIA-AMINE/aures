@@ -6,6 +6,7 @@ import { useSnackbar } 			from "notistack";
 import { useEffect } 			from "react";
 import { useState } 			from "react";
 import { useLocation } 			from "react-router-dom";
+import { useNavigate } 			from "react-router-dom";
 import { useParams } 			from "react-router-dom";
 
 import { Autocomplete } 		from "@mui/material";
@@ -43,7 +44,7 @@ import { ApprovalStatus } 		from "../../../../../model/realization/approval.stat
 import { Project } 				from "../../../../../model/realization/project";
 import { RealizationDirector } 	from "../../../../../model/realization/realization.director";
 import { ConsultationStep } 	from "../../../../../model/realization/consultation/consultation.step";
-import { ConsultationPhase } from "../../../../../model/realization/consultation/consultation.phase";
+import { ConsultationPhase } 	from "../../../../../model/realization/consultation/consultation.phase";
 
 const ConsultationDetails = (props : any) => {
 
@@ -53,6 +54,7 @@ const ConsultationDetails = (props : any) => {
 
 	let readOnly 					= params.action === 'edit' ? false : true;
 	const { getUrl, getBasedUrl, patchUrl, postBasedUrl } = useHTTP();
+    const navigate          		= useNavigate();
 
 	const [ awardMethods, setAwardMethods ]				= useState<AwardMethod[]>([]);
 	const [ awardMethod, setAwardMethod ]				= useState<string>("");
@@ -376,16 +378,16 @@ const ConsultationDetails = (props : any) => {
 						Consultation Details
 					</Typography>
 					<Box>
-						<Button color="secondary" variant="outlined" size="small" sx={{ marginRight:'5px' }} onClick={e => patchData()}>
+						<Button color="secondary" variant="outlined" size="small" sx={{ marginRight:'5px' }} onClick={e => navigate("/consultation/documents", {state:location.state.modelId})}>
 							<FolderCopyOutlined />
 						</Button>
-						<Button color="error" variant="outlined" size="small" sx={{ marginRight:'5px' }} onClick={e => patchData()}>
+						<Button color="error" variant="outlined" size="small" sx={{ marginRight:'5px' }} onClick={e => navigate("consultation/documents")}>
 							<FireTruckOutlined />
 						</Button>
-						<Button color="warning" variant="outlined" size="small" sx={{ marginRight:'5px' }} onClick={e => patchData()}>
+						<Button color="warning" variant="outlined" size="small" sx={{ marginRight:'5px' }} onClick={e => navigate("consultation/documents")}>
 							<AttachEmailOutlined />
 						</Button>
-						<Button color="info" variant="outlined" size="small" sx={{ marginRight:'5px' }} onClick={e => patchData()}>
+						<Button color="info" variant="outlined" size="small" sx={{ marginRight:'5px' }} onClick={e => navigate("consultation/documents")}>
 							<ViewHeadlineOutlined />
 						</Button>
 						<Button color="primary" variant="outlined" size="small" sx={{ marginRight:'5px' }} onClick={e => patchData()}>

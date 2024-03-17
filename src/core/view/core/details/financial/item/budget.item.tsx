@@ -29,7 +29,6 @@ import { BudgetDomain } 		from "../../../../../model/financial/budget.domain";
 import { BudgetItemStatus } 	from "../../../../../model/financial/budget.item.status";
 import { BudgetItem } 			from "../../../../../model/financial/budget.item";
 import { BudgetRubric } 		from "../../../../../model/financial/budget.rubric";
-import { BudgetSubDomain } 		from "../../../../../model/financial/budget.sub.domain";
 import { FinancialOperation } 	from "../../../../../model/financial/financial.operation";
 
 const BudgetItemDetails = (props : any) => {
@@ -43,9 +42,6 @@ const BudgetItemDetails = (props : any) => {
 
 	const [ budgetDomains, setBudgetDomains ]				= useState<BudgetDomain[]>([]);
 	const [ budgetDomain, setBudgetDomain ]					= useState<string>("");
-
-	const [ budgetSubDomains, setBudgetSubDomains ]			= useState<BudgetSubDomain[]>([]);
-	const [ budgetSubDomain, setBudgetSubDomain ]			= useState<string>("");
 
 	const [ budgetRubrics, setBudgetRubrics ]				= useState<BudgetRubric[]>([]);
 	const [ budgetRubric, setBudgetRubric ]					= useState<string>("");
@@ -130,12 +126,9 @@ const BudgetItemDetails = (props : any) => {
 			});
 
 			getUrl(formatURL(item.data._links.budgetRubric.href)).then((rubricURL) => {
-			 	getUrl(formatURL(rubricURL.data._links.budgetSubDomain.href)).then((subDomainURL) => {
-					getUrl(formatURL(subDomainURL.data._links.budgetDomain.href)).then((domainURL) => {
-						setBudgetDomain(domainURL.data._links.self.href);
-						setBudgetSubDomain(subDomainURL.data._links.self.href);
-						setBudgetRubric(rubricURL.data._links.self.href);
-					});
+			 	getUrl(formatURL(rubricURL.data._links.budgetDomain.href)).then((domainURL) => {
+					setBudgetDomain(domainURL.data._links.self.href);
+					setBudgetRubric(rubricURL.data._links.self.href);
 			 	})
 			});
 
@@ -187,21 +180,12 @@ const BudgetItemDetails = (props : any) => {
 	useEffect(() => {
 		if(budgetDomain !== "")
 		getUrl(formatURL(budgetDomain)).then((domain) => {
-			getUrl(formatURL(domain.data._links.budgetSubDomains.href)).then((subDomains) => {
-				setBudgetSubDomains(subDomains.data._embedded.budgetSubDomain);
+			getUrl(formatURL(domain.data._links.budgetRubrics.href)).then((rubrics) => {
+				setBudgetRubrics(rubrics.data._embedded.budgetRubric);
 			})
 		});
 		
 	},[budgetDomain]);
-
-	useEffect(() => {
-		if(budgetSubDomain !== "")
-		getUrl(formatURL(budgetSubDomain)).then((subDomain) => {
-			getUrl(formatURL(subDomain.data._links.budgetRubrics.href)).then((rubrics) => {
-				setBudgetRubrics(rubrics.data._embedded.budgetRubric);
-			})
-		});
-	},[budgetSubDomain]);
 
 	useEffect(() => {
 
@@ -268,31 +252,7 @@ const BudgetItemDetails = (props : any) => {
 									</Select>
 								</FormControl>
 							</Grid>
-							<Grid item xs={4} sm={4}>
-								<FormControl fullWidth size="small" >
-									<InputLabel id="budgetSubDomainLabel">Budget Sub-Domain</InputLabel>
-									<Select
-										required
-										fullWidth
-										size="small"
-										labelId="budgetSubDomainLabel"
-										id="budgetSubDomain"
-										variant="outlined"
-										value={budgetSubDomain}
-										label="Budget Sub-Domain"
-										
-										onChange={(e) => setBudgetSubDomain(e.target.value)}
-									>
-										{
-											budgetSubDomains.length > 0 && budgetSubDomains.map(budgetSubDomain => {
-												return(
-													<MenuItem key={budgetSubDomain._links.self.href} value={budgetSubDomain._links.budgetSubDomain.href}>{budgetSubDomain.designationFr}</MenuItem>
-												);
-											})
-										}
-									</Select>
-								</FormControl>
-							</Grid>
+							<Grid item xs={8} sm={8}></Grid>
 							<Grid item xs={12} sm={12}>
 								<FormControl fullWidth size="small" >
 									<InputLabel id="budgetRubricLabel">Budget Rubric</InputLabel>
@@ -344,8 +304,6 @@ const BudgetItemDetails = (props : any) => {
 									</Select>
 								</FormControl>
 							</Grid>
-							<Grid item xs={8} sm={8}></Grid>
-
 							<Grid item xs={4} sm={4}>
 								<FormControl fullWidth size="small" >
 									<InputLabel id="itemStatusLabel">Item Status</InputLabel>
@@ -371,7 +329,7 @@ const BudgetItemDetails = (props : any) => {
 									</Select>
 								</FormControl>
 							</Grid>
-							<Grid item xs={8} sm={8}></Grid>
+							<Grid item xs={4} sm={4}></Grid>
 
 							<Grid item xs={12} sm={12}>
 								<FormControl fullWidth size="small">

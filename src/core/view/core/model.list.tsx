@@ -77,7 +77,7 @@ function ModelList() {
 
     const rowClickHandler = (event : React.MouseEvent<HTMLElement>, modelId: any, action:string) => {
         event.preventDefault();
-        navigate("/" + model + "/edit", { state: modelId } );
+        navigate("/" + model + "/" + action, { state: modelId } );
     }
 
     const rowHoverHandler = (event : React.MouseEvent<HTMLElement>, index: number) => {
@@ -199,6 +199,19 @@ function ModelList() {
         )
     }
 
+    const renderSwitch = (param : string, value : any) => {
+        //let USDollar = new Intl.NumberFormat('en-US', {style: 'currency', curr});
+        switch(param) {
+            case 'date':
+                return dayjs(value).format('YYYY-MM-DD');
+            case 'money':
+                return new Intl.NumberFormat('en-US', {style: 'currency', currency: 'DZD'}).format(value).replace("DZD", ""); //value.toLocaleString(undefined, {maximumFractionDigits:2, maximumFractionDigits:2});
+            case 'number':
+                return value.toLocaleString(undefined, {maximumFractionDigits:1, minimumFractionDigits:0});//value.toFixed(2);
+            default:
+                return value;
+        }
+      }
 	return (
         
         <div style={{ width: '100%'}}>
@@ -252,7 +265,7 @@ function ModelList() {
                                                 j === 0 ? value = page * size + i+1 : value = decodeId(column.id, row);
                                                 return (
                                                     <TableCell align={ column.align } key={j + " - "+ value}>
-                                                        {column.type === "date" ? dayjs(value).format('YYYY-MM-DD') : value}
+                                                        { renderSwitch(column.type, value) }
                                                     </TableCell>
                                                 )
                                             })}

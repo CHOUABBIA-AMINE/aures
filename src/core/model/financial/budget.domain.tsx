@@ -9,7 +9,7 @@ interface BudgetDomain {
         self                    :{
             href                    : string
         },
-        budgetSubDomains        :{
+        budgetRubrics           :{
             href                    : string
         }
     }
