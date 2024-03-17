@@ -48,7 +48,7 @@ function ConsultationDocuments() {
 	const params 					            = useParams();
 	const { enqueueSnackbar } 		            = useSnackbar();
 
-	let readOnly 					            = params.action === 'edit' ? false : true;
+	let readOnly 					            = false; //params.action === 'edit' ? false : true;
 
     const { getUrl }                            = useHTTP();
     const { getBasedUrl }                       = useHTTP();
@@ -237,14 +237,16 @@ function ConsultationDocuments() {
             <div style={{ width: '100%'}}>
                 <Box sx={{display : "flex", paddingTop: 5 , justifyContent: "space-between"}}>
                     <Grid container spacing={1} direction={"row"}>	
-                        <Grid item xs={2} sm={2}></Grid>
+                        <Grid item xs={4} sm={4}>
+                            Consultation 
+                        </Grid>
                         <Grid item xs={2} sm={2}>
                             <FormControl fullWidth size="small">
                                 <TextField
                                     required
                                     fullWidth
                                     value={_document.reference}
-                                    onChange={ (e) => setDocument(document => ({...document, reference: e.target.value})) }
+                                    onChange={ (e) => setDocument(doc => ({...doc, reference: e.target.value})) }
                                     size="small"
                                     id="reference"
                                     name="reference"
@@ -291,20 +293,19 @@ function ConsultationDocuments() {
                                     readOnly={readOnly} 
                                     slotProps={{ textField: { size: 'small', required: true }}} 
                                     value={_document.issueDate} 
-                                    onChange={ changedDate=>setDocument(document => ({...document, issueDate:changedDate})) }
+                                    onChange={ changedDate=>setDocument(doc => ({...doc, issueDate:changedDate})) }
                                 />
                             </FormControl>
                         </Grid>
-                        <Grid item xs={2} sm={2}>
+                        <Grid item xs={2} sm={2} alignContent="center">
                             <input type='file' hidden id="imageSelector" onChange={onSelectFile} accept=".pdf"/>
                             <Button color="error" variant="outlined" size="large" sx={{ marginRight:'5px' }} onClick={clickFileUploader}>
                                 <PictureAsPdfOutlined />
                             </Button>
-                            <Button color="primary" variant="outlined" size="large" sx={{ marginRight:'5px' }} onClick={e => {saveDoc}}>
+                            <Button color="primary" variant="outlined" size="large" sx={{ marginRight:'5px' }} onClick={saveDoc}>
                                 <Save />
                             </Button>
                         </Grid>
-                        <Grid item xs={2} sm={2}></Grid>
                     </Grid>
                 </Box>
             </div>
