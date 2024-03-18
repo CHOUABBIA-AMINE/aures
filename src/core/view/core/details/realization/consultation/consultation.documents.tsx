@@ -38,8 +38,9 @@ import { useHTTP }              from "../../../../../api/request";
 import Lists                    from "../../../../../api/list";
 import { formatURL }            from "../../../../../api/tools";
 import { DatePicker } 			from "@mui/x-date-pickers/DatePicker";
-import { AURESDocument }        from "../../../../../model/common/document/document";
-import { AURESDocumentType }    from "../../../../../model/common/document/document.type";
+import { Doc }                  from "../../../../../model/common/document/document";
+import { DocType }              from "../../../../../model/common/document/document.type";
+import { SpecialZoomLevel, Viewer } from "@react-pdf-viewer/core";
 
 function ConsultationDocuments() {
 
@@ -53,6 +54,7 @@ function ConsultationDocuments() {
     const { getUrl }                            = useHTTP();
     const { getBasedUrl }                       = useHTTP();
     const { postBasedUrl }                      = useHTTP();
+    const { putUrl }                            = useHTTP();
     const { deleteUrl }                         = useHTTP();
     const { patchUrl }                          = useHTTP();
     const { uploadFile }                        = useHTTP();
@@ -62,17 +64,19 @@ function ConsultationDocuments() {
     const [order, setOrder]                     = useState<'asc' | 'desc'>('asc');
     const [orderBy, setOrderBy]                 = useState(Lists.get("document")[1].id);
     const [openRD, setOpenRD]                   = useState(false);
+    const [openSD, setOpenSD]                   = useState(false);
     const [url, setUrl]                         = useState("");
 
-    const [rows, setRow]                        = useState([]);
+    const [rows, setRow]                        = useState<Doc[]>([]);
     const [page, setPage]                       = useState(0);
     const [size, setSize]                       = useState(10);
     const [total, setTotal]                     = useState(0);
 
-    const [ documentTypes, setDocumentTypes ]   = useState<AURESDocumentType[]>([]);
-	const [ documentType, setDocumentType ]	    = useState<string>("");
-    const [ _file, setFile ] 			        = useState()
-    const [ _document, setDocument ]             = useState<AURESDocument>({
+    const [ docTypes, setDocTypes ]             = useState<DocType[]>([]);
+	const [ docType, setDocType ]	            = useState<string>("");
+    const [ _file, setFile ] 			        = useState();
+    const [ pdfFile, setPDFFile ] 			    = useState("");
+    const [ doc, setDoc ]                       = useState<Doc>({
 		reference               : "",
 		issueDate               : dayjs(),
 		_links                  : {
@@ -111,9 +115,16 @@ function ConsultationDocuments() {
         setPage(0);
     }
 
-    const rowClickHandler = (event : React.MouseEvent<HTMLElement>, modelId: any, action:string) => {
+    const rowClickHandler = (event : React.MouseEvent<HTMLElement>, entity: any, action:string) => {
         event.preventDefault();
         //navigate("/" + model + "/edit", { state: modelId } );
+        console.log(entity);
+        entity.issueDate = dayjs(entity.issueDate)
+        setDoc(entity);
+        
+        getUrl(entity._links.documentType.href).then((documentType) => {
+			setDocType(documentType.data._links.self.href);
+		});
     }
 
     const rowHoverHandler = (event : React.MouseEvent<HTMLElement>, index: number) => {
@@ -132,21 +143,33 @@ function ConsultationDocuments() {
     }
 
     const saveDoc = ()=>{
-		if(_document._links.self.href !== ""){
-			patchUrl(formatURL(_document._links.self.href), JSON.stringify({
-				reference       : _document.reference,
-				issueDate       : _document.issueDate,
-				documentType	: documentType,
-			}));
+		if(doc._links.self.href !== ""){
+			patchUrl(formatURL(doc._links.self.href), JSON.stringify({
+				reference       : doc.reference,
+				issueDate       : doc.issueDate,
+				documentType	: docType,
+			})).then((doc : any) =>{
+                //patchUrl(formatURL(location.state) + "/documents?", {doc.data.});
+                console.log(doc);
+            });
 		}else{
 			if(_file !== undefined){
 				uploadFile(_file).then( __file => {
 					postBasedUrl("document", JSON.stringify({
-                        reference       : _document.reference,
-                        issueDate       : _document.issueDate,
-                        documentType	: documentType,
+                        reference       : doc.reference,
+				        issueDate       : doc.issueDate,
+                        documentType	: docType,
 						picture			: getFile(__file.data.id)
-					}));
+					})).then(document =>{
+                        let aux = rows;
+                        aux.push(document.data);
+                        putUrl(formatURL(location.state) + "/documents?projection=documentList", aux.map(row => row._links.self.href).join("\n"), "text/uri-list").then((data) =>{
+                            let _rows = rows;
+                            _rows.push(document.data);
+                            setRow(_rows);
+                        });
+                        //console.log(doc);
+                    });;
 				})
 			}
 		}
@@ -183,11 +206,11 @@ function ConsultationDocuments() {
     useEffect(() => {
 
         getBasedUrl("documentType").then((documentTypes) => {
-			setDocumentTypes(documentTypes.data._embedded.documentType);
+			setDocTypes(documentTypes.data._embedded.documentType);
 		});
 
         let projection = "";//proj !== undefined ? "&projection=" + proj : ""
-        getUrl(formatURL(location.state) + "/documents?" + projection).then((response) => {
+        getUrl(formatURL(location.state) + "/documents?projection=documentList").then((response) => {
             let rows : []= response.data._embedded.document;
             setRow(rows);
             setTotal(rows.length);
@@ -195,13 +218,16 @@ function ConsultationDocuments() {
 
     },[])
 
-    const Actions = (modelId : any) =>{
+    const Actions = (entity : any) =>{
         return(
             <>
-                <IconButton aria-label="edit" color="success" size="small" sx={{ p: '0px', ml: '0%', mr: '5%', b: '0px'}} onClick={event => rowClickHandler(event, modelId,'edit')}>
+                <IconButton aria-label="edit" color="success" size="small" sx={{ p: '0px', ml: '0%', mr: '5%', b: '0px'}} onClick={event => rowClickHandler(event, entity.entity,'edit')}>
                     <Edit fontSize="inherit" />
                 </IconButton>
-                <IconButton aria-label="delete" color="error" size="small" sx={{ p: '0px', ml: '5%', mr: '0%', b: '0px' }} onClick={event => {setUrl(modelId.modelId); setOpenRD(true);}}>
+                <IconButton aria-label="delete" color="error" size="small" sx={{ p: '0px', ml: '5%', mr: '0%', b: '0px' }} onClick={event => {setUrl(entity._links.self.href); setOpenRD(true);}}>
+                    <Delete fontSize="inherit" />
+                </IconButton>
+                <IconButton aria-label="delete" color="error" size="small" sx={{ p: '0px', ml: '5%', mr: '0%', b: '0px' }} onClick={event => {setDocToView(entity._links.file.href);}}>
                     <Delete fontSize="inherit" />
                 </IconButton>
             </>
@@ -232,10 +258,60 @@ function ConsultationDocuments() {
         )
     }
 
-    const TableTool = () =>{
-        return(
-            <div style={{ width: '100%'}}>
-                <Box sx={{display : "flex", paddingTop: 5 , justifyContent: "space-between"}}>
+    const setDocToView = (fileUrl : string) =>{
+        getUrl(formatURL(fileUrl)).then( file =>{
+            setPDFFile(file.data.path);
+            setOpenSD(true);
+        })
+    }
+
+    const DocumentViewer = () => {
+        return (
+            <div style={{
+                backgroundColor: '#fff',
+    
+                /* Fixed position */
+                left: 0,
+                position: 'fixed',
+                top: 0,
+    
+                /* Take full size */
+                height: '60%',
+                width: '50%',
+    
+                /* Displayed on top of other elements */
+                zIndex: 9999,
+    
+                display: 'flex',
+                flexDirection: 'column',
+                overflow: 'hidden',
+            }}>
+                <Viewer fileUrl={pdfFile} defaultScale={SpecialZoomLevel.PageFit} />;
+            </div>
+        )
+    }
+
+    const renderSwitch = (param : string, value : any) => {
+        //let USDollar = new Intl.NumberFormat('en-US', {style: 'currency', curr});
+        switch(param) {
+            case 'date':
+                return dayjs(value).format('YYYY-MM-DD');
+            case 'money':
+                return new Intl.NumberFormat('en-US', {style: 'currency', currency: 'DZD'}).format(value).replace("DZD", ""); //value.toLocaleString(undefined, {maximumFractionDigits:2, maximumFractionDigits:2});
+            case 'number':
+                return value.toLocaleString(undefined, {maximumFractionDigits:1, minimumFractionDigits:0});//value.toFixed(2);
+            default:
+                return value;
+        }
+    }
+	return (
+        
+        <div style={{ width: '100%'}}>
+            <RemoveDialog />
+            <DocumentViewer />
+            <Paper sx={{ width: 'calc(100% - 40px)', ml: '20px', mt: '10px' }}>
+                
+                <Box sx={{display : "flex", width : '100%', paddingTop: 5 , paddingBottom: 5 , justifyContent: "space-between"}}>
                     <Grid container spacing={1} direction={"row"}>	
                         <Grid item xs={4} sm={4}>
                             Consultation 
@@ -245,8 +321,8 @@ function ConsultationDocuments() {
                                 <TextField
                                     required
                                     fullWidth
-                                    value={_document.reference}
-                                    onChange={ (e) => setDocument(doc => ({...doc, reference: e.target.value})) }
+                                    value={doc.reference}
+                                    onChange={ (e) => setDoc(doc => ({...doc, reference: e.target.value})) }
                                     size="small"
                                     id="reference"
                                     name="reference"
@@ -270,15 +346,15 @@ function ConsultationDocuments() {
                                     labelId="documentTypeLabel"
                                     id="documentType"
                                     variant="outlined"
-                                    value={documentType}
+                                    value={docType}
                                     label="Document Type"
                                     
-                                    onChange={(e) => setDocumentType(e.target.value)}
+                                    onChange={(e) => setDocType(e.target.value)}
                                 >
                                     {
-                                        documentTypes.length > 0 && documentTypes.map(documentType => {
+                                        docTypes.length > 0 && docTypes.map(docType => {
                                             return(
-                                                <MenuItem key={documentType._links.self.href} value={documentType._links.documentType.href}>{documentType.designationFr}</MenuItem>
+                                                <MenuItem key={docType._links.self.href} value={docType._links.documentType.href}>{docType.designationFr}</MenuItem>
                                             );
                                         })
                                     }
@@ -289,58 +365,27 @@ function ConsultationDocuments() {
                             <FormControl fullWidth size="small">
                                 <DatePicker 
                                     format="DD/MM/YYYY" 
-                                    label="Start Date" 
+                                    label="Issue Date" 
                                     readOnly={readOnly} 
                                     slotProps={{ textField: { size: 'small', required: true }}} 
-                                    value={_document.issueDate} 
-                                    onChange={ changedDate=>setDocument(doc => ({...doc, issueDate:changedDate})) }
+                                    value={doc.issueDate} 
+                                    onChange={ changedDate=>setDoc(doc => ({...doc, issueDate:changedDate})) }
                                 />
                             </FormControl>
                         </Grid>
-                        <Grid item xs={2} sm={2} alignContent="center">
-                            <input type='file' hidden id="imageSelector" onChange={onSelectFile} accept=".pdf"/>
-                            <Button color="error" variant="outlined" size="large" sx={{ marginRight:'5px' }} onClick={clickFileUploader}>
-                                <PictureAsPdfOutlined />
-                            </Button>
-                            <Button color="primary" variant="outlined" size="large" sx={{ marginRight:'5px' }} onClick={saveDoc}>
-                                <Save />
-                            </Button>
+                        <Grid item xs={2} sm={2} sx={{display : "flex", justifyContent: "space-around"}}>
+                            <div>
+                                <input type='file' hidden id="imageSelector" onChange={onSelectFile} accept=".pdf"/>
+                                <Button color="error" variant="outlined" size="large" sx={{ marginRight:'5px' }} onClick={clickFileUploader}>
+                                    <PictureAsPdfOutlined />
+                                </Button>
+                                <Button color="primary" variant="outlined" size="large" sx={{ marginRight:'5px' }} onClick={saveDoc}>
+                                    <Save />
+                                </Button>
+                            </div>
                         </Grid>
                     </Grid>
                 </Box>
-            </div>
-        )
-    }
-
-    const renderSwitch = (param : string, value : any) => {
-        //let USDollar = new Intl.NumberFormat('en-US', {style: 'currency', curr});
-        switch(param) {
-            case 'date':
-                return dayjs(value).format('YYYY-MM-DD');
-            case 'money':
-                return new Intl.NumberFormat('en-US', {style: 'currency', currency: 'DZD'}).format(value).replace("DZD", ""); //value.toLocaleString(undefined, {maximumFractionDigits:2, maximumFractionDigits:2});
-            case 'number':
-                return value.toLocaleString(undefined, {maximumFractionDigits:1, minimumFractionDigits:0});//value.toFixed(2);
-            default:
-                return value;
-        }
-    }
-	return (
-        
-        <div style={{ width: '100%'}}>
-            <RemoveDialog />
-            <Paper sx={{ width: 'calc(100% - 40px)', ml: '20px', mt: '10px' }}>
-                <TableTool />
-                <TablePagination
-                    rowsPerPageOptions={[5, 10]}
-                    rowsPerPage={size}
-                    page={page}
-                    count={total}
-                    component="div"
-                    onPageChange={handlePage}
-                    onRowsPerPageChange={handleSize}
-                >
-                </TablePagination>
                 <TableContainer sx={{maxHeight:'calc(90vh - 128px)', minWidth: '100%', maxWidth: '100%'}}>
                     <Table stickyHeader onMouseLeave={event => rowHoverHandler(event, -1)}>
                         <TableHead onMouseEnter={event => rowHoverHandler(event, -1)}>
@@ -383,7 +428,7 @@ function ConsultationDocuments() {
                                                 )
                                             })}
                                             <TableCell align="center" key={Lists.get("document").length + " - action"}>
-                                                {i === rowh ? <Actions modelId={row['_links']["document"]['href']}/> : " "}
+                                                {i === rowh ? <Actions entity={row}/> : " "}
                                             </TableCell>
                                         </TableRow>
                                     )
@@ -391,6 +436,16 @@ function ConsultationDocuments() {
                         </TableBody>
                     </Table>
                 </TableContainer>
+                <TablePagination
+                    rowsPerPageOptions={[5, 10]}
+                    rowsPerPage={size}
+                    page={page}
+                    count={total}
+                    component="div"
+                    onPageChange={handlePage}
+                    onRowsPerPageChange={handleSize}
+                >
+                </TablePagination>
             </Paper>
 
         </div>

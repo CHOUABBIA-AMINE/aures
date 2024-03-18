@@ -58,13 +58,24 @@ export const useHTTP = () => {
         });
     }
 
-    const postUrl = (url : string, data : any) => {
-        return axios.post(url, data, {
-            headers: { 
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json; charset=utf-8'
+    const postUrl = (url : string, data : any, contentType : string = "") => {
+        let headers = {};
+        if(contentType === ""){
+            headers = {
+                headers: { 
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json; charset=utf-8'
+                }
             }
-        });
+        }else{
+            headers = {
+                headers: { 
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': contentType
+                }
+            }
+        }
+        return axios.post(url, data, headers);
     }
 
     const postBasedUrl = (url : string, data : any) => {
@@ -74,6 +85,26 @@ export const useHTTP = () => {
                 'Content-Type': 'application/json; charset=utf-8'
             }
         });
+    }
+
+    const putUrl = (url : string, data : any, contentType : string = "") => {
+        let headers = {};
+        if(contentType === ""){
+            headers = {
+                headers: { 
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json; charset=utf-8'
+                }
+            }
+        }else{
+            headers = {
+                headers: { 
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': contentType
+                }
+            }
+        }
+        return axios.put(url, data, headers);
     }
 
     const patchUrl = (url : string, data : any) => {
@@ -112,5 +143,5 @@ export const useHTTP = () => {
         });
     }
 
-    return {connect, getAuthority, uploadFile, getFile, getUrl, getBasedUrl, postUrl, postBasedUrl, patchUrl, patchBasedUrl, deleteUrl, deleteBasedUrl};
+    return {connect, getAuthority, uploadFile, getFile, getUrl, getBasedUrl, postUrl, postBasedUrl, putUrl, patchUrl, patchBasedUrl, deleteUrl, deleteBasedUrl};
 }

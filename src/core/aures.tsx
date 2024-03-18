@@ -1,3 +1,5 @@
+import { Worker } 				from '@react-pdf-viewer/core';
+
 import { SnackbarProvider } 	from 'notistack';
 
 import { useState } 			from 'react';
@@ -26,11 +28,13 @@ function Aures() {
 	}
 
 	return (
+		
 		<SnackbarProvider maxSnack={3} autoHideDuration={1200} anchorOrigin={{horizontal: "center", vertical: "bottom"}}>
 		<NavContext.Provider value={{menu, setMenu}}>
 		<LocalizationProvider dateAdapter={AdapterDayjs}>
 		<AuthContext.Provider value={{ user , setUser, token, setToken, authority, setAuthority, hasAuthority }}>
 			<Box sx={{ display: 'flex', flexDirection: 'column'}}>
+				<Worker workerUrl="./pdf.worker.min.js"></Worker>
 				<CssBaseline />
 				<Navbar />
 				<Box position='static' sx={{width:'100%', height:'calc(100vh - 64px)', background:'FFF', display: 'flex', flexDirection: 'row'}}>

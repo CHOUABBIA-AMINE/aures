@@ -35,7 +35,7 @@ const contract = [
 const document = [
     { id: 'id',             name: 'Id',                 width: '20px',              align: 'center',    type:"number" },
     { id: 'reference',      name: 'Reference',          width: 'calc(40%-120px)',   align: 'left',      type:"text" },
-    { id: 'documentType',   name: 'Type',               width: '40%',               align: 'left',      type:"text" },
+    { id: 'type',           name: 'Type',               width: '40%',               align: 'left',      type:"text" },
     { id: 'issueDate',      name: 'Date',               width: '20%',               align: 'center',    type:"date" }
 ];
 const structure = [

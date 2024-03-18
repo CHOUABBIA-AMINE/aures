@@ -1,4 +1,4 @@
-interface AURESDocumentType {
+interface DocType {
     designationAr   : string;
     designationEn   : string;
     designationFr   : string;
@@ -12,4 +12,4 @@ interface AURESDocumentType {
     };
 }
 
-export type { AURESDocumentType };
+export type { DocType };

@@ -1,6 +1,6 @@
 import { Dayjs }                from "dayjs";
 
-interface AURESDocument {
+interface Doc {
     reference       : string;
     issueDate       : Dayjs | null;
     _links          : {
@@ -19,4 +19,4 @@ interface AURESDocument {
     }
 }
 
-export type { AURESDocument };
+export type { Doc };
