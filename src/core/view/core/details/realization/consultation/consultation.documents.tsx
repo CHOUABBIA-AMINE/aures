@@ -7,18 +7,23 @@ import { useLocation }          from "react-router-dom";
 import { useNavigate }          from "react-router-dom";
 import { useParams }            from "react-router-dom";
 
-import { Box, Button, FormControl, Grid, InputLabel, MenuItem, Select, TextField }               from "@mui/material";
+import { Box }                  from "@mui/material";
+import { Button }               from "@mui/material";
+import { FormControl }          from "@mui/material";
+import { Grid }                 from "@mui/material";
+import { InputLabel }           from "@mui/material";
+import { MenuItem }             from "@mui/material";
+import { Modal }                from "@mui/material";
+import { Select }               from "@mui/material";
+import { TextField }            from "@mui/material";
 import { Dialog }               from "@mui/material";
 import { DialogActions }        from "@mui/material";
 import { DialogContent }        from "@mui/material";
 import { DialogContentText }    from "@mui/material";
 import { DialogTitle }          from "@mui/material";
 import { IconButton }           from "@mui/material";
-import { Input }                from "@mui/material";
 import { Paper }                from "@mui/material";
 import { TableSortLabel }       from "@mui/material";
-import { Toolbar }              from "@mui/material";
-import { Typography }           from "@mui/material";
 import { Table }                from "@mui/material";
 import { TableBody }            from "@mui/material";
 import { TableCell }            from "@mui/material";
@@ -27,20 +32,19 @@ import { TableHead }            from "@mui/material";
 import { TablePagination }      from "@mui/material";
 import { TableRow }             from "@mui/material";
 
-import { AddBoxOutlined, PictureAsPdfOutlined, Save }       from "@mui/icons-material";
-import { PrintOutlined }        from "@mui/icons-material";
-import { IosShareOutlined }     from "@mui/icons-material";
+import { PictureAsPdfOutlined } from "@mui/icons-material";
+import {  Save }                from "@mui/icons-material";
+import { Visibility }           from "@mui/icons-material";
 import { Delete }               from "@mui/icons-material";
 import { Edit }                 from "@mui/icons-material";
-import { Search }               from "@mui/icons-material";
+import { DatePicker } 			from "@mui/x-date-pickers/DatePicker";
 
 import { useHTTP }              from "../../../../../api/request";
 import Lists                    from "../../../../../api/list";
 import { formatURL }            from "../../../../../api/tools";
-import { DatePicker } 			from "@mui/x-date-pickers/DatePicker";
 import { Doc }                  from "../../../../../model/common/document/document";
 import { DocType }              from "../../../../../model/common/document/document.type";
-import { SpecialZoomLevel, Viewer } from "@react-pdf-viewer/core";
+import { PDFViewer }            from "../../../../public/pdf.viewer";
 
 function ConsultationDocuments() {
 
@@ -159,11 +163,11 @@ function ConsultationDocuments() {
                         reference       : doc.reference,
 				        issueDate       : doc.issueDate,
                         documentType	: docType,
-						picture			: getFile(__file.data.id)
+						file			: getFile(__file.data.id)
 					})).then(document =>{
                         let aux = rows;
                         aux.push(document.data);
-                        putUrl(formatURL(location.state) + "/documents?projection=documentList", aux.map(row => row._links.self.href).join("\n"), "text/uri-list").then((data) =>{
+                        putUrl(formatURL(location.state) + "/documents", aux.map(row => row._links.self.href).join("\n"), "text/uri-list").then((data) =>{
                             let _rows = rows;
                             _rows.push(document.data);
                             setRow(_rows);
@@ -227,8 +231,8 @@ function ConsultationDocuments() {
                 <IconButton aria-label="delete" color="error" size="small" sx={{ p: '0px', ml: '5%', mr: '0%', b: '0px' }} onClick={event => {setUrl(entity._links.self.href); setOpenRD(true);}}>
                     <Delete fontSize="inherit" />
                 </IconButton>
-                <IconButton aria-label="delete" color="error" size="small" sx={{ p: '0px', ml: '5%', mr: '0%', b: '0px' }} onClick={event => {setDocToView(entity._links.file.href);}}>
-                    <Delete fontSize="inherit" />
+                <IconButton aria-label="delete" color="info"  size="small" sx={{ p: '0px', ml: '5%', mr: '0%', b: '0px' }} onClick={event => {setDocToView(entity.entity._links.file.href);}}>
+                    <Visibility fontSize="inherit" />
                 </IconButton>
             </>
         )
@@ -258,37 +262,27 @@ function ConsultationDocuments() {
         )
     }
 
-    const setDocToView = (fileUrl : string) =>{
-        getUrl(formatURL(fileUrl)).then( file =>{
-            setPDFFile(file.data.path);
-            setOpenSD(true);
-        })
+    const ViewPDF = () => {
+        return (
+            <Modal
+                open={openSD}
+                onClose={ e => setOpenSD(false)}
+                aria-labelledby="child-modal-title"
+                aria-describedby="child-modal-description"
+            >
+                <Box >
+                    <PDFViewer url={pdfFile}/>
+                </Box>
+            </Modal>
+        )
     }
 
-    const DocumentViewer = () => {
-        return (
-            <div style={{
-                backgroundColor: '#fff',
-    
-                /* Fixed position */
-                left: 0,
-                position: 'fixed',
-                top: 0,
-    
-                /* Take full size */
-                height: '60%',
-                width: '50%',
-    
-                /* Displayed on top of other elements */
-                zIndex: 9999,
-    
-                display: 'flex',
-                flexDirection: 'column',
-                overflow: 'hidden',
-            }}>
-                <Viewer fileUrl={pdfFile} defaultScale={SpecialZoomLevel.PageFit} />;
-            </div>
-        )
+    const setDocToView = (fileUrl : string) =>{
+        getUrl(formatURL(fileUrl)).then( file =>{
+            setPDFFile(file.data._links.file.href);
+            setOpenSD(true);
+            //console.log(file.data.path);
+        })
     }
 
     const renderSwitch = (param : string, value : any) => {
@@ -304,11 +298,13 @@ function ConsultationDocuments() {
                 return value;
         }
     }
+
 	return (
         
         <div style={{ width: '100%'}}>
             <RemoveDialog />
-            <DocumentViewer />
+            <ViewPDF/>
+            
             <Paper sx={{ width: 'calc(100% - 40px)', ml: '20px', mt: '10px' }}>
                 
                 <Box sx={{display : "flex", width : '100%', paddingTop: 5 , paddingBottom: 5 , justifyContent: "space-between"}}>
