@@ -38,6 +38,12 @@ const document = [
     { id: 'type',           name: 'Type',               width: '40%',               align: 'left',      type:"text" },
     { id: 'issueDate',      name: 'Date',               width: '20%',               align: 'center',    type:"date" }
 ];
+const mail = [
+    { id: 'id',             name: 'Id',                 width: '20px',              align: 'center',    type:"number" },
+    { id: 'reference',      name: 'Reference',          width: 'calc(40%-120px)',   align: 'left',      type:"text" },
+    { id: 'mailDate',       name: 'Date',               width: '20%',               align: 'center',    type:"date" },
+    { id: 'object',         name: 'Object',             width: '40%',               align: 'left',      type:"text" }
+];
 const structure = [
     { id: 'id',             name: 'Id',                 width: '20px',              align: 'center',    type:"number" },
     { id: 'designationFr',  name: 'Designation',        width: '60%',               align: 'left',      type:"text" },
@@ -76,6 +82,8 @@ Lists.set("consultation", consultation);
 Lists.set("contract", contract);
 
 Lists.set("document", document);
+
+Lists.set("mail", mail);
 
 Lists.set("structure", structure);
 Lists.set("job", job);
