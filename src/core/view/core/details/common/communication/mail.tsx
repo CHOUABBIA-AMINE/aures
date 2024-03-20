@@ -7,7 +7,7 @@ import { useParams } 			from "react-router-dom";
 
 import { useSnackbar } 			from "notistack";
 
-import { Autocomplete, Modal } 		from "@mui/material";
+import { Autocomplete, Modal, Tooltip } 		from "@mui/material";
 import { Box } 					from "@mui/material";
 import { Button } 				from "@mui/material";
 import { Container } 			from "@mui/material";
@@ -287,19 +287,27 @@ const MailDetails = (props : any) => {
 					<Box>
 						<input type='file' hidden id="imageSelector" onChange={onSelectFile} accept=".pdf"/>
 						{ (file !== undefined || dbFile !== undefined) &&(
-							<Button color="info" 	variant="outlined" size="small" sx={{ marginRight:'5px' }}  onClick={e => {ViewPDF(); setOpenSD(true); }}>
-								<Visibility />
-							</Button>
+							<Tooltip title="Display Mail" arrow>
+								<Button color="info" 	variant="outlined" size="small" sx={{ marginRight:'5px' }}  onClick={e => {ViewPDF(); setOpenSD(true); }}>
+									<Visibility />
+								</Button>
+						  	</Tooltip>
 						)}
-						<Button color="error" 	variant="outlined" size="small" sx={{ marginRight:'5px' }}  onClick={clickFileUploader}>
-							<PictureAsPdfOutlined />
-						</Button>
-						<Button color="primary" variant="outlined" size="small" sx={{ marginRight:'5px' }} onClick={e => patchData()}>
-							<Save />
-						</Button>
-						<Button color="success" variant="outlined" size="small" sx={{ marginRight:'5px' }}  onClick={e => { setFile(undefined); fetchData();}}>
-							<Replay />
-						</Button>
+						<Tooltip title="Select a File" arrow>
+							<Button color="error" 	variant="outlined" size="small" sx={{ marginRight:'5px' }}  onClick={clickFileUploader}>
+								<PictureAsPdfOutlined />
+							</Button>
+						</Tooltip>
+						<Tooltip title="Save" arrow>
+							<Button color="primary" variant="outlined" size="small" sx={{ marginRight:'5px' }} onClick={e => patchData()}>
+								<Save />
+							</Button>
+						</Tooltip>
+						<Tooltip title="Reset" arrow>
+							<Button color="success" variant="outlined" size="small" sx={{ marginRight:'5px' }}  onClick={e => { setFile(undefined); fetchData();}}>
+								<Replay />
+							</Button>
+						</Tooltip>
 					</Box>
 				</Box>
 				<Grid container spacing={1}>
