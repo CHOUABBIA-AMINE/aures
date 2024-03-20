@@ -7,7 +7,7 @@ import { useParams } 			from "react-router-dom";
 
 import { useSnackbar } 			from "notistack";
 
-import { Autocomplete } 		from "@mui/material";
+import { Autocomplete, Modal } 		from "@mui/material";
 import { Box } 					from "@mui/material";
 import { Button } 				from "@mui/material";
 import { Container } 			from "@mui/material";
@@ -23,8 +23,10 @@ import { Typography } 			from "@mui/material";
 
 import { DatePicker } 			from "@mui/x-date-pickers/DatePicker";
 
-import { PictureAsPdfOutlined, Replay } 				from "@mui/icons-material";
+import { PictureAsPdfOutlined } from "@mui/icons-material";
+import { Replay } 				from "@mui/icons-material";
 import { Save } 				from "@mui/icons-material";
+import { Visibility } 			from "@mui/icons-material";
 
 import { formatURL } 			from "../../../../../api/tools";
 import { useHTTP } 				from "../../../../../api/request";
@@ -32,16 +34,17 @@ import { Structure } 			from "../../../../../model/common/administration/structu
 import { Mail } 				from "../../../../../model/common/communication/mail";
 import { MailType } 			from "../../../../../model/common/communication/mail.type";
 import { MailNature } 			from "../../../../../model/common/communication/mail.nature";
+import { PDFViewer }            from "../../../../public/pdf.viewer";
 
 const MailDetails = (props : any) => {
 
-	const { getUrl, getBasedUrl, patchUrl, postBasedUrl} = useHTTP();
+	const { getUrl, getBasedUrl, patchUrl, postBasedUrl, uploadFile, getFile, deleteUrl} = useHTTP();
 
 	const location 							= useLocation();
 	const params 							= useParams();
 	const { enqueueSnackbar } 				= useSnackbar();
 	
-	let readOnly 							= params.action === 'edit' ? false : true;
+	let readOnly 							= params.action === 'view' ? true : false;
 
 	const [ mailTypes, setMailTypes ]		= useState<MailType[]>([]);
 	const [ mailType, setMailType ]			= useState<string>("");
@@ -52,12 +55,14 @@ const MailDetails = (props : any) => {
 	const [ structures, setStructures ]		= useState<Structure[]>([]);
 	const [ structure, setStructure ]		= useState<Structure | null>(null);
 
-	const [ file, setFile ] 			    = useState();
+	const [ file, setFile ] 			    = useState(undefined);
+	const [ dbFile, setDBFile ] 			= useState(undefined);
+    const [ openSD, setOpenSD ]       		= useState(false);
 
 	const [ mail, setMail ]	= useState<Mail>({
 		reference   	: "",
 		mailDate   		: dayjs(),
-		object       	: "",
+		subject       	: "",
 		recordNumber   	: "",
 		recordDate      : dayjs(),
 		_links          : {
@@ -83,46 +88,82 @@ const MailDetails = (props : any) => {
 	});
 
 	const fetchData = ()=>{
-
-		getUrl(formatURL(location.state.modelId)).then((response : any) => {
+		if(location.state){
+			getUrl(formatURL(location.state)).then((response : any) => {
+				setMail({
+					reference   	: response.data.reference,
+					mailDate   		: dayjs(response.data.mailDate),
+					subject       	: response.data.subject,
+					recordNumber   	: response.data.recordNumber,
+					recordDate      : dayjs(response.data.recordDate),
+					_links          : {
+						mail       		:{
+							href            : response.data._links.mail.href
+						},
+						self            :{
+							href            : response.data._links.self.href
+						},
+						mailType   		:{
+							href            : response.data._links.mailType.href
+						},
+						mailNature     	:{
+							href            : response.data._links.mailNature.href
+						},
+						structure   	:{
+							href            : response.data._links.structure.href
+						},
+						file     		:{
+							href            : response.data._links.file.href
+						}
+					}
+				})
+				getUrl(formatURL(response.data._links.mailType.href)).then((type) => {
+					setMailType(type.data !== undefined ? type.data._links.self.href : "" )
+				});
+				getUrl(formatURL(response.data._links.mailNature.href)).then((nature) => {
+					setMailNature(nature.data !== undefined ? nature.data._links.self.href : "" )
+				});
+				getUrl(formatURL(response.data._links.structure.href)).then((parent) => {
+					setStructure(parent.data !== undefined ? parent.data : null )
+				}).catch(()=>{
+				});
+				getUrl(formatURL(response.data._links.file.href)).then((_dbFile) => {
+					setDBFile(_dbFile.data !== undefined ? _dbFile.data._links.file.href : "" )
+				}).catch(()=>{
+				});
+			});
+		}else{
 			setMail({
-				reference   	: response.data.reference,
-				mailDate   		: dayjs(response.data.mailDate),
-				object       	: response.data.object,
-				recordNumber   	: response.data.recordNumber,
-				recordDate      : dayjs(response.data.recordDate),
+				reference   	: "",
+				mailDate   		: dayjs(),
+				subject       	: "",
+				recordNumber   	: "",
+				recordDate      : dayjs(),
 				_links          : {
 					mail       		:{
-						href            : response.data._links.mail.href
+						href            : ""
 					},
 					self            :{
-						href            : response.data._links.self.href
+						href            : ""
 					},
 					mailType   		:{
-						href            : response.data._links.mailType.href
+						href            : ""
 					},
 					mailNature     	:{
-						href            : response.data._links.mailNature.href
+						href            : ""
 					},
-					structure   	:{
-						href            : response.data._links.structure.href
+					structure     	:{
+						href            : ""
 					},
 					file     		:{
-						href            : response.data._links.file.href
+						href            : ""
 					}
 				}
 			})
-			getUrl(formatURL(response.data._links.mailType.href)).then((type) => {
-				setMailType(type.data !== undefined ? type.data._links.self.href : "" )
-			});
-			getUrl(formatURL(response.data._links.mailNature.href)).then((nature) => {
-				setMailNature(nature.data !== undefined ? nature.data._links.self.href : "" )
-			});
-			getUrl(formatURL(response.data._links.structure.href)).then((parent) => {
-				setStructure(parent.data !== undefined ? parent.data : null )
-			}).catch(()=>{
-			});
-		});
+			setMailType( "" );
+			setMailNature( "" );
+			setStructure( null );
+		}
 	}
 
 	const clickFileUploader = () => {
@@ -144,34 +185,81 @@ const MailDetails = (props : any) => {
 	}
 
 	const patchData = ()=>{
-		if(location.state != null){
-			patchUrl(formatURL(location.state.modelId), JSON.stringify({
-				reference   	: mail.reference,
-				mailDate   		: mail.mailDate,
-				object       	: mail.object,
-				recordNumber   	: mail.recordNumber,
-				recordDate      : mail.recordDate,
-				mailType  		: mailType,
-				mailNature		: mailNature,
-				structure  		: structure?._links.self.href
-			})).then((response) => {
-				enqueueSnackbar('Entity updated successfully!', {variant: 'success'});
-			})
+		if(location.state !== null){
+			if(file === undefined){
+				patchUrl(formatURL(location.state), JSON.stringify({
+					reference   	: mail.reference,
+					mailDate   		: mail.mailDate,
+					subject       	: mail.subject,
+					recordNumber   	: mail.recordNumber,
+					recordDate      : mail.recordDate,
+					mailType  		: mailType,
+					mailNature		: mailNature,
+					structure  		: structure?._links.self.href
+				})).then((response) => {
+					enqueueSnackbar('Entity updated successfully!', {variant: 'success'});
+				})
+			}else{
+				getUrl(location.state).then(_mail =>{
+					getUrl(_mail.data._links.file.href).then(_file =>{
+						uploadFile(file).then( __file => {
+							patchUrl(formatURL(location.state), JSON.stringify({
+								reference   	: mail.reference,
+								mailDate   		: mail.mailDate,
+								subject       	: mail.subject,
+								recordNumber   	: mail.recordNumber,
+								recordDate      : mail.recordDate,
+								mailType  		: mailType,
+								mailNature		: mailNature,
+								structure  		: structure?._links.self.href,
+								file			: getFile(__file.data.id)
+							})).then((response) => {
+								deleteUrl(_file.data._links.self.href).then( () =>{
+									enqueueSnackbar('Entity updated successfully!', {variant: 'success'});
+								})
+							})
+						})
+					})
+				})
+			}
 		}else{
-			postBasedUrl("mail", JSON.stringify({
-				reference   	: mail.reference,
-				mailDate   		: mail.mailDate,
-				object       	: mail.object,
-				recordNumber   	: mail.recordNumber,
-				recordDate      : mail.recordDate,
-				mailType  		: mailType,
-				mailNature		: mailNature,
-				structure  		: structure?._links.self.href
-			})).then((response) => {
-				enqueueSnackbar('Entity updated successfully!', {variant: 'success'});
-			})
+			if(file !== undefined){
+				uploadFile(file).then( _file => {
+					postBasedUrl("mail", JSON.stringify({
+						reference   	: mail.reference,
+						mailDate   		: mail.mailDate,
+						subject       	: mail.subject,
+						recordNumber   	: mail.recordNumber,
+						recordDate      : mail.recordDate,
+						mailType  		: mailType,
+						mailNature		: mailNature,
+						structure  		: structure?._links.self.href,
+						file			: getFile(_file.data.id)
+					})).then((response) => {
+						enqueueSnackbar('Entity updated successfully!', {variant: 'success'});
+					})
+				})
+			}else{
+				enqueueSnackbar('Upload mail pdf format First!', {variant: 'error'});
+			}
 		}
 	}
+
+    const ViewPDF = () => {
+		let link : string = dbFile !== undefined? dbFile : file !== undefined ? URL.createObjectURL(file) : "";
+        return (
+            <Modal
+                open={openSD}
+                onClose={ e => setOpenSD(false)}
+                aria-labelledby="child-modal-title"
+                aria-describedby="child-modal-description"
+            >
+                <Box >
+                    <PDFViewer url={ link }/>
+                </Box>
+            </Modal>
+        )
+    }
 
 	useEffect(() => {
 
@@ -190,6 +278,7 @@ const MailDetails = (props : any) => {
 
 	return (
 		<Container maxWidth="lg">
+			<ViewPDF/>
 			<Paper variant="outlined" sx={{ marginTop: "60px", padding:'30px' }}>
 				<Box sx={{display : "flex", paddingBottom: 5 , justifyContent: "space-between"}}>
 					<Typography variant="h6" >
@@ -197,20 +286,25 @@ const MailDetails = (props : any) => {
 					</Typography>
 					<Box>
 						<input type='file' hidden id="imageSelector" onChange={onSelectFile} accept=".pdf"/>
-						<Button color="error" 	variant="outlined" size="small" sx={{ marginLeft:'5px' }}  onClick={clickFileUploader}>
+						{ (file !== undefined || dbFile !== undefined) &&(
+							<Button color="info" 	variant="outlined" size="small" sx={{ marginRight:'5px' }}  onClick={e => {ViewPDF(); setOpenSD(true); }}>
+								<Visibility />
+							</Button>
+						)}
+						<Button color="error" 	variant="outlined" size="small" sx={{ marginRight:'5px' }}  onClick={clickFileUploader}>
 							<PictureAsPdfOutlined />
 						</Button>
 						<Button color="primary" variant="outlined" size="small" sx={{ marginRight:'5px' }} onClick={e => patchData()}>
 							<Save />
 						</Button>
-						<Button color="success" variant="outlined" size="small" sx={{ marginLeft:'5px' }}  onClick={e => fetchData()}>
+						<Button color="success" variant="outlined" size="small" sx={{ marginRight:'5px' }}  onClick={e => { setFile(undefined); fetchData();}}>
 							<Replay />
 						</Button>
 					</Box>
 				</Box>
 				<Grid container spacing={1}>
 					
-					<Grid item xs={3} sm={3}>
+					<Grid item xs={2} sm={2}>
 						<FormControl fullWidth size="small" >
 							<InputLabel id="mailTypeLabel">Mail Type</InputLabel>
 							<Select
@@ -260,7 +354,9 @@ const MailDetails = (props : any) => {
 							</Select>
 						</FormControl>
 					</Grid>
-					<Grid item xs={7} sm={7}>
+					<Grid item xs={8} sm={8}></Grid>
+
+					<Grid item xs={6} sm={6}>
 						<Autocomplete
 							id="structure"
 							fullWidth
@@ -273,28 +369,9 @@ const MailDetails = (props : any) => {
 							renderInput={(params) => <TextField {...params} label="Source/Destination" onChange={debounce(filterBy, 200)}/>}
 						/>
 					</Grid>
-					
-					<Grid item xs={12} sm={12}>
-						<FormControl fullWidth size="small">
-							<TextField
-								required
-								fullWidth
-								value={mail.object}
-								onChange={ (e) => setMail(mail => ({...mail, object: e.target.value})) }
-								size="small"
-								id="object"
-								name="object"
-								label="Object"
-								autoComplete="off"
-								variant="outlined"
-								inputProps={{ 
-									readOnly: readOnly 
-								}}
-							/>
-						</FormControl>
-					</Grid>
+					<Grid item xs={6} sm={6}></Grid>
 
-					<Grid item xs={6} sm={6}>
+					<Grid item xs={4} sm={4}>
 						<FormControl fullWidth size="small">
 							<TextField
 								required
@@ -325,6 +402,8 @@ const MailDetails = (props : any) => {
 							/>
 						</FormControl>
 					</Grid>
+
+					<Grid item xs={2} sm={2}></Grid>
 					<Grid item xs={2} sm={2}>
 						<FormControl fullWidth size="small">
 							<TextField
@@ -357,10 +436,29 @@ const MailDetails = (props : any) => {
 						</FormControl>
 					</Grid>
 
+					<Grid item xs={12} sm={12}>
+						<FormControl fullWidth size="small">
+							<TextField
+								required
+								fullWidth
+								value={mail.subject}
+								onChange={ (e) => setMail(mail => ({...mail, subject: e.target.value})) }
+								size="small"
+								id="subject"
+								name="subject"
+								label="Subject"
+								autoComplete="off"
+								variant="outlined"
+								inputProps={{ 
+									readOnly: readOnly 
+								}}
+							/>
+						</FormControl>
+					</Grid>
+
 				</Grid>
 			</Paper>
 		</Container>
 	);
 }
 export default MailDetails ;
-

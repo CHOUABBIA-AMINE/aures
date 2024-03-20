@@ -19,7 +19,7 @@ const commonMenu : NavItem[] = [
         { name : "Employee",        icon : EngineeringOutlined,     authority : "AUTH_EMPLOYEE",            link: "/list/employee/employeeList" }
     ] },
     { name : "Environment",     icon : HomeWorkOutlined,        authority : "AUTH_ENVIRONMENT",         link : "/" },
-    { name : "Currial",         icon : DraftsOutlined,          authority : "AUTH_COMMUNICATION",       link : "/list/mail" },
+    { name : "Currial",         icon : DraftsOutlined,          authority : "AUTH_COMMUNICATION",       link : "/mails" },
     { name : "Security",        icon : HttpsOutlined,           authority : "AUTH_SECURITY",            link : [
         { name : "User",            icon : PersonOutlineOutlined,   authority : "AUTH_USER",                link: "/list/user" },
         { name : "Role",            icon : SecurityOutlined,        authority : "AUTH_ROLE",                link: "/list/role" }

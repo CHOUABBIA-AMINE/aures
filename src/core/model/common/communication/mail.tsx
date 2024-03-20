@@ -3,7 +3,7 @@ import { Dayjs }                from "dayjs";
 interface Mail {
     reference       : string;
     recordNumber    : string;
-    object          : string;
+    subject         : string;
     mailDate        : Dayjs | null;
     recordDate      : Dayjs | null;
     _links          : {

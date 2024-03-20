@@ -42,7 +42,7 @@ const mail = [
     { id: 'id',             name: 'Id',                 width: '20px',              align: 'center',    type:"number" },
     { id: 'reference',      name: 'Reference',          width: 'calc(40%-120px)',   align: 'left',      type:"text" },
     { id: 'mailDate',       name: 'Date',               width: '20%',               align: 'center',    type:"date" },
-    { id: 'object',         name: 'Object',             width: '40%',               align: 'left',      type:"text" }
+    { id: 'subject',        name: 'Subject',            width: '40%',               align: 'left',      type:"text" }
 ];
 const structure = [
     { id: 'id',             name: 'Id',                 width: '20px',              align: 'center',    type:"number" },
