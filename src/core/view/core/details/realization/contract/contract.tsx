@@ -30,15 +30,15 @@ import { DatePicker } 			from "@mui/x-date-pickers/DatePicker";
 import { useHTTP } 				from "../../../../../api/request";
 import { formatURL } 			from "../../../../../api/tools";
 
-import { Contract } 			from "../../../../../model/realization/contract/contract";
-import { RealizationStatus } 	from "../../../../../model/realization/realization.status";
 import { ApprovalStatus } 		from "../../../../../model/realization/approval.status";
-import { Project } 				from "../../../../../model/realization/project";
+import { Contract } 			from "../../../../../model/realization/contract/contract";
+import { Consultation } 		from "../../../../../model/realization/consultation/consultation";
+import { Currency } 			from "../../../../../model/common/currency";
 import { ContractStep } 		from "../../../../../model/realization/contract/contract.step";
 import { ContractPhase } 		from "../../../../../model/realization/contract/contract.phase";
 import { ContractType } 		from "../../../../../model/realization/contract/contract.type";
 import { Provider } 			from "../../../../../model/realization/provider/provider";
-import { Currency } 			from "../../../../../model/common/currency";
+import { RealizationStatus } 	from "../../../../../model/realization/realization.status";
 
 const ContractDetails = (props : any) => {
 
@@ -70,8 +70,8 @@ const ContractDetails = (props : any) => {
 	const [ currencies, setCurrencies ]					= useState<Currency[]>([]);
 	const [ currency, setCurrency ]						= useState<string>("");
 
-	const [ projects, setProjects ]						= useState<Project[]>([]);
-	const [ project, setProject ]						= useState<Project | null>(null);
+	const [ consultations, setConsultations ]			= useState<Consultation[]>([]);
+	const [ consultation, setConsultation ]				= useState<Consultation | null>(null);
 
 	let years : string []			= [];
 	for (let i = 2010; i < 2031; i++) years.push(""+i); 
@@ -116,7 +116,7 @@ const ContractDetails = (props : any) => {
 			currency     			:{
 				href                    : ""
 			},
-			project                 :{
+			consultation            :{
 				href                    : ""
 			},
 			documents               :{
@@ -131,9 +131,9 @@ const ContractDetails = (props : any) => {
 		}
 	});
 
-	const filterProjectBy = (e : any) =>{
-		getBasedUrl("project/search/filterBy?filter=" + e.target.value).then((projects) => {
-			setProjects(projects.data._embedded.project);
+	const filterConsultationBy = (e : any) =>{
+		getBasedUrl("consultation/search/filterBy?filter=" + e.target.value).then((consultations) => {
+			setConsultations(consultations.data._embedded.consultation);
 		})
 	}
 
@@ -186,8 +186,8 @@ const ContractDetails = (props : any) => {
 					currency                :{
 						href                    : contract.data._links.currency.href
 					},
-					project                 :{
-						href                    : contract.data._links.project.href
+					consultation            :{
+						href                    : contract.data._links.consultation.href
 					},
 					documents               :{
 						href                    : contract.data._links.documents.href
@@ -232,10 +232,9 @@ const ContractDetails = (props : any) => {
 				setCurrency(currency.data._links.self.href);
 			}).catch(e => {});
 			
-			getUrl(formatURL(contract.data._links.project.href)).then((project) => {
-				setProject(project.data);
+			getUrl(formatURL(contract.data._links.consultation.href)).then((consultation) => {
+				setConsultation(consultation.data);
 			}).catch(e => {});
-			
 		});
 	}
 
@@ -261,7 +260,7 @@ const ContractDetails = (props : any) => {
 			contractStep        	: contractStep,
 			approvalStatus          : approvalStatus,
 			currency     			: currency,
-			project                 : project?._links.self.href
+			consultation            : consultation?._links.self.href
 		};
 		if(location.state != null){
 			patchUrl(formatURL(location.state.modelId), JSON.stringify({data})).then((contract) => {
@@ -390,15 +389,15 @@ const ContractDetails = (props : any) => {
 
 					<Grid item xs={6} sm={6}>
 						<Autocomplete
-							id="project"
+							id="consultation"
 							fullWidth
 							size="small"
-							options={projects}
-							value={project}
-							onChange={(e, value) => setProject(value)}
-							getOptionLabel={(project) => project.designationFr}
+							options={consultations}
+							value={consultation}
+							onChange={(e, value) => setConsultation(value)}
+							getOptionLabel={(consultation) => consultation.designationFr}
 							isOptionEqualToValue={(option, value) => option._links.self.href === value._links.self.href}
-							renderInput={(params) => <TextField {...params} label="Project" onChange={debounce(filterProjectBy, 200)}/>}
+							renderInput={(params) => <TextField {...params} label="Consultation" onChange={debounce(filterConsultationBy, 200)}/>}
 						/>
 					</Grid>
 					<Grid item xs={6} sm={6}></Grid>

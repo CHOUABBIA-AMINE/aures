@@ -123,6 +123,7 @@ function ModelList() {
             setModel("");
         }
     }, [entity])
+    
     useEffect(() => {
         
         let projection = proj !== undefined ? "&projection=" + proj : ""

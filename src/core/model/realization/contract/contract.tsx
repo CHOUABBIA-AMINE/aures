@@ -22,25 +22,25 @@ interface Contract {
         self                    :{
             href                    : string
         },
-        contractType             :{
+        contractType            :{
             href                    : string
         },
-        provider       :{
+        provider                :{
             href                    : string
         },
-        realizationStatus              :{
+        realizationStatus       :{
             href                    : string
         },
-        contractStep       :{
+        contractStep            :{
             href                    : string
         },
         approvalStatus          :{
             href                    : string
         },
-        currency     :{
+        currency                :{
             href                    : string
         },
-        project                 :{
+        consultation            :{
             href                    : string
         },
         documents               :{
