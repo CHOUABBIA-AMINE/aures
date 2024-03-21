@@ -46,7 +46,7 @@ const ContractDetails = (props : any) => {
 	const params 					= useParams();
 	const { enqueueSnackbar } 		= useSnackbar();
 
-	let readOnly 					= params.action === 'edit' ? false : true;
+	let readOnly 					= params.action !== 'view' ? false : true;
 	const { getUrl, getBasedUrl, patchUrl, postBasedUrl } = useHTTP();
 
 	const [ contractTypes, setContractTypes ]			= useState<ContractType[]>([]);
