@@ -432,9 +432,6 @@ const ConsultationDetails = (props : any) => {
 							/>
 						</FormControl>
 					</Grid>
-					<Grid item xs={4} sm={4}></Grid>
-
-					<Grid item xs={6} sm={6}></Grid>
 					<Grid item xs={3} sm={3}>
 						<FormControl fullWidth size="small" >
 							<InputLabel id="realizationNatureLabel">Realization Nature</InputLabel>

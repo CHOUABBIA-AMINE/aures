@@ -415,7 +415,7 @@ const ContractDetails = (props : any) => {
 							options={consultations}
 							value={consultation}
 							onChange={(e, value) => setConsultation(value)}
-							getOptionLabel={(consultation) => consultation.designationFr}
+							getOptionLabel={(consultation) => consultation.reference + " : " + consultation.designationFr}
 							isOptionEqualToValue={(option, value) => option._links.self.href === value._links.self.href}
 							renderInput={(params) => <TextField {...params} label="Consultation" onChange={debounce(filterConsultationBy, 200)}/>}
 						/>
