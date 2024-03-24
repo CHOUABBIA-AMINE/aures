@@ -145,7 +145,7 @@ const ContractDetails = (props : any) => {
 
 	const filterContractBy = (e : any) =>{
 		getBasedUrl("contract/search/filterBy?filter=" + e.target.value).then((contracts) => {
-			setConsultations(contracts.data._embedded.contract);
+			setContracts(contracts.data._embedded.contract);
 		})
 	}
 
