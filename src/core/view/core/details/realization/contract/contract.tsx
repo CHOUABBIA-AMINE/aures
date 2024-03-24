@@ -73,6 +73,9 @@ const ContractDetails = (props : any) => {
 	const [ consultations, setConsultations ]			= useState<Consultation[]>([]);
 	const [ consultation, setConsultation ]				= useState<Consultation | null>(null);
 
+	const [ contracts, setContracts ]					= useState<Contract[]>([]);
+	const [ contractUp, setContractUp ]					= useState<Contract | null>(null);
+
 	let years : string []			= [];
 	for (let i = 2010; i < 2031; i++) years.push(""+i); 
 
@@ -119,6 +122,9 @@ const ContractDetails = (props : any) => {
 			consultation            :{
 				href                    : ""
 			},
+			contractUp            	:{
+				href                    : ""
+			},
 			documents               :{
 				href                    : ""
 			},
@@ -134,6 +140,12 @@ const ContractDetails = (props : any) => {
 	const filterConsultationBy = (e : any) =>{
 		getBasedUrl("consultation/search/filterBy?filter=" + e.target.value).then((consultations) => {
 			setConsultations(consultations.data._embedded.consultation);
+		})
+	}
+
+	const filterContractBy = (e : any) =>{
+		getBasedUrl("contract/search/filterBy?filter=" + e.target.value).then((contracts) => {
+			setConsultations(contracts.data._embedded.contract);
 		})
 	}
 
@@ -189,6 +201,9 @@ const ContractDetails = (props : any) => {
 					consultation            :{
 						href                    : contract.data._links.consultation.href
 					},
+					contractUp            	:{
+						href                    : contract.data._links.contractUp.href
+					},
 					documents               :{
 						href                    : contract.data._links.documents.href
 					},
@@ -235,6 +250,10 @@ const ContractDetails = (props : any) => {
 			getUrl(formatURL(contract.data._links.consultation.href)).then((consultation) => {
 				setConsultation(consultation.data);
 			}).catch(e => {});
+			
+			getUrl(formatURL(contract.data._links.contractUp.href)).then((contractUp) => {
+				setContractUp(contractUp.data);
+			}).catch(e => {});
 		});
 	}
 
@@ -260,7 +279,8 @@ const ContractDetails = (props : any) => {
 			contractStep        	: contractStep,
 			approvalStatus          : approvalStatus,
 			currency     			: currency,
-			consultation            : consultation?._links.self.href
+			consultation            : consultation !== null ? consultation?._links.self.href : "",
+			contractUp            	: contractUp !== null ? consultation?._links.self.href : ""
 		};
 		if(location.state != null){
 			patchUrl(formatURL(location.state.modelId), JSON.stringify({data})).then((contract) => {
@@ -270,7 +290,7 @@ const ContractDetails = (props : any) => {
 				}
 			})
 		}else{
-			postBasedUrl("provider", JSON.stringify({data})).then((contract) => {
+			postBasedUrl("contract", JSON.stringify({data})).then((contract) => {
 				if(contract.data !== undefined){
 					setContract(contract.data);
 					enqueueSnackbar('Entity created successfully !', {variant: 'success'});
@@ -400,7 +420,19 @@ const ContractDetails = (props : any) => {
 							renderInput={(params) => <TextField {...params} label="Consultation" onChange={debounce(filterConsultationBy, 200)}/>}
 						/>
 					</Grid>
-					<Grid item xs={6} sm={6}></Grid>
+					<Grid item xs={6} sm={6}>
+						<Autocomplete
+							id="contractUp"
+							fullWidth
+							size="small"
+							options={contracts}
+							value={contractUp}
+							onChange={(e, value) => setContractUp(value)}
+							getOptionLabel={(contractUp) => contractUp.reference}
+							isOptionEqualToValue={(option, value) => option._links.self.href === value._links.self.href}
+							renderInput={(params) => <TextField {...params} label="Parent Contract's" onChange={debounce(filterContractBy, 200)}/>}
+						/>
+					</Grid>
 
 					<Grid item xs={6} sm={6}>
 						<Autocomplete

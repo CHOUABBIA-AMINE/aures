@@ -43,9 +43,6 @@ interface Consultation {
         consultationStep        :{
             href                    : string
         },
-        project                 :{
-            href                    : string
-        },
         documents               :{
             href                    : string
         },

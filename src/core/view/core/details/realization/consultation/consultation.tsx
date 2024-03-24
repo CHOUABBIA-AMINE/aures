@@ -129,9 +129,6 @@ const ConsultationDetails = (props : any) => {
 			consultationStep        :{
 				href                    : ""
 			},
-			project                 :{
-				href                    : ""
-			},
 			documents               :{
 				href                    : ""
 			},
@@ -146,12 +143,6 @@ const ConsultationDetails = (props : any) => {
 			}
 		}
 	});
-
-	const filterBy = (e : any) =>{
-		getBasedUrl("project/search/filterBy?filter=" + e.target.value).then((projects) => {
-			setProjects(projects.data._embedded.project);
-		})
-	}
 
 	const fetchData = ()=>{
 
@@ -198,9 +189,6 @@ const ConsultationDetails = (props : any) => {
 					},
 					consultationStep        :{
 						href                    : consultation.data._links.consultationStep.href
-					},
-					project                 :{
-						href                    : consultation.data._links.project.href
 					},
 					documents               :{
 						href                    : consultation.data._links.documents.href
@@ -252,10 +240,6 @@ const ConsultationDetails = (props : any) => {
 				
 			}).catch(e => {});
 			
-			getUrl(formatURL(consultation.data._links.project.href)).then((project) => {
-				setProject(project.data);
-			}).catch(e => {});
-			
 		});
 	}
 
@@ -283,8 +267,7 @@ const ConsultationDetails = (props : any) => {
 				realizationStatus       : realizationStatus,
 				approvalStatus          : approvalStatus,
 				realizationDirector     : realizationDirector,
-				consultationStep        : consultationStep,
-				project                 : project?._links.self.href
+				consultationStep        : consultationStep
 			})).then((consultation) => {
 				if(consultation.data !== undefined){
 					setConsultation(consultation.data);
@@ -313,8 +296,7 @@ const ConsultationDetails = (props : any) => {
 				realizationStatus       : realizationStatus,
 				approvalStatus          : approvalStatus,
 				realizationDirector     : realizationDirector,
-				consultationStep        : consultationStep,
-				project                 : project?._links.self.href
+				consultationStep        : consultationStep
 			})).then((consultation) => {
 				if(consultation.data !== undefined){
 					setConsultation(consultation.data);
@@ -452,19 +434,7 @@ const ConsultationDetails = (props : any) => {
 					</Grid>
 					<Grid item xs={4} sm={4}></Grid>
 
-					<Grid item xs={6} sm={6}>
-						<Autocomplete
-							id="project"
-							fullWidth
-							size="small"
-							options={projects}
-							value={project}
-							onChange={(e, value) => setProject(value)}
-							getOptionLabel={(project) => project.designationFr}
-							isOptionEqualToValue={(option, value) => option._links.self.href === value._links.self.href}
-							renderInput={(params) => <TextField {...params} label="Project" onChange={debounce(filterBy, 200)}/>}
-						/>
-					</Grid>
+					<Grid item xs={6} sm={6}></Grid>
 					<Grid item xs={3} sm={3}>
 						<FormControl fullWidth size="small" >
 							<InputLabel id="realizationNatureLabel">Realization Nature</InputLabel>

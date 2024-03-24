@@ -43,6 +43,9 @@ interface Contract {
         consultation            :{
             href                    : string
         },
+        contractUp              :{
+            href                    : string
+        },
         documents               :{
             href                    : string
         },
