@@ -52,8 +52,8 @@ const ContractDetails = (props : any) => {
 	const [ contractTypes, setContractTypes ]			= useState<ContractType[]>([]);
 	const [ contractType, setContractType ]				= useState<string>("");
 
-	const [ providers, setProviders ]					= useState<Provider[]>([]);
-	const [ provider, setProvider ]						= useState<Provider | null>(null);
+	const [ providers, setProviders ]					= useState<any[]>([]);
+	const [ provider, setProvider ]						= useState<any | null>(null);
 
 	const [ realizationStatuss, setRealizationStatuss ]	= useState<RealizationStatus[]>([]);
 	const [ realizationStatus, setRealizationStatus ]	= useState<string>("");
@@ -91,6 +91,7 @@ const ContractDetails = (props : any) => {
 		startDate               : dayjs(),
 		approvalReference       : "",
 		approvalDate            : dayjs(),
+		contractDate            : dayjs(),
 		notifyDate              : dayjs(),
 		contractDuration        : 0,
 		observation             : "",
@@ -150,7 +151,7 @@ const ContractDetails = (props : any) => {
 	}
 
 	const filterProviderBy = (e : any) =>{
-		getBasedUrl("provider/search/filterBy?filter=" + e.target.value).then((providers) => {
+		getBasedUrl("provider/search/filterBy?filter=" + e.target.value + "&projection=providerList").then((providers) => {
 			setProviders(providers.data._embedded.provider);
 		})
 	}
@@ -167,10 +168,11 @@ const ContractDetails = (props : any) => {
 				designationFr           : contract.data.designationFr,
 				amount         			: contract.data.amount,
 				transferableAmount    	: contract.data.transferableAmount,
-				startDate               : contract.data.startDate,
+				startDate               : contract.data.startDate !== null ? dayjs(contract.data.approvalDate) : dayjs(),
 				approvalReference       : contract.data.approvalReference,
-				approvalDate            : contract.data.approvalDate,
-				notifyDate             	: contract.data.notifyDate,
+				approvalDate            : contract.data.approvalDate !== null ? dayjs(contract.data.approvalDate) : dayjs(),
+				contractDate            : contract.data.contractDate !== null ? dayjs(contract.data.contractDate) : dayjs(),
+				notifyDate             	: contract.data.notifyDate !== null ? dayjs(contract.data.notifyDate) : dayjs(),
 				contractDuration        : contract.data.contractDuration,
 				observation             : contract.data.observation,
 				_links          		: {
@@ -211,7 +213,7 @@ const ContractDetails = (props : any) => {
 						href                    : contract.data._links.referencedMails.href
 					},
 					budgetItems             :{
-						href                    : contract.data._links.budgetGoals.href
+						href                    : contract.data._links.budgetItems.href
 					}
 				}
 			})
@@ -220,7 +222,7 @@ const ContractDetails = (props : any) => {
 				setContractType(contractType.data._links.self.href);
 			}).catch(e => {});
 			
-			getUrl(formatURL(contract.data._links.provider.href)).then((provider) => {
+			getUrl(formatURL(contract.data._links.provider.href) + "?projection=providerList").then((provider) => {
 				setProvider(provider.data);
 			}).catch(e => {});
 			
@@ -442,7 +444,7 @@ const ContractDetails = (props : any) => {
 							options={providers}
 							value={provider}
 							onChange={(e, value) => setProvider(value)}
-							getOptionLabel={(provider) => provider.designationLt}
+							getOptionLabel={(provider) => provider.providerNature + ' ' +provider.designationLt}
 							isOptionEqualToValue={(option, value) => option._links.self.href === value._links.self.href}
 							renderInput={(params) => <TextField {...params} label="Provider" onChange={debounce(filterProviderBy, 200)}/>}
 						/>

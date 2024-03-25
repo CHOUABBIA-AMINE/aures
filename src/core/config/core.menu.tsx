@@ -23,7 +23,7 @@ const coreMenu : NavItem[] = [
     { name : "Realization",     icon : SquareFootOutlined,      authority : "AUTH_ADMINISTRATION",      link: [
         { name : "Project",         icon : AccountTreeOutlined,     authority : "AUTH_PROJECT",             link: "/list/project/projectList" },
         { name : "Consultation",    icon : MenuBookOutlined,        authority : "AUTH_CONSULTATION",        link: "/list/consultation/consultationList" },
-        { name : "Contract",        icon : DescriptionOutlined,     authority : "AUTH_CONTRACT",            link: "/list/contract" },
+        { name : "Contract",        icon : DescriptionOutlined,     authority : "AUTH_CONTRACT",            link: "/list/contract/contractList" },
         { name : "Amendment",       icon : OnDeviceTrainingOutlined,authority : "AUTH_AMENDMENT",           link: "/list/amendment" },
         { name : "Purchase ",       icon : ShoppingCartOutlined,    authority : "AUTH_CONSULTATION",        link: "/list/purchase" }
     ]}

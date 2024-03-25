@@ -5,7 +5,7 @@ import { useState }             from "react";
 import { useNavigate }          from "react-router-dom";
 import { useParams }            from "react-router-dom";
 
-import { Button }               from "@mui/material";
+import { Button, FormControl, Grid, TextField, debounce }               from "@mui/material";
 import { Dialog }               from "@mui/material";
 import { DialogActions }        from "@mui/material";
 import { DialogContent }        from "@mui/material";
@@ -45,6 +45,8 @@ function ModelList() {
     const { getBasedUrl }       = useHTTP();
     const { deleteUrl }         = useHTTP();
 
+    const [inList, setInList]   = useState("");
+
     const [rowh, setRowH]       = useState(-1);
     const [order, setOrder]     = useState<'asc' | 'desc'>('asc');
     const [orderBy, setOrderBy] = useState(Lists.get(model)[1].id);
@@ -66,6 +68,7 @@ function ModelList() {
             default : return row[id];
         }
     }
+
     const handlePage = (event : any, newpage : number) => {
         setPage(newpage)
     }
@@ -126,14 +129,30 @@ function ModelList() {
     
     useEffect(() => {
         
-        let projection = proj !== undefined ? "&projection=" + proj : ""
-        getBasedUrl(entity+"?page=" + page + "&size=" +size + "&sort=" + orderBy + "," + order + projection).then((response) => {
+        let projection = proj !== undefined ? "&projection=" + proj : "";
+        let search = inList !== "" ? "/search/inList?filter=" + inList + "&page=" : "?page=";
+        getBasedUrl(entity + search + page + "&size=" + size + "&sort=" + orderBy + "," + order + projection).then((response) => {
             let rows : []= response.data._embedded[model];
             setRow(rows);
             setTotal(response.data.page.totalElements);
         })
 
-    },[ model, page, size, orderBy, order, total])
+    },[ model, page, size, orderBy, order, total, inList])
+
+    const changeInListFilter = (e : React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        setInList(e.target.value)
+    }
+
+    useEffect(() => {
+        let projection = proj !== undefined ? "&projection=" + proj : ""
+        getBasedUrl(entity + "/search/inList?filter=" + inList + "?page=" + page + "&size=" +size + "&sort=" + orderBy + "," + order + projection).then((response) => {
+            let rows : [] = response.data._embedded[model];
+            setRow(rows);
+            setTotal(response.data.page.totalElements);
+        })
+        console.log(inList)
+
+    },[ inList])
 
     const Actions = (modelId : any) =>{
         return(
@@ -157,12 +176,11 @@ function ModelList() {
                 aria-describedby="alert-dialog-description"
             >
                 <DialogTitle id="alert-dialog-title">
-                    {"Use Google's location service?"}
+                    {"Confirmation!!"}
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                        Let Google help apps determine location. This means sending anonymous
-                        location data to Google, even when no apps are running.
+                        Do you want really to delete the record.
                     </DialogContentText>
                 </DialogContent>
             <DialogActions>
@@ -172,36 +190,8 @@ function ModelList() {
           </Dialog>
         )
     }
-    const TableTool = () =>{
-        return(
-            <Toolbar>
-                <Typography
-                    sx={{ flex: '1 1 100%' }}
-                    color="inherit"
-                    variant="subtitle1"
-                    component="div"
-                >
-                    {model} List
-                </Typography>
-                <Input placeholder="Search" sx={{ width : '340px'}} />
-                <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
-                    <Search />
-                </IconButton>
-                <IconButton type="button" color="primary" sx={{ p: '10px' }} aria-label="new" onClick={event => rowClickHandler(event, null,'create')}>
-                    <AddBoxOutlined />
-                </IconButton>
-                <IconButton type="button" color="success" sx={{ p: '10px' }} aria-label="new" onClick={event => rowClickHandler(event, null,'create')}>
-                    <IosShareOutlined />
-                </IconButton>
-                <IconButton type="button" color="info" sx={{ p: '10px' }} aria-label="new" onClick={event => rowClickHandler(event, null,'create')}>
-                    <PrintOutlined />
-                </IconButton>
-            </Toolbar>
-        )
-    }
 
     const renderSwitch = (param : string, value : any) => {
-        //let USDollar = new Intl.NumberFormat('en-US', {style: 'currency', curr});
         switch(param) {
             case 'date':
                 return dayjs(value).format('YYYY-MM-DD');
@@ -212,23 +202,56 @@ function ModelList() {
             default:
                 return value;
         }
-      }
+    }
+
 	return (
         
         <div style={{ width: '100%'}}>
             <RemoveDialog />
             <Paper sx={{ width: 'calc(100% - 40px)', ml: '20px', mt: '10px' }}>
-                <TableTool />
-                <TablePagination
-                    rowsPerPageOptions={[5, 10]}
-                    rowsPerPage={size}
-                    page={page}
-                    count={total}
-                    component="div"
-                    onPageChange={handlePage}
-                    onRowsPerPageChange={handleSize}
-                >
-                </TablePagination>
+                <Toolbar sx={{mb : "10px"}}>
+                    <Grid container>
+                        <Grid item xs={10} sm={10}>
+                            <Typography
+                                color="inherit"
+                                variant="h4"
+                                component="div"
+                            >
+                                {model} List
+                            </Typography>
+                        </Grid>
+                        <Grid item xs={2} sm={2}>
+                            <Grid container justifyContent="flex-end" sx={{width : "100%"}}>
+                                <IconButton type="button" color="primary" sx={{ p: '10px' }} aria-label="new" onClick={event => rowClickHandler(event, null,'create')}>
+                                    <AddBoxOutlined />
+                                </IconButton>
+                                <IconButton type="button" color="success" sx={{ p: '10px' }} aria-label="new" onClick={event => rowClickHandler(event, null,'create')}>
+                                    <IosShareOutlined />
+                                </IconButton>
+                                <IconButton type="button" color="info" sx={{ p: '10px' }} aria-label="new" onClick={event => rowClickHandler(event, null,'create')}>
+                                    <PrintOutlined />
+                                </IconButton>
+                            </Grid>
+                        </Grid>
+                        <Grid item xs={10} sm={10}></Grid>
+                        <Grid item xs={2} sm={2}>
+                        <FormControl fullWidth size="small">
+                                <TextField
+                                    required
+                                    fullWidth
+                                    value={inList}
+                                    onChange={changeInListFilter}
+                                    size="small"
+                                    id="inList"
+                                    name="inList"
+                                    label="Search"
+                                    autoComplete="off"
+                                    variant="standard"
+                                />
+                            </FormControl>
+                        </Grid>
+                    </Grid>
+                </Toolbar>
                 <TableContainer sx={{maxHeight:'calc(90vh - 128px)', minWidth: '100%', maxWidth: '100%'}}>
                     <Table stickyHeader onMouseLeave={event => rowHoverHandler(event, -1)}>
                         <TableHead onMouseEnter={event => rowHoverHandler(event, -1)}>
@@ -279,6 +302,16 @@ function ModelList() {
                         </TableBody>
                     </Table>
                 </TableContainer>
+                <TablePagination
+                    rowsPerPageOptions={[5, 10]}
+                    rowsPerPage={size}
+                    page={page}
+                    count={total}
+                    component="div"
+                    onPageChange={handlePage}
+                    onRowsPerPageChange={handleSize}
+                >
+                </TablePagination>
             </Paper>
 
         </div>

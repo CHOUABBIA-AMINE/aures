@@ -12,6 +12,7 @@ interface Contract {
     startDate               : Dayjs | null;
     approvalReference       : string;
     approvalDate            : Dayjs | null;
+    contractDate            : Dayjs | null;
     notifyDate              : Dayjs | null;
     contractDuration        : number;
     observation             : string;

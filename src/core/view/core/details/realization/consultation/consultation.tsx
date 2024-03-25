@@ -237,7 +237,6 @@ const ConsultationDetails = (props : any) => {
 						setConsultationStep(consultationStep.data._links.self.href);
 					})
 				})
-				
 			}).catch(e => {});
 			
 		});

@@ -30,7 +30,8 @@ const consultation = [
 const contract = [
     { id: 'id',             name: 'Id',                 width: '20px',              align: 'center',    type:"number" },
     { id: 'reference',      name: 'Reference',          width: '15%',               align: 'center',    type:"text" },
-    { id: 'designationFr',  name: 'Designation',        width: 'calc(85%-120px)',   align: 'left',      type:"text" }
+    { id: 'designationFr',  name: 'Designation',        width: 'calc(55%-120px)',   align: 'left',      type:"text" },
+    { id: 'providerName',   name: 'Provider',           width: '30%',               align: 'left',      type:"text" }
 ];
 const document = [
     { id: 'id',             name: 'Id',                 width: '20px',              align: 'center',    type:"number" },
