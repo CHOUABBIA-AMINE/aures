@@ -355,11 +355,11 @@ const ConsultationDetails = (props : any) => {
 		<Container maxWidth="lg">
 			<Paper variant="outlined" sx={{ marginTop: "60px", padding:'30px' }}>
 				<Box sx={{display : "flex", paddingBottom: 5 , justifyContent: "space-between"}}>
-					<Typography variant="h6" >
+					<Typography variant="h5" >
 						Consultation Details
 					</Typography>
 					<Box>
-						<Button color="secondary" variant="outlined" size="small" sx={{ marginRight:'5px' }} onClick={e => navigate("/consultation/documents", {state:location.state.modelId})}>
+						<Button color="secondary" variant="outlined" size="small" sx={{ marginRight:'5px' }} onClick={e => navigate("/consultation/documents", {state:consultation})}>
 							<FolderCopyOutlined />
 						</Button>
 						<Button color="error" variant="outlined" size="small" sx={{ marginRight:'5px' }} onClick={e => navigate("consultation/documents")}>
@@ -547,6 +547,7 @@ const ConsultationDetails = (props : any) => {
 								variant="outlined"
 								inputProps={{ 
 									readOnly: readOnly,
+									dir: "rtl"
 								}}
 							/>
 						</FormControl>
@@ -566,6 +567,7 @@ const ConsultationDetails = (props : any) => {
 								variant="outlined"
 								inputProps={{ 
 									readOnly: readOnly,
+									dir: "rtl"
 								}}
 							/>
 						</FormControl>

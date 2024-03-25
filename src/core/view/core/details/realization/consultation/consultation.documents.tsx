@@ -7,7 +7,7 @@ import { useLocation }          from "react-router-dom";
 import { useNavigate }          from "react-router-dom";
 import { useParams }            from "react-router-dom";
 
-import { Box }                  from "@mui/material";
+import { Box, Typography }                  from "@mui/material";
 import { Button }               from "@mui/material";
 import { FormControl }          from "@mui/material";
 import { Grid }                 from "@mui/material";
@@ -54,6 +54,24 @@ function ConsultationDocuments() {
 	const { enqueueSnackbar } 		            = useSnackbar();
 
 	let readOnly 					            = false; //params.action === 'edit' ? false : true;
+    const initialData : Doc = {
+        reference               : "",
+		issueDate               : dayjs(),
+		_links                  : {
+			document                :{
+				href                    : ""
+			},
+			self                    :{
+				href                    : ""
+			},
+			documentType            :{
+				href                    : ""
+			},
+			file                    :{
+				href                    : ""
+			}
+		}
+    };
 
     const { getUrl }                            = useHTTP();
     const { getBasedUrl }                       = useHTTP();
@@ -80,24 +98,7 @@ function ConsultationDocuments() {
 	const [ docType, setDocType ]	            = useState<string>("");
     const [ _file, setFile ] 			        = useState();
     const [ pdfFile, setPDFFile ] 			    = useState("");
-    const [ doc, setDoc ]                       = useState<Doc>({
-		reference               : "",
-		issueDate               : dayjs(),
-		_links                  : {
-			document                :{
-				href                    : ""
-			},
-			self                    :{
-				href                    : ""
-			},
-			documentType            :{
-				href                    : ""
-			},
-			file                    :{
-				href                    : ""
-			}
-		}
-	});
+    const [ doc, setDoc ]                       = useState<Doc>(initialData);
 
     const decodeId = (id : string, row : any) => {
         let ids : string[] = id.split(".");
@@ -153,8 +154,12 @@ function ConsultationDocuments() {
 				issueDate       : doc.issueDate,
 				documentType	: docType,
 			})).then((doc : any) =>{
-                //patchUrl(formatURL(location.state) + "/documents?", {doc.data.});
-                console.log(doc);
+                getUrl(formatURL(location.state._links.self.href) + "/documents?projection=documentList").then((response) => {
+                    let rows : []= response.data._embedded.document.sort((a:any,b:any) => { return a.type > b.type;});
+                    setRow(rows);
+                    setTotal(rows.length);
+                    setDoc(initialData);
+                })
             });
 		}else{
 			if(_file !== undefined){
@@ -167,12 +172,14 @@ function ConsultationDocuments() {
 					})).then(document =>{
                         let aux = rows;
                         aux.push(document.data);
-                        putUrl(formatURL(location.state) + "/documents", aux.map(row => row._links.self.href).join("\n"), "text/uri-list").then((data) =>{
-                            let _rows = rows;
-                            _rows.push(document.data);
-                            setRow(_rows);
+                        putUrl(formatURL(location.state._links.self.href) + "/documents", aux.map(row => row._links.self.href).join("\n"), "text/uri-list").then(() =>{
+                            getUrl(formatURL(location.state._links.self.href) + "/documents?projection=documentList").then((response) => {
+                                let rows : []= response.data._embedded.document.sort((a:any,b:any) => { return a.type > b.type;});;
+                                setRow(rows);
+                                setTotal(rows.length);
+                                setDoc(initialData);
+                            })
                         });
-                        //console.log(doc);
                     });;
 				})
 			}
@@ -213,9 +220,8 @@ function ConsultationDocuments() {
 			setDocTypes(documentTypes.data._embedded.documentType);
 		});
 
-        let projection = "";//proj !== undefined ? "&projection=" + proj : ""
-        getUrl(formatURL(location.state) + "/documents?projection=documentList").then((response) => {
-            let rows : []= response.data._embedded.document;
+        getUrl(formatURL(location.state._links.self.href) + "/documents?projection=documentList").then((response) => {
+            let rows : []= response.data._embedded.document.sort((a:any,b:any) => { return a.type > b.type;});;
             setRow(rows);
             setTotal(rows.length);
         })
@@ -299,6 +305,10 @@ function ConsultationDocuments() {
         }
     }
 
+    const toParent = () => {
+        navigate("/consultation/edit", {state : {modelId : location.state._links.self.href}})
+    }
+
 	return (
         
         <div style={{ width: '100%'}}>
@@ -310,7 +320,9 @@ function ConsultationDocuments() {
                 <Box sx={{display : "flex", width : '100%', paddingTop: 5 , paddingBottom: 5 , justifyContent: "space-between"}}>
                     <Grid container spacing={1} direction={"row"}>	
                         <Grid item xs={4} sm={4}>
-                            Consultation 
+                            <Typography variant="h5" sx={{color:"#555", cursor: "pointer"}} align="center" onClick={toParent}>
+                                Consultation {location.state.reference}
+                            </Typography>
                         </Grid>
                         <Grid item xs={2} sm={2}>
                             <FormControl fullWidth size="small">

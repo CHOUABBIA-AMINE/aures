@@ -25,7 +25,8 @@ const project = [
 const consultation = [
     { id: 'id',             name: 'Id',                 width: '20px',              align: 'center',    type:"number" },
     { id: 'internalOrder',  name: 'Internal Id',        width: '15%',               align: 'center',    type:"text" },
-    { id: 'designationFr',  name: 'Designation',        width: 'calc(85%-120px)',   align: 'left',      type:"text" }
+    { id: 'designationFr',  name: 'Designation',        width: 'calc(65%-120px)',   align: 'left',      type:"text" },
+    { id: 'reference',      name: 'Reference',          width: '20%',               align: 'left',      type:"text" }
 ];
 const contract = [
     { id: 'id',             name: 'Id',                 width: '20px',              align: 'center',    type:"number" },
