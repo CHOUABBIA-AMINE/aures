@@ -6,6 +6,7 @@ import { useSnackbar } 			from "notistack";
 import { useEffect } 			from "react";
 import { useState } 			from "react";
 import { useLocation } 			from "react-router-dom";
+import { useNavigate } 			from "react-router-dom";
 import { useParams } 			from "react-router-dom";
 
 import { Autocomplete } 		from "@mui/material";
@@ -20,8 +21,10 @@ import { MenuItem } 			from "@mui/material";
 import { Paper } 				from "@mui/material";
 import { Select } 				from "@mui/material";
 import { TextField } 			from "@mui/material";
+import { Tooltip } 				from "@mui/material";
 import { Typography } 			from "@mui/material";
 
+import { FolderCopyOutlined } 	from "@mui/icons-material";
 import { Replay } 				from "@mui/icons-material";
 import { Save } 				from "@mui/icons-material";
 
@@ -47,6 +50,7 @@ const ContractDetails = (props : any) => {
 	const location 					= useLocation();
 	const params 					= useParams();
 	const { enqueueSnackbar } 		= useSnackbar();
+    const navigate          		= useNavigate();
 
 	let readOnly 					= params.action !== 'view' ? false : true;
 	const { getUrl, getBasedUrl, patchUrl, postBasedUrl } = useHTTP();
@@ -65,6 +69,7 @@ const ContractDetails = (props : any) => {
 
 	const [ contractSteps, setContractSteps ]			= useState<ContractStep[]>([]);
 	const [ contractStep, setContractStep ]				= useState<string>("");
+	const [ contract_Step, setContract_Step ]			= useState<string>("");
 
 	const [ approvalStatuss, setApprovalStatuss ]		= useState<ApprovalStatus[]>([]);
 	const [ approvalStatus, setApprovalStatus ]			= useState<string>("");
@@ -90,11 +95,11 @@ const ContractDetails = (props : any) => {
 		designationFr           : "",
 		amount         			: 0.00,
 		transferableAmount	    : 0.00,
-		startDate               : dayjs(),
+		startDate               : null,
 		approvalReference       : "",
-		approvalDate            : dayjs(),
-		contractDate            : dayjs(),
-		notifyDate              : dayjs(),
+		approvalDate            : null,
+		contractDate            : null,
+		notifyDate              : null,
 		contractDuration        : 0,
 		observation             : "",
 		_links          		: {
@@ -170,11 +175,11 @@ const ContractDetails = (props : any) => {
 				designationFr           : contract.data.designationFr,
 				amount         			: contract.data.amount,
 				transferableAmount    	: contract.data.transferableAmount,
-				startDate               : contract.data.startDate !== null ? dayjs(contract.data.approvalDate) : dayjs(),
+				startDate               : contract.data.startDate !== null ? dayjs(contract.data.approvalDate) : null,
 				approvalReference       : contract.data.approvalReference,
-				approvalDate            : contract.data.approvalDate !== null ? dayjs(contract.data.approvalDate) : dayjs(),
-				contractDate            : contract.data.contractDate !== null ? dayjs(contract.data.contractDate) : dayjs(),
-				notifyDate             	: contract.data.notifyDate !== null ? dayjs(contract.data.notifyDate) : dayjs(),
+				approvalDate            : contract.data.approvalDate !== null ? dayjs(contract.data.approvalDate) : null,
+				contractDate            : contract.data.contractDate !== null ? dayjs(contract.data.contractDate) : null,
+				notifyDate             	: contract.data.notifyDate !== null ? dayjs(contract.data.notifyDate) : null,
 				contractDuration        : contract.data.contractDuration,
 				observation             : contract.data.observation,
 				_links          		: {
@@ -233,14 +238,14 @@ const ContractDetails = (props : any) => {
 			}).catch(e => {});
 			
 			getUrl(formatURL(contract.data._links.contractStep.href)).then((contractStep) => {
-				getUrl(formatURL(contract.data._links.contractPhase.href)).then((contractPhase) => {
+				getUrl(formatURL(contractStep.data._links.contractPhase.href)).then((contractPhase) => {
 					setContractPhase(contractPhase.data._links.self.href);
-					getUrl(contractPhase.data._links.contractSteps.href).then((contractSteps) => {
-						setContractSteps(contractSteps.data._embedded.contractStep);
-						setContractStep(contractStep.data._links.self.href);
-					})
+					//getUrl(contractPhase.data._links.contractSteps.href).then((contractSteps) => {
+						console.log(contractStep.data._links.self.href)
+						//setContractSteps(contractSteps.data._embedded.contractStep);
+						setContract_Step(contractStep.data._links.self.href);
+					//})
 				})
-				
 			}).catch(e => {});
 
 			getUrl(formatURL(contract.data._links.approvalStatus.href)).then((approvalStatus) => {
@@ -274,6 +279,7 @@ const ContractDetails = (props : any) => {
 			startDate               : contract.startDate,
 			approvalReference       : contract.approvalReference,
 			approvalDate            : contract.approvalDate,
+			contractDate            : contract.contractDate,
 			notifyDate             	: contract.notifyDate,
 			contractDuration        : contract.contractDuration,
 			observation             : contract.observation,
@@ -289,6 +295,10 @@ const ContractDetails = (props : any) => {
 		if(location.state != null){
 			patchUrl(formatURL(location.state.modelId), JSON.stringify({data})).then((contract) => {
 				if(contract.data !== undefined){
+					contract.data.startDate 	= contract.data.startDate !== null ? dayjs(contract.data.startDate) : null;
+					contract.data.approvalDate 	= contract.data.approvalDate !== null ? dayjs(contract.data.approvalDate) : null;
+					contract.data.contractDate 	= contract.data.contractDate !== null ? dayjs(contract.data.contractDate) : null;
+					contract.data.notifyDate 	= contract.data.notifyDate !== null ? dayjs(contract.data.notifyDate) : null;
 					setContract(contract.data);
 					enqueueSnackbar('Entity created successfully !', {variant: 'success'});
 				}
@@ -296,6 +306,10 @@ const ContractDetails = (props : any) => {
 		}else{
 			postBasedUrl("contract", JSON.stringify({data})).then((contract) => {
 				if(contract.data !== undefined){
+					contract.data.startDate 	= contract.data.startDate !== null ? dayjs(contract.data.startDate) : null;
+					contract.data.approvalDate 	= contract.data.approvalDate !== null ? dayjs(contract.data.approvalDate) : null;
+					contract.data.contractDate 	= contract.data.contractDate !== null ? dayjs(contract.data.contractDate) : null;
+					contract.data.notifyDate 	= contract.data.notifyDate !== null ? dayjs(contract.data.notifyDate) : null;
 					setContract(contract.data);
 					enqueueSnackbar('Entity created successfully !', {variant: 'success'});
 				}
@@ -306,13 +320,18 @@ const ContractDetails = (props : any) => {
 	useEffect(() => {
 		if(contractPhase !== ""){
 			getUrl(contractPhase).then((contractPhase) => {
-				setContractSteps([])
+				setContractStep("")
+				//setContractSteps([])
 				getUrl(contractPhase.data._links.contractSteps.href).then((contractSteps) => {
 					setContractSteps(contractSteps.data._embedded.contractStep);
 				});
 			});
 		}
 	}, [contractPhase]);
+
+	useEffect(() => {
+		setContractStep(contract_Step);
+	}, [contractSteps]);
 
 	useEffect(() => {
 
@@ -349,12 +368,21 @@ const ContractDetails = (props : any) => {
 						Contract Details
 					</Typography>
 					<Box>
-						<Button color="primary" variant="outlined" size="small" sx={{ marginRight:'5px' }} onClick={e => patchData()}>
-							<Save />
-						</Button>
-						<Button color="success" variant="outlined" size="small" sx={{ marginLeft:'5px' }}  onClick={e => fetchData()}>
-							<Replay />
-						</Button>
+						<Tooltip title="Documents" arrow>
+							<Button color="secondary" variant="outlined" size="small" sx={{ marginRight:'5px' }} onClick={e => navigate("/contract/documents", {state:contract})}>
+								<FolderCopyOutlined />
+							</Button>
+						</Tooltip>
+						<Tooltip title="Save" arrow>
+							<Button color="primary" variant="outlined" size="small" sx={{ marginRight:'5px' }} onClick={e => patchData()}>
+								<Save />
+							</Button>
+						</Tooltip>
+						<Tooltip title="Reset" arrow>
+							<Button color="success" variant="outlined" size="small" sx={{ marginRight:'5px' }}  onClick={e => fetchData()}>
+								<Replay />
+							</Button>
+						</Tooltip>
 					</Box>
 				</Box>
 				<Grid container spacing={1} direction={"row"}>	
@@ -729,7 +757,7 @@ const ContractDetails = (props : any) => {
 								value={approvalStatus}
 								label="Approval Status"
 								
-								onChange={(e) => setContractStep(e.target.value)}
+								onChange={(e) => setApprovalStatus(e.target.value)}
 							>
 								{
 									approvalStatuss.length > 0 && approvalStatuss.map(approvalStatus => {
@@ -773,7 +801,6 @@ const ContractDetails = (props : any) => {
 						</FormControl>
 					</Grid>
 
-					<Grid item xs={3} sm={3}></Grid>
 					<Grid item xs={3} sm={3}>
 						<FormControl fullWidth size="small">
 							<TextField
@@ -797,11 +824,11 @@ const ContractDetails = (props : any) => {
 						<FormControl fullWidth size="small">
 							<DatePicker 
 								format="DD/MM/YYYY" 
-								label="Notification Date" 
+								label="Contract Date" 
 								readOnly={readOnly} 
-								slotProps={{ textField: { size: 'small', required: true }}} 
-								value={contract.notifyDate} 
-								onChange={ changedDate=>setContract(contract => ({...contract, notifyDate:changedDate})) }
+								slotProps={{ textField: { size: 'small', required: false }}} 
+								value={contract.contractDate} 
+								onChange={ changedDate=>setContract(contract => ({...contract, contractDate:changedDate})) }
 							/>
 						</FormControl>
 					</Grid>
@@ -827,6 +854,18 @@ const ContractDetails = (props : any) => {
 									readOnly: readOnly,
 									dir:'rtl'
 								}}
+							/>
+						</FormControl>
+					</Grid>
+					<Grid item xs={3} sm={3}>
+						<FormControl fullWidth size="small">
+							<DatePicker 
+								format="DD/MM/YYYY" 
+								label="Notification Date" 
+								readOnly={readOnly} 
+								slotProps={{ textField: { size: 'small', required: false }}} 
+								value={contract.notifyDate} 
+								onChange={ changedDate=>setContract(contract => ({...contract, notifyDate:changedDate})) }
 							/>
 						</FormControl>
 					</Grid>

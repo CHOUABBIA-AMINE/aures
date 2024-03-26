@@ -17,6 +17,7 @@ import ProjectDetails           from "../view/core/details/realization/project";
 import ConsultationDetails      from "../view/core/details/realization/consultation/consultation";
 import ConsultationDocuments    from "../view/core/details/realization/consultation/consultation.documents";
 import ContractDetails          from "../view/core/details/realization/contract/contract";
+import ContractDocuments        from "../view/core/details/realization/contract/contract.documents";
 
 import MailDetails              from "../view/core/details/common/communication/mail";
 import Mails                    from "../view/core/details/common/communication/mails";
@@ -59,6 +60,7 @@ function CoreRouting(){
             <Route path="consultation/:action"          element={<ConsultationDetails />}></Route>
             <Route path="consultation/documents"        element={<ConsultationDocuments />}></Route>
             <Route path="contract/:action"              element={<ContractDetails />}></Route>
+            <Route path="contract/documents"            element={<ContractDocuments />}></Route>
 
             <Route path="mail/:action"                  element={<MailDetails />}></Route>
             <Route path="mails"                         element={<Mails />}></Route>

@@ -5,18 +5,17 @@ import { useState }             from "react";
 import { useNavigate }          from "react-router-dom";
 import { useParams }            from "react-router-dom";
 
-import { Button, FormControl, Grid, TextField, debounce }               from "@mui/material";
+import { Button }               from "@mui/material";
 import { Dialog }               from "@mui/material";
 import { DialogActions }        from "@mui/material";
 import { DialogContent }        from "@mui/material";
 import { DialogContentText }    from "@mui/material";
 import { DialogTitle }          from "@mui/material";
 import { IconButton }           from "@mui/material";
-import { Input }                from "@mui/material";
 import { Paper }                from "@mui/material";
+import { FormControl }          from "@mui/material";
+import { Grid }                 from "@mui/material";
 import { TableSortLabel }       from "@mui/material";
-import { Toolbar }              from "@mui/material";
-import { Typography }           from "@mui/material";
 import { Table }                from "@mui/material";
 import { TableBody }            from "@mui/material";
 import { TableCell }            from "@mui/material";
@@ -24,13 +23,15 @@ import { TableContainer }       from "@mui/material";
 import { TableHead }            from "@mui/material";
 import { TablePagination }      from "@mui/material";
 import { TableRow }             from "@mui/material";
+import { TextField }            from "@mui/material";
+import { Toolbar }              from "@mui/material";
+import { Typography }           from "@mui/material";
 
 import { AddBoxOutlined }       from "@mui/icons-material";
 import { PrintOutlined }        from "@mui/icons-material";
 import { IosShareOutlined }     from "@mui/icons-material";
 import { Delete }               from "@mui/icons-material";
 import { Edit }                 from "@mui/icons-material";
-import { Search }               from "@mui/icons-material";
 
 import { useHTTP }              from "../../api/request";
 import { formatURL }            from "../../api/tools";
@@ -150,7 +151,6 @@ function ModelList() {
             setRow(rows);
             setTotal(response.data.page.totalElements);
         })
-        console.log(inList)
 
     },[ inList])
 

@@ -9,11 +9,10 @@ import { useLocation } 			from "react-router-dom";
 import { useNavigate } 			from "react-router-dom";
 import { useParams } 			from "react-router-dom";
 
-import { Autocomplete } 		from "@mui/material";
+import { Tooltip } 				from "@mui/material";
 import { Box } 					from "@mui/material";
 import { Button } 				from "@mui/material";
 import { Container } 			from "@mui/material";
-import { debounce } 			from "@mui/material";
 import { FormControl } 			from "@mui/material";
 import { InputLabel } 			from "@mui/material";
 import { Grid } 				from "@mui/material";
@@ -37,13 +36,12 @@ import { DatePicker } 			from "@mui/x-date-pickers/DatePicker";
 import { useHTTP } 				from "../../../../../api/request";
 import { formatURL } 			from "../../../../../api/tools";
 
+import { BudgetType } 			from "../../../../../model/financial/budget.type";
 import { Consultation } 		from "../../../../../model/realization/consultation/consultation";
 import { RealizationNature } 	from "../../../../../model/realization/realization.nature";
 import { AwardMethod } 			from "../../../../../model/realization/consultation/award.method";
-import { BudgetType } 			from "../../../../../model/financial/budget.type";
 import { RealizationStatus } 	from "../../../../../model/realization/realization.status";
 import { ApprovalStatus } 		from "../../../../../model/realization/approval.status";
-import { Project } 				from "../../../../../model/realization/project";
 import { RealizationDirector } 	from "../../../../../model/realization/realization.director";
 import { ConsultationStep } 	from "../../../../../model/realization/consultation/consultation.step";
 import { ConsultationPhase } 	from "../../../../../model/realization/consultation/consultation.phase";
@@ -81,9 +79,7 @@ const ConsultationDetails = (props : any) => {
 
 	const [ consultationSteps, setConsultationSteps ]	= useState<ConsultationStep[]>([]);
 	const [ consultationStep, setConsultationStep ]		= useState<string>("");
-
-	const [ projects, setProjects ]						= useState<Project[]>([]);
-	const [ project, setProject ]						= useState<Project | null>(null);
+	const [ consultation_Step, setConsultation_Step ]	= useState<string>("");
 
 	let years : string []			= [];
 	for (let i = 2010; i < 2031; i++) years.push(""+i); 
@@ -234,10 +230,10 @@ const ConsultationDetails = (props : any) => {
 			getUrl(formatURL(consultation.data._links.consultationStep.href)).then((consultationStep) => {
 				getUrl(formatURL(consultationStep.data._links.consultationPhase.href)).then((consultationPhase) => {
 					setConsultationPhase(consultationPhase.data._links.self.href);
-					getUrl(consultationPhase.data._links.consultationSteps.href).then((consultationSteps) => {
-						setConsultationSteps(consultationSteps.data._embedded.consultationStep);
-						setConsultationStep(consultationStep.data._links.self.href);
-					})
+					//getUrl(consultationPhase.data._links.consultationSteps.href).then((consultationSteps) => {
+						//setConsultationSteps(consultationSteps.data._embedded.consultationStep);
+						setConsultation_Step(consultationStep.data._links.self.href);
+					//})
 				})
 			}).catch(e => {});
 			
@@ -319,6 +315,15 @@ const ConsultationDetails = (props : any) => {
 	}, [consultationPhase]);
 
 	useEffect(() => {
+		if(consultation_Step !== "")setConsultationStep(consultation_Step);
+	}, [consultationSteps]);
+
+	
+	useEffect(() => {
+		setConsultation_Step("");
+	}, [consultationStep]);
+
+	useEffect(() => {
 
 		getBasedUrl("awardMethod").then((awardMethods) => {
 			setAwardMethods(awardMethods.data._embedded.awardMethod);
@@ -361,24 +366,36 @@ const ConsultationDetails = (props : any) => {
 						Consultation Details
 					</Typography>
 					<Box>
-						<Button color="secondary" variant="outlined" size="small" sx={{ marginRight:'5px' }} onClick={e => navigate("/consultation/documents", {state:consultation})}>
-							<FolderCopyOutlined />
-						</Button>
-						<Button color="error" variant="outlined" size="small" sx={{ marginRight:'5px' }} onClick={e => navigate("consultation/documents")}>
-							<FireTruckOutlined />
-						</Button>
-						<Button color="warning" variant="outlined" size="small" sx={{ marginRight:'5px' }} onClick={e => navigate("consultation/documents")}>
-							<AttachEmailOutlined />
-						</Button>
-						<Button color="info" variant="outlined" size="small" sx={{ marginRight:'5px' }} onClick={e => navigate("consultation/documents")}>
-							<ViewHeadlineOutlined />
-						</Button>
-						<Button color="primary" variant="outlined" size="small" sx={{ marginRight:'5px' }} onClick={e => patchData()}>
-							<Save />
-						</Button>
-						<Button color="success" variant="outlined" size="small" sx={{ marginLeft:'5px' }}  onClick={e => fetchData()}>
-							<Replay />
-						</Button>
+						<Tooltip title="Documents" arrow>
+							<Button color="secondary" variant="outlined" size="small" sx={{ marginRight:'5px' }} onClick={e => navigate("/consultation/documents", {state:consultation})}>
+								<FolderCopyOutlined />
+							</Button>
+						</Tooltip>
+						<Tooltip title="Tenders" arrow>
+							<Button color="error" variant="outlined" size="small" sx={{ marginRight:'5px' }} onClick={e => navigate("consultation/documents")}>
+								<FireTruckOutlined />
+							</Button>
+						</Tooltip>
+						<Tooltip title="Mails" arrow>
+							<Button color="warning" variant="outlined" size="small" sx={{ marginRight:'5px' }} onClick={e => navigate("consultation/documents")}>
+								<AttachEmailOutlined />
+							</Button>
+						</Tooltip>
+						<Tooltip title="Imputation" arrow>
+							<Button color="info" variant="outlined" size="small" sx={{ marginRight:'5px' }} onClick={e => navigate("consultation/documents")}>
+								<ViewHeadlineOutlined />
+							</Button>
+						</Tooltip>
+						<Tooltip title="Save" arrow>
+							<Button color="primary" variant="outlined" size="small" sx={{ marginRight:'5px' }} onClick={e => patchData()}>
+								<Save />
+							</Button>
+						</Tooltip>
+						<Tooltip title="Reset" arrow>
+							<Button color="success" variant="outlined" size="small" sx={{ marginLeft:'5px' }}  onClick={e => fetchData()}>
+								<Replay />
+							</Button>
+						</Tooltip>
 					</Box>
 				</Box>
 				<Grid container spacing={1} direction={"row"}>
