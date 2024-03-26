@@ -30,6 +30,8 @@ import { Replay } 				from "@mui/icons-material";
 import { Save } 				from "@mui/icons-material";
 import { ViewHeadlineOutlined} 	from "@mui/icons-material";
 
+import { NumericFormat } 		from 'react-number-format';
+
 import { DatePicker } 			from "@mui/x-date-pickers/DatePicker";
 
 import { useHTTP } 				from "../../../../../api/request";
@@ -379,7 +381,8 @@ const ConsultationDetails = (props : any) => {
 						</Button>
 					</Box>
 				</Box>
-				<Grid container spacing={1} direction={"row"}>	
+				<Grid container spacing={1} direction={"row"}>
+
 					<Grid item xs={2} sm={2}>
 						<FormControl fullWidth size="small">
 							<TextField
@@ -534,9 +537,14 @@ const ConsultationDetails = (props : any) => {
 					</Grid>
 					<Grid item xs={3} sm={3}>
 						<FormControl fullWidth size="small">
-							<TextField
+							<NumericFormat 
 								required
 								fullWidth
+								thousandSeparator="."
+								decimalSeparator=","
+								decimalScale={2}
+								fixedDecimalScale
+								customInput={TextField} 
 								value={consultation.allocatedAmount}
 								onChange={ (e) => setConsultation(consultation => ({...consultation, allocatedAmount: Number(e.target.value)})) }
 								size="small"
@@ -554,9 +562,14 @@ const ConsultationDetails = (props : any) => {
 					</Grid>
 					<Grid item xs={3} sm={3}>
 						<FormControl fullWidth size="small">
-							<TextField
+							<NumericFormat 
 								required
 								fullWidth
+								thousandSeparator="."
+								decimalSeparator=","
+								decimalScale={2}
+								fixedDecimalScale
+								customInput={TextField} 
 								value={consultation.financialEstimation}
 								onChange={ (e) => setConsultation(consultation => ({...consultation, financialEstimation: Number(e.target.value)})) }
 								size="small"
@@ -570,6 +583,8 @@ const ConsultationDetails = (props : any) => {
 									dir: "rtl"
 								}}
 							/>
+							
+							
 						</FormControl>
 					</Grid>
 					

@@ -25,20 +25,22 @@ import { Typography } 			from "@mui/material";
 import { Replay } 				from "@mui/icons-material";
 import { Save } 				from "@mui/icons-material";
 
+import { NumericFormat } 		from 'react-number-format';
+
 import { DatePicker } 			from "@mui/x-date-pickers/DatePicker";
 
 import { useHTTP } 				from "../../../../../api/request";
 import { formatURL } 			from "../../../../../api/tools";
 
+import { Currency } 			from "../../../../../model/common/currency";
+
 import { ApprovalStatus } 		from "../../../../../model/realization/approval.status";
+import { RealizationStatus } 	from "../../../../../model/realization/realization.status";
 import { Contract } 			from "../../../../../model/realization/contract/contract";
 import { Consultation } 		from "../../../../../model/realization/consultation/consultation";
-import { Currency } 			from "../../../../../model/common/currency";
 import { ContractStep } 		from "../../../../../model/realization/contract/contract.step";
 import { ContractPhase } 		from "../../../../../model/realization/contract/contract.phase";
 import { ContractType } 		from "../../../../../model/realization/contract/contract.type";
-import { Provider } 			from "../../../../../model/realization/provider/provider";
-import { RealizationStatus } 	from "../../../../../model/realization/realization.status";
 
 const ContractDetails = (props : any) => {
 
@@ -478,9 +480,14 @@ const ContractDetails = (props : any) => {
 					</Grid>
 					<Grid item xs={3} sm={3}>
 						<FormControl fullWidth size="small">
-							<TextField
+							<NumericFormat 
 								required
 								fullWidth
+								thousandSeparator="."
+								decimalSeparator=","
+								decimalScale={2}
+								fixedDecimalScale
+								customInput={TextField} 
 								value={contract.amount}
 								onChange={ (e) => setContract(contract => ({...contract, amount: Number(e.target.value)})) }
 								size="small"
@@ -491,15 +498,21 @@ const ContractDetails = (props : any) => {
 								variant="outlined"
 								inputProps={{ 
 									readOnly: readOnly,
+									dir: "rtl"
 								}}
 							/>
 						</FormControl>
 					</Grid>
 					<Grid item xs={3} sm={3}>
 						<FormControl fullWidth size="small">
-							<TextField
+							<NumericFormat 
 								required
 								fullWidth
+								thousandSeparator="."
+								decimalSeparator=","
+								decimalScale={2}
+								fixedDecimalScale
+								customInput={TextField} 
 								value={contract.transferableAmount}
 								onChange={ (e) => setContract(contract => ({...contract, transferableAmount: Number(e.target.value)})) }
 								size="small"
@@ -510,6 +523,7 @@ const ContractDetails = (props : any) => {
 								variant="outlined"
 								inputProps={{ 
 									readOnly: readOnly,
+									dir: "rtl"
 								}}
 							/>
 						</FormControl>
@@ -793,9 +807,14 @@ const ContractDetails = (props : any) => {
 					</Grid>
 					<Grid item xs={3} sm={3}>
 						<FormControl fullWidth size="small">
-							<TextField
+							<NumericFormat 
 								required
 								fullWidth
+								thousandSeparator="."
+								decimalSeparator=","
+								decimalScale={0}
+								fixedDecimalScale
+								customInput={TextField} 
 								value={contract.contractDuration}
 								onChange={ (e) => setContract(contract => ({...contract, contractDuration: Number(e.target.value)})) }
 								size="small"
@@ -806,6 +825,7 @@ const ContractDetails = (props : any) => {
 								variant="outlined"
 								inputProps={{ 
 									readOnly: readOnly,
+									dir:'rtl'
 								}}
 							/>
 						</FormControl>
