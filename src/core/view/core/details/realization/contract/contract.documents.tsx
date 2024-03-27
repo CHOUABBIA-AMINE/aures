@@ -306,7 +306,7 @@ function ContractDocuments() {
     }
 
     const toParent = () => {
-        navigate("/consultation/edit", {state : {modelId : location.state._links.self.href}})
+        navigate("/contract/edit", {state : {modelId : location.state._links.self.href}})
     }
 
 	return (
@@ -321,7 +321,7 @@ function ContractDocuments() {
                     <Grid container spacing={1} direction={"row"}>	
                         <Grid item xs={4} sm={4}>
                             <Typography variant="h5" sx={{color:"#555", cursor: "pointer"}} align="center" onClick={toParent}>
-                                Consultation {location.state.reference}
+                                Contract {location.state.reference}
                             </Typography>
                         </Grid>
                         <Grid item xs={2} sm={2}>

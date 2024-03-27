@@ -270,30 +270,30 @@ const ContractDetails = (props : any) => {
 		let data = {
 			internalId              : contract.internalId,
 			contractYear        	: contract.contractYear,
-			referenc        		: contract.reference,
+			reference        		: contract.reference,
 			designationAr           : contract.designationAr,
 			designationEn           : contract.designationEn,
 			designationFr           : contract.designationFr,
 			amount         			: contract.amount,
 			transferableAmount     	: contract.transferableAmount,
-			startDate               : contract.startDate,
+			startDate               : contract.startDate !== null ? dayjs(contract.startDate) : null,
 			approvalReference       : contract.approvalReference,
-			approvalDate            : contract.approvalDate,
-			contractDate            : contract.contractDate,
-			notifyDate             	: contract.notifyDate,
+			approvalDate            : contract.approvalDate !== null ? dayjs(contract.approvalDate) : null,
+			contractDate            : contract.contractDate !== null ? dayjs(contract.contractDate) : null,
+			notifyDate             	: contract.notifyDate !== null ? dayjs(contract.notifyDate) : null,
 			contractDuration        : contract.contractDuration,
 			observation             : contract.observation,
 			contractType            : contractType,
-			provider       			: provider?._links.self.href,
+			provider       			: provider !== null ? provider?._links.self.href : "",
 			realizationStatus       : realizationStatus,
 			contractStep        	: contractStep,
 			approvalStatus          : approvalStatus,
 			currency     			: currency,
 			consultation            : consultation !== null ? consultation?._links.self.href : "",
-			contractUp            	: contractUp !== null ? consultation?._links.self.href : ""
+			contractUp            	: contractUp !== null ? contractUp?._links.self.href : ""
 		};
 		if(location.state != null){
-			patchUrl(formatURL(location.state.modelId), JSON.stringify({data})).then((contract) => {
+			patchUrl(formatURL(location.state.modelId), JSON.stringify(data)).then((contract) => {
 				if(contract.data !== undefined){
 					contract.data.startDate 	= contract.data.startDate !== null ? dayjs(contract.data.startDate) : null;
 					contract.data.approvalDate 	= contract.data.approvalDate !== null ? dayjs(contract.data.approvalDate) : null;
@@ -304,7 +304,7 @@ const ContractDetails = (props : any) => {
 				}
 			})
 		}else{
-			postBasedUrl("contract", JSON.stringify({data})).then((contract) => {
+			postBasedUrl("contract", JSON.stringify(data)).then((contract) => {
 				if(contract.data !== undefined){
 					contract.data.startDate 	= contract.data.startDate !== null ? dayjs(contract.data.startDate) : null;
 					contract.data.approvalDate 	= contract.data.approvalDate !== null ? dayjs(contract.data.approvalDate) : null;
@@ -513,11 +513,12 @@ const ContractDetails = (props : any) => {
 								fullWidth
 								thousandSeparator="."
 								decimalSeparator=","
+								allowedDecimalSeparators={[',', '.']}
 								decimalScale={2}
 								fixedDecimalScale
 								customInput={TextField} 
 								value={contract.amount}
-								onChange={ (e) => setContract(contract => ({...contract, amount: Number(e.target.value)})) }
+								onValueChange={(values) => {setContract(contract => ({...contract, amount: Number(values.floatValue)}))}}
 								size="small"
 								id="amount"
 								name="amount"
@@ -538,11 +539,13 @@ const ContractDetails = (props : any) => {
 								fullWidth
 								thousandSeparator="."
 								decimalSeparator=","
+								allowedDecimalSeparators={[',', '.']}
 								decimalScale={2}
 								fixedDecimalScale
 								customInput={TextField} 
 								value={contract.transferableAmount}
-								onChange={ (e) => setContract(contract => ({...contract, transferableAmount: Number(e.target.value)})) }
+								onValueChange={(values) => {setContract(contract => ({...contract, transferableAmount: Number(values.floatValue)}))}}
+								//onChange={ (e) => {console.log(e.target.value + " - " +contract.transferableAmount); setContract(contract => ({...contract, transferableAmount: Number(e.target.value)})) }}
 								size="small"
 								id="transferableAmount"
 								name="transferableAmount"
@@ -843,7 +846,7 @@ const ContractDetails = (props : any) => {
 								fixedDecimalScale
 								customInput={TextField} 
 								value={contract.contractDuration}
-								onChange={ (e) => setContract(contract => ({...contract, contractDuration: Number(e.target.value)})) }
+								onValueChange={(values) => {setContract(contract => ({...contract, contractDuration: Number(values.floatValue)}))}}
 								size="small"
 								id="contractDuration"
 								name="contractDuration"
